@@ -5,304 +5,322 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chaos Ward</title>
 <style>
-@font-face { font-family: "Barlow"; src: url(fonts/Barlow-Regular.ttf); font-weight: 400; }
-@font-face { font-family: "Barlow"; src: url(fonts/Barlow-Medium.ttf); font-weight: 500; }
-@font-face { font-family: "Barlow"; src: url(fonts/Barlow-SemiBold.ttf); font-weight: 600; }
-@font-face { font-family: "Barlow"; src: url(fonts/Barlow-Bold.ttf); font-weight: 700; }
-@font-face { font-family: "Marcellus SC"; src: url(fonts/MarcellusSC-Regular.ttf); font-weight: 400; }
+/* Chaos Ward: Stil "Siegel"
+   Regeln: eine Schriftfamilie (IBM Plex), kantige Formen (2 px), dünne Linien.
+   Farben tragen Bedeutung: Grünblau = gewählt / Schutz an. Gold = nur ein Treffer. Rot = verboten / Fehler.
+   Blau = Zahlen aus dem Spiel. Sonst nur Kohle und Stein. */
+@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-Regular.ttf); font-weight: 400; }
+@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-Medium.ttf); font-weight: 500; }
+@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-Bold.ttf); font-weight: 700; }
+@font-face { font-family: "Plex Cond"; src: url(fonts/IBMPlexSansCondensed-Medium.ttf); font-weight: 500; }
+@font-face { font-family: "Plex Cond"; src: url(fonts/IBMPlexSansCondensed-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: "Plex Mono"; src: url(fonts/IBMPlexMono-Medium.ttf); font-weight: 500; }
+@font-face { font-family: "Plex Mono"; src: url(fonts/IBMPlexMono-SemiBold.ttf); font-weight: 600; }
 
 :root {
-  --slate: #15191C;   /* Grund */
-  --side: #121518;    /* Seitenleiste */
-  --ledge: #1D2226;   /* Flächen */
-  --ridge: #283036;   /* angehoben / aktiv */
-  --line: #2F383E;    /* Haarlinien */
-  --line2: #3C474E;
-  --ink: #EDE6D6;     /* Text */
-  --ash: #8F9A94;     /* Nebentext */
-  --dim: #66716B;
-  --gold: #E9B44C;    /* an / Treffer / gewählt */
-  --gold-hi: #F6D58A;
-  --gold-deep: #9C7425;
-  --gold-soft: rgba(233,180,76,.12);
-  --magic: #8888FF;   /* Mod-Zeilen wie im Spiel */
-  --magic-hi: #BDBDFF;
-  --rare: #F5F07A;    /* Item-Namen */
-  --good: #78C48A;
-  --bad: #E0644F;
-  --r-s: 6px; --r-m: 10px;
+  --bg: #121314;      /* Grund */
+  --side: #0E0F10;    /* Seitenleiste */
+  --s1: #17181A;      /* Fläche */
+  --s2: #1E1F22;      /* angehoben */
+  --s3: #27292C;      /* Knöpfe */
+  --line: #2A2C30;    /* Haarlinie */
+  --line2: #3A3D42;
+  --ink: #E7E3DB;     /* Text, warmes Steinweiß */
+  --ash: #9A968E;     /* Nebentext */
+  --dim: #66635D;
+  --ward: #4FAE9B;    /* gewählt / Schutz an */
+  --ward-hi: #8AD4C3;
+  --ward-lo: #1B3631;
+  --ward-a: rgba(79,174,155,.10);
+  --ward-ink: #0B1A17;
+  --hit: #D6A640;     /* nur Treffer */
+  --hit-hi: #F0CF7A;
+  --hit-a: rgba(214,166,64,.12);
+  --val: #A3A8FF;     /* Zahlen wie im Spiel */
+  --bad: #D4604E;
+  --bad-a: rgba(212,96,78,.10);
+  --r: 2px;
+  --sans: "Plex", "Segoe UI", system-ui, sans-serif;
+  --cond: "Plex Cond", "Plex", "Segoe UI", sans-serif;
+  --mono: "Plex Mono", Consolas, monospace;
 }
 * { box-sizing: border-box; margin: 0; }
 html, body { height: 100%; }
-body { background: var(--slate); color: var(--ink); font: 400 14px/1.45 "Barlow", "Segoe UI", system-ui, sans-serif; font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; overflow: hidden; }
+body { background: var(--bg); color: var(--ink); font: 400 14px/1.45 var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
-input, select, textarea { font: inherit; color: var(--ink); background: var(--ledge); border: 1px solid var(--line); border-radius: var(--r-s); padding: 7px 10px; outline: none; }
-input:focus, select:focus, textarea:focus { border-color: var(--gold-deep); box-shadow: 0 0 0 3px rgba(233,180,76,.12); }
-input[type=range] { padding: 0; border: 0; background: transparent; accent-color: var(--gold); box-shadow: none; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-thumb { background: #2c353b; border-radius: 6px; border: 2px solid var(--slate); }
+input, select, textarea { font: inherit; color: var(--ink); background: var(--s1); border: 1px solid var(--line2); border-radius: var(--r); padding: 6px 9px; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--ward); }
+input::placeholder { color: var(--dim); }
+input[type=range] { padding: 0; border: 0; background: transparent; accent-color: var(--ward); }
+:focus-visible { outline: 1px solid var(--ward-hi); outline-offset: 2px; }
+::-webkit-scrollbar { width: 9px; height: 9px; } ::-webkit-scrollbar-thumb { background: var(--s3); border: 2px solid var(--bg); }
 .muted { color: var(--ash); } small { font-size: 12px; }
-kbd { font: 600 11px "Barlow"; color: var(--ash); border: 1px solid var(--line2); border-radius: 4px; padding: 1px 6px; }
+b, strong { font-weight: 600; }
+kbd { font: 500 11px var(--mono); color: var(--ash); border: 1px solid var(--line2); border-bottom-width: 2px; border-radius: var(--r); padding: 0 5px; }
+.lbl, h3.sec { font: 600 11.5px/1.2 var(--cond); letter-spacing: .09em; text-transform: uppercase; color: var(--ash); }
 
-.app { display: grid; grid-template-columns: 216px 1fr; height: 100vh; }
+.app { display: grid; grid-template-columns: 212px 1fr; height: 100vh; }
 
 /* ---------- Seitenleiste ---------- */
-.side { background: linear-gradient(180deg, #171B1E, var(--side)); border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 16px 12px 12px; min-height: 0; }
-.brand { display: flex; align-items: center; gap: 10px; padding: 0 4px 20px; }
-.brand img { width: 42px; height: 42px; filter: drop-shadow(0 2px 8px rgba(233,180,76,.25)); }
-.brand b { font: 400 20px/1 "Marcellus SC", serif; display: block; letter-spacing: .01em; }
-.brand small { color: var(--ash); font-size: 11.5px; display: block; margin-top: 3px; }
-.nav { display: flex; flex-direction: column; gap: 2px; }
-.nav button { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: var(--r-s); color: var(--ash); font-weight: 500; font-size: 15px; text-align: left; }
-.nav button:hover { color: var(--ink); background: rgba(255,255,255,.03); }
-.nav button.on { color: var(--ink); background: var(--ridge); box-shadow: inset 2px 0 0 var(--gold); }
-.nav .ni { width: 24px; height: 24px; flex: none; margin: -2px; filter: saturate(.7) brightness(.85); transition: filter .15s; object-fit: contain; }
-.nav button:hover .ni, .nav button.on .ni { filter: none; }
-.nav svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.nav button.on svg { color: var(--gold); }
-.nav .sep { height: 1px; background: var(--line); margin: 10px 6px; }
+.side { background: var(--side); border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 18px 0 12px; min-height: 0; }
+.brand { display: flex; align-items: center; gap: 11px; padding: 0 16px 22px; }
+.brand img { width: 36px; height: 36px; }
+.brand b { font: 600 18px/1 var(--cond); letter-spacing: .02em; display: block; }
+.brand small { color: var(--dim); font-size: 11px; line-height: 1.3; display: block; margin-top: 4px; }
+.nav { display: flex; flex-direction: column; }
+.nav button { display: flex; align-items: center; gap: 12px; padding: 9px 16px; color: var(--ash); font-weight: 500; font-size: 14.5px; text-align: left; border-left: 2px solid transparent; }
+.nav button:hover { color: var(--ink); background: var(--s1); }
+.nav button.on { color: var(--ink); background: var(--s2); border-left-color: var(--ward); }
+.nav svg { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.nav button.on svg { color: var(--ward-hi); }
+.nav .sep { height: 1px; background: var(--line); margin: 10px 16px; }
 
-/* Schutz-Feld mit Walzen-Zähler */
-.guard { margin-top: auto; border-radius: var(--r-m); padding: 13px 13px 12px; background: var(--ledge); border: 1px solid var(--line); transition: border-color .2s, background .2s; }
-.guard.on { background: radial-gradient(120% 90% at 50% 0%, rgba(233,180,76,.15), transparent 60%), var(--ledge); border-color: #4a3d22; }
-.guard.hit { background: radial-gradient(120% 90% at 50% 0%, rgba(233,180,76,.32), transparent 70%), #2a2416; border-color: var(--gold); }
+/* Schutz-Feld mit Zählwerk */
+.guard { margin: auto 12px 0; padding: 12px; background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); }
+.guard.on { border-color: var(--ward-lo); box-shadow: inset 0 2px 0 var(--ward); }
+.guard.hit { border-color: #5a4720; box-shadow: inset 0 2px 0 var(--hit); }
 .guard-top { display: flex; align-items: center; gap: 9px; }
-.lamp { width: 10px; height: 10px; border-radius: 50%; background: #4b555c; flex: none; }
-.guard.on .lamp, .guard.hit .lamp { background: var(--gold); box-shadow: 0 0 0 4px rgba(233,180,76,.15), 0 0 14px var(--gold); }
-.guard.hit .lamp { animation: pulse 1s ease-in-out infinite; }
-@keyframes pulse { 50% { box-shadow: 0 0 0 7px rgba(233,180,76,.08), 0 0 20px var(--gold); } }
-.guard-top b { font-weight: 600; font-size: 15px; }
+.lamp { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--dim); flex: none; }
+.guard.on .lamp { border-color: var(--ward); background: var(--ward); }
+.guard.hit .lamp { border-color: var(--hit); background: var(--hit); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.guard-top b { font: 600 13px var(--cond); letter-spacing: .08em; text-transform: uppercase; }
 .guard-top kbd { margin-left: auto; }
-.reel { display: flex; gap: 3px; margin: 12px 0 6px; justify-content: center; }
-.reel span { width: 29px; height: 41px; border-radius: 5px; display: grid; place-items: center; font: 700 25px/1 "Barlow"; color: #1b1406;
-  background: linear-gradient(180deg, #8d6a24 0%, #f6d58a 18%, #fff3d0 50%, #f2cd76 82%, #8d6a24 100%); box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 2px 0 rgba(0,0,0,.4); }
-.guard:not(.on):not(.hit) .reel span { background: linear-gradient(180deg, #252c31, #39434a 50%, #252c31); color: var(--ash); }
-.guard-cap { text-align: center; color: var(--ash); font-size: 12px; }
-.guard-btn { width: 100%; margin-top: 11px; padding: 9px; border-radius: var(--r-s); font-weight: 600; background: var(--gold); color: #1d1405; }
-.guard-btn:hover { filter: brightness(1.07); }
-.guard.on .guard-btn { background: var(--ridge); color: var(--ink); }
+.reel { display: flex; gap: 2px; margin: 12px 0 6px; justify-content: center; }
+.reel span { width: 27px; height: 36px; display: grid; place-items: center; font: 600 22px/1 var(--mono); color: var(--ash); background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); }
+.guard.on .reel span { color: var(--ink); }
+.guard.hit .reel span { color: var(--hit-hi); border-color: #4a3b1d; }
+.guard-cap { text-align: center; color: var(--dim); font-size: 11.5px; }
+.guard-btn { width: 100%; margin-top: 11px; padding: 8px; border-radius: var(--r); font-weight: 600; background: var(--ward); color: var(--ward-ink); }
+.guard-btn:hover { background: var(--ward-hi); }
+.guard.on .guard-btn, .guard.hit .guard-btn { background: var(--s3); color: var(--ink); }
+.guard.on .guard-btn:hover, .guard.hit .guard-btn:hover { background: var(--line2); }
 
 /* ---------- Hauptbereich ---------- */
 .main { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .page { display: none; flex: 1; min-height: 0; flex-direction: column; } .page.on { display: flex; }
-.head { display: flex; align-items: flex-end; gap: 16px; padding: 18px 24px 14px; border-bottom: 1px solid var(--line); flex: none; }
-.head h1 { font: 400 26px/1.1 "Marcellus SC", serif; letter-spacing: .01em; }
-.head p { color: var(--ash); margin-top: 3px; max-width: 72ch; }
+.head { display: flex; align-items: flex-end; gap: 16px; padding: 20px 24px 15px; border-bottom: 1px solid var(--line); flex: none; }
+.head h1 { font: 600 23px/1.1 var(--cond); letter-spacing: .01em; }
+.head p { color: var(--ash); margin-top: 4px; max-width: 72ch; }
 .head .grow { flex: 1; }
 .body { flex: 1; min-height: 0; display: flex; }
 .scroll { overflow: auto; min-height: 0; }
-.panel { background: var(--ledge); border: 1px solid var(--line); border-radius: var(--r-m); }
-h3.sec { font: 600 15px "Barlow"; margin: 0 0 10px; }
+.panel { background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); }
+h3.sec { margin: 0 0 10px; }
 .hint { color: var(--ash); font-size: 12.5px; }
 
-/* Schalter, Segmente, Chips, Knöpfe */
-.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--slate); border: 1px solid var(--line); border-radius: var(--r-s); padding: 3px; gap: 2px; }
-.seg button { padding: 7px 8px; border-radius: 4px; color: var(--ash); font-weight: 500; white-space: nowrap; }
-.seg button.on { background: var(--ridge); color: var(--ink); box-shadow: inset 0 -2px 0 var(--gold); }
-.chip { padding: 5px 12px; border-radius: 999px; color: var(--ash); border: 1px solid var(--line2); font-size: 13px; white-space: nowrap; }
+/* Schalter, Reiter, Knöpfe */
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border-bottom: 1px solid var(--line2); }
+.seg button { padding: 7px 10px 8px; color: var(--ash); font-weight: 500; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.seg button:hover { color: var(--ink); }
+.seg button.on { color: var(--ink); border-bottom-color: var(--ward); }
+.chip { padding: 4px 10px; border-radius: var(--r); color: var(--ash); border: 1px solid var(--line2); font-size: 13px; white-space: nowrap; }
 .chip:hover { color: var(--ink); border-color: var(--ash); }
-.chip.on { color: #1d1405; background: var(--gold); border-color: var(--gold); font-weight: 600; }
-.btn { padding: 8px 14px; border-radius: var(--r-s); font-weight: 600; background: var(--gold); color: #1d1405; }
-.btn:hover { filter: brightness(1.07); }
-.btn.quiet { background: var(--ridge); color: var(--ink); }
-.btn.quiet:hover { background: #313a41; filter: none; }
+.chip.on { color: var(--ward-hi); border-color: var(--ward); background: var(--ward-a); }
+.btn { padding: 8px 14px; border-radius: var(--r); font-weight: 600; background: var(--ward); color: var(--ward-ink); }
+.btn:hover { background: var(--ward-hi); }
+.btn.quiet { background: var(--s3); color: var(--ink); }
+.btn.quiet:hover { background: var(--line2); }
 .link { color: var(--ash); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line2); }
 .link:hover { color: var(--bad); text-decoration-color: currentColor; }
 .sw { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px solid var(--line); }
 .sw:first-of-type { border-top: 0; }
 .sw > span { flex: 1; min-width: 0; } .sw > span small { display: block; color: var(--ash); font-size: 12.5px; margin-top: 1px; }
-.tg { width: 40px; height: 24px; border-radius: 999px; background: #39434a; position: relative; flex: none; cursor: pointer; transition: background .15s; }
-.tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #dfe4e1; transition: left .15s; }
-.on > .tg, .tg.on { background: var(--gold); } .on > .tg::after, .tg.on::after { left: 19px; background: #fff8e6; }
-.stepper { display: inline-flex; align-items: center; gap: 8px; }
-.stepper button { width: 30px; height: 30px; border-radius: var(--r-s); background: var(--ridge); font-size: 17px; font-weight: 600; }
-.stepper b { min-width: 22px; text-align: center; font-size: 17px; }
+.tg { width: 34px; height: 18px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line2); position: relative; flex: none; cursor: pointer; transition: background .12s, border-color .12s; }
+.tg::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 1px; background: var(--dim); transition: left .12s, background .12s; }
+.on > .tg, .tg.on { background: var(--ward-lo); border-color: var(--ward); } .on > .tg::after, .tg.on::after { left: 18px; background: var(--ward-hi); }
+.stepper { display: inline-flex; align-items: center; gap: 6px; }
+.stepper button { width: 28px; height: 28px; border-radius: var(--r); background: var(--s3); font: 500 16px var(--mono); }
+.stepper button:hover { background: var(--line2); }
+.stepper b { min-width: 22px; text-align: center; font: 600 16px var(--mono); }
 
 /* ---------- Mods wählen ---------- */
-.cats { width: 196px; flex: none; border-right: 1px solid var(--line); padding: 14px 10px; }
-.cats input { width: 100%; margin-bottom: 10px; }
-.grp > button { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 8px 4px; color: var(--ash); font-size: 12.5px; }
+.cats { width: 194px; flex: none; border-right: 1px solid var(--line); padding: 14px 10px; }
+.cats input { width: 100%; margin-bottom: 8px; }
+.grp > button { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 9px 8px 4px; color: var(--ash); font-size: 13px; font-weight: 500; }
 .grp > button:hover { color: var(--ink); }
-.grp .chev { transition: transform .15s; } .grp.open .chev { transform: rotate(90deg); }
+.grp .chev { transition: transform .15s; font-family: var(--sans); } .grp.open .chev { transform: rotate(90deg); }
 .grp .items { display: none; } .grp.open .items { display: block; }
-.cat { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 6px 8px; border-radius: var(--r-s); font-size: 14px; text-align: left; gap: 6px; }
+.cat { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 5px 8px; border-radius: var(--r); font-size: 14px; text-align: left; gap: 6px; border-left: 2px solid transparent; }
 .cat em { font-style: normal; color: var(--ash); font-size: 12px; }
-.cat:hover { background: rgba(255,255,255,.03); }
-.cat.on { background: var(--ridge); } .cat.on em { color: var(--gold); }
-.cat .badge { min-width: 19px; padding: 0 5px; border-radius: 9px; background: var(--gold); color: #1d1405; font: 700 11px/18px "Barlow"; text-align: center; }
+.cat:hover { background: var(--s1); }
+.cat.on { background: var(--s2); border-left-color: var(--ward); }
+.cat .badge { min-width: 18px; padding: 0 4px; border-radius: var(--r); background: var(--ward-lo); color: var(--ward-hi); font: 600 11px/17px var(--mono); text-align: center; }
 
 .mods { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .filt { display: flex; gap: 6px; padding: 12px 18px 10px; align-items: center; flex-wrap: wrap; }
-.filt input { width: 180px; padding: 5px 10px; margin-left: auto; }
-.filt .count { color: var(--ash); font-size: 13px; }
+.filt input { width: 180px; padding: 4px 9px; margin-left: auto; }
+.filt .count { color: var(--dim); font: 500 12px var(--mono); margin-left: 4px; }
 .list { padding: 0 18px 18px; }
-.secl { color: var(--ash); font-size: 12.5px; padding: 12px 4px 6px; }
-.mod { display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 12px; padding: 9px 12px; border-radius: var(--r-s); border: 1px solid transparent; cursor: pointer; }
-.mod + .mod { margin-top: 2px; }
-.mod:hover { background: rgba(255,255,255,.025); }
-.mod .tx { color: var(--magic); font-size: 15px; }
-.mod .tx i { font-style: normal; color: var(--magic-hi); }
-.chk { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #56616a; display: grid; place-items: center; }
-.mod.on { background: linear-gradient(90deg, rgba(233,180,76,.10), rgba(233,180,76,.02)); border-color: rgba(233,180,76,.28); }
-.mod.on .chk { background: var(--gold); border-color: var(--gold); }
-.mod.on .chk::after { content: ""; width: 9px; height: 5px; border: 2px solid #1d1405; border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px,-1px); }
-.tiers { display: flex; gap: 3px; flex-wrap: wrap; justify-content: flex-end; max-width: 236px; }
-.tiers b { min-width: 25px; padding: 2px 0; text-align: center; border-radius: 4px; font: 600 11.5px "Barlow"; color: var(--dim); background: var(--ledge); border: 1px solid var(--line); cursor: pointer; }
+.secl { color: var(--ash); font: 600 11.5px var(--cond); letter-spacing: .09em; text-transform: uppercase; padding: 14px 12px 6px; }
+.mod { display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 12px; padding: 8px 12px; border-radius: var(--r); border-left: 2px solid transparent; cursor: pointer; }
+.mod + .mod { margin-top: 1px; }
+.mod:hover { background: var(--s1); }
+.mod .tx { color: var(--ink); font-size: 14.5px; }
+.mod .tx i { font-style: normal; color: var(--val); font-weight: 600; font-variant-numeric: tabular-nums; }
+.chk { width: 16px; height: 16px; border-radius: var(--r); border: 1.5px solid var(--line2); display: grid; place-items: center; }
+.mod:hover .chk { border-color: var(--ash); }
+.mod.on { background: var(--ward-a); border-left-color: var(--ward); }
+.mod.on .chk { background: var(--ward); border-color: var(--ward); }
+.mod.on .chk::after { content: ""; width: 8px; height: 4px; border: 2px solid var(--ward-ink); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px,-1px); }
+.tiers { display: flex; gap: 2px; flex-wrap: wrap; justify-content: flex-end; max-width: 230px; }
+.tiers b { min-width: 25px; padding: 1px 0; text-align: center; border-radius: var(--r); font: 500 11px/1.5 var(--mono); color: var(--dim); border: 1px solid var(--line); cursor: pointer; }
 .tiers b:hover { color: var(--ink); border-color: var(--ash); }
 .mod.on .tiers b { color: var(--ash); }
-.tiers b.rng { color: var(--ink) !important; background: rgba(233,180,76,.14); border-color: rgba(233,180,76,.35); }
-.tiers b.sel { color: #1d1405 !important; background: var(--gold); border-color: var(--gold); }
-.tiers .val { color: var(--gold); font: 600 12px "Barlow"; padding: 2px 4px; }
+.tiers b.rng { color: var(--ward-hi) !important; background: var(--ward-a); border-color: var(--ward-lo); }
+.tiers b.sel { color: var(--ward-ink) !important; background: var(--ward); border-color: var(--ward); font-weight: 600; }
+.tiers .val { color: var(--ward-hi); font: 500 11.5px var(--mono); padding: 2px 4px; }
 .empty { color: var(--ash); padding: 40px 10px; text-align: center; }
 
-/* Deine Jagd: wie ein Item-Tooltip im Spiel */
+/* Deine Jagd: die Liste, die das Siegel prüft */
 .slip > *, .rside > * { flex: none; }
-.slip { width: 272px; flex: none; border-left: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-.ticket { border-radius: 4px; background: rgba(8,9,11,.92); border: 1px solid #5b4a2a; box-shadow: 0 0 0 1px #000 inset, 0 10px 30px rgba(0,0,0,.35); text-align: center; overflow: hidden; }
-.ticket .band { position: relative; padding: 10px 26px 9px; background: linear-gradient(180deg, #3a2f1b, #1f190f); border-bottom: 1px solid #6b5631; }
-.ticket .band::before, .ticket .band::after { content: ""; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -5px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 8px rgba(233,180,76,.6); }
-.ticket .band::before { left: 9px; } .ticket .band::after { right: 9px; }
-.ticket h3 { font: 400 16px/1.15 "Marcellus SC", serif; color: var(--rare); }
-.ticket .sub { font-size: 12px; color: #c9b98f; margin-top: 2px; }
-.ticket ul { list-style: none; padding: 12px 12px 4px; display: flex; flex-direction: column; gap: 7px; }
-.ticket li { color: var(--magic); font-size: 14px; line-height: 1.3; }
-.ticket li b { display: inline-block; margin-left: 6px; font: 700 11px/1 "Barlow"; color: #1d1405; background: var(--gold); border-radius: 3px; padding: 3px 5px 2px; vertical-align: 1px; }
-.ticket li.ban { color: #d98a7c; text-decoration: line-through; text-decoration-color: rgba(224,100,79,.6); }
-.ticket .none { color: var(--ash); font-size: 13px; padding: 6px 4px 8px; }
-.ticket .rule { margin: 8px 12px 12px; padding-top: 10px; border-top: 1px solid #3a3122; font-size: 12.5px; color: #a89d86; }
-.ticket .rule strong { color: var(--ink); font-weight: 600; }
-.ticket .rule .seg { margin-top: 8px; background: transparent; }
-.ticket .rule .stepper { margin-top: 8px; justify-content: center; }
-.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border-radius: var(--r-m); overflow: hidden; background: var(--line); border: 1px solid var(--line); }
-.tiles div { background: var(--ledge); padding: 10px 12px; }
-.tiles b { display: block; font: 700 20px/1.1 "Barlow"; }
-.tiles span { color: var(--ash); font-size: 12px; }
+.slip { width: 276px; flex: none; border-left: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.ticket { background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); }
+.ticket .band { padding: 11px 14px 10px; border-bottom: 1px solid var(--line); display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.ticket h3 { font: 600 11.5px var(--cond); letter-spacing: .09em; text-transform: uppercase; color: var(--ash); }
+.ticket .sub { font-size: 13px; color: var(--ink); font-weight: 500; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ticket ul { list-style: none; padding: 6px 0; display: flex; flex-direction: column; }
+.ticket li { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 5px 14px; font-size: 13.5px; line-height: 1.3; color: var(--ink); }
+.ticket li b { flex: none; font: 500 11px var(--mono); color: var(--ward-hi); border: 1px solid var(--ward-lo); border-radius: var(--r); padding: 1px 5px; }
+.ticket li.ban { color: var(--bad); text-decoration: line-through; text-decoration-color: rgba(212,96,78,.55); }
+.ticket .none { color: var(--ash); font-size: 13px; padding: 10px 14px; }
+.ticket .rule { padding: 10px 14px 12px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ash); }
+.ticket .rule strong { color: var(--ink); }
+.ticket .rule .seg { margin-top: 8px; }
+.ticket .rule .stepper { margin-top: 10px; display: flex; justify-content: center; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.tiles div { background: var(--s1); padding: 9px 12px; }
+.tiles b { display: block; font: 600 18px/1.2 var(--mono); }
+.tiles span { color: var(--ash); font-size: 11.5px; }
 
 /* ---------- Mageblood ---------- */
 .legs { flex: 1; padding: 16px 22px; }
-.legs .seg { max-width: 360px; margin-bottom: 14px; }
-.leggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(218px, 1fr)); gap: 8px; }
-.leg { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: var(--r-m); background: var(--ledge); border: 1px solid var(--line); }
-.leg.on { border-color: rgba(233,180,76,.45); background: linear-gradient(90deg, rgba(233,180,76,.10), rgba(233,180,76,.02)), var(--ledge); }
-.gem { width: 26px; height: 26px; border-radius: 50%; flex: none; box-shadow: inset -4px -5px 8px rgba(0,0,0,.45), inset 3px 3px 6px rgba(255,255,255,.35); }
-.leg .nm { flex: 1; font-weight: 600; min-width: 0; } .leg .nm small { display: block; color: var(--ash); font-weight: 400; font-size: 11.5px; }
-.leg .st { display: flex; align-items: center; gap: 4px; }
-.leg .st button { width: 26px; height: 26px; border-radius: 5px; background: var(--ridge); font-weight: 700; }
-.leg .st b { min-width: 24px; text-align: center; color: var(--gold); }
-.leg.ban { border-color: rgba(224,100,79,.5); background: rgba(224,100,79,.08); }
-.leg.ban .gem { filter: grayscale(.8) brightness(.7); } .leg.ban .nm { text-decoration: line-through; color: var(--ash); }
-.leg.off { opacity: .45; }
-.leg .x { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line2); font-size: 12px; color: var(--ash); }
-.leg.ban .x { background: var(--bad); border-color: var(--bad); color: #fff; }
-.rside { width: 300px; flex: none; border-left: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.slot { height: 50px; border-radius: var(--r-s); border: 1.5px dashed var(--line2); display: grid; place-items: center; font-size: 11.5px; color: var(--dim); text-align: center; padding: 2px; }
-.slot.f { border-style: solid; color: var(--ink); font-weight: 600; background: var(--slate); }
+.legs .seg { max-width: 340px; margin-bottom: 16px; }
+.leggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(218px, 1fr)); gap: 6px; }
+.leg { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: var(--r); background: var(--s1); border: 1px solid var(--line); border-left: 2px solid var(--line); }
+.leg.on { border-left-color: var(--ward); background: var(--ward-a); }
+.gem { width: 12px; height: 12px; border-radius: 50%; flex: none; box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line2); }
+.leg .nm { flex: 1; font-weight: 500; min-width: 0; } .leg .nm small { display: block; color: var(--bad); font-weight: 400; font-size: 11.5px; }
+.leg .st { display: flex; align-items: center; gap: 3px; }
+.leg .st button { width: 24px; height: 24px; border-radius: var(--r); background: var(--s3); font: 500 14px var(--mono); }
+.leg .st button:hover { background: var(--line2); }
+.leg .st b { min-width: 26px; text-align: center; font: 600 13px var(--mono); color: var(--dim); }
+.leg.on .st b { color: var(--ward-hi); }
+.leg.ban { border-left-color: var(--bad); background: var(--bad-a); }
+.leg.ban .gem { filter: grayscale(1) brightness(.6); } .leg.ban .nm { text-decoration: line-through; color: var(--ash); }
+.leg.off { opacity: .5; }
+.leg .x { padding: 2px 8px; border-radius: var(--r); border: 1px solid var(--line2); font-size: 12px; color: var(--ash); }
+.leg.ban .x { border-color: var(--bad); color: var(--bad); }
+.rside { width: 300px; flex: none; border-left: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 18px; }
+.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.slot { height: 46px; border-radius: var(--r); border: 1px dashed var(--line2); display: grid; place-items: center; font-size: 11.5px; color: var(--dim); text-align: center; padding: 2px; }
+.slot.f { border: 1px solid var(--line2); border-bottom: 2px solid var(--c, var(--ward)); color: var(--ink); font-weight: 500; background: var(--s1); }
 .field { display: flex; align-items: center; gap: 10px; }
-.field input { width: 84px; }
+.field input { width: 80px; font-family: var(--mono); }
 
 /* ---------- Divine ---------- */
 .dvl-wrap { flex: 1; padding: 16px 24px; }
-.dv-item { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
-.dv-item img { width: 54px; height: 54px; filter: drop-shadow(0 0 12px rgba(233,180,76,.35)); flex: none; }
-.dv-item b { font: 400 19px "Marcellus SC", serif; color: var(--rare); display: block; }
+.dv-item { display: flex; align-items: center; gap: 14px; padding-bottom: 12px; }
+.dv-item svg, .dvempty svg { width: 34px; height: 34px; flex: none; fill: none; stroke: var(--ash); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.dv-item b { font: 600 18px var(--cond); display: block; }
 .dv-item small { color: var(--ash); }
 .dv-item .grow { flex: 1; }
 .dl { padding: 13px 0; border-top: 1px solid var(--line); }
-.dl .tx { color: var(--magic); font-size: 15px; }
-.dl .tx em { font-style: normal; color: var(--magic-hi); font-weight: 600; }
-.dn { display: grid; grid-template-columns: auto 1fr 38px 82px; gap: 12px; align-items: center; margin-top: 8px; }
+.dl .tx { color: var(--ink); font-size: 14.5px; }
+.dl .tx em { font-style: normal; color: var(--val); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dn { display: grid; grid-template-columns: auto 1fr 34px 80px; gap: 12px; align-items: center; margin-top: 8px; }
 .dn .rng { min-width: 0; }
-.dn .rng small { color: var(--dim); display: flex; justify-content: space-between; font-size: 11.5px; }
+.dn .rng small { color: var(--dim); display: flex; justify-content: space-between; font-size: 11.5px; font-variant-numeric: tabular-nums; }
 .rbox { position: relative; height: 20px; }
-.rbox .dbar { position: absolute; left: 8px; right: 8px; top: 8px; margin: 0; }
+.rbox .dbar { position: absolute; left: 6px; right: 6px; top: 9px; margin: 0; }
 .rbox input[type=range] { -webkit-appearance: none; appearance: none; position: absolute; inset: 0; width: 100%; height: 20px; margin: 0; background: transparent; cursor: pointer; }
 .rbox input[type=range]::-webkit-slider-runnable-track { height: 20px; background: transparent; }
-.rbox input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; background: var(--gold); border: 2px solid #fff3d0; box-shadow: 0 0 0 3px rgba(0,0,0,.35), 0 0 10px rgba(233,180,76,.45); }
-.dn.off .rbox input[type=range]::-webkit-slider-thumb { background: #59646b; border-color: #8f9a94; box-shadow: none; }
-.dbar { position: relative; height: 4px; border-radius: 2px; background: var(--ridge); }
-.dbar u { position: absolute; top: 0; bottom: 0; border-radius: 2px; background: linear-gradient(90deg, rgba(233,180,76,.45), var(--gold)); }
-.dbar i { position: absolute; top: -5px; width: 2px; height: 14px; border-radius: 1px; background: var(--ink); }
-.dn .op { height: 32px; border-radius: var(--r-s); background: var(--ridge); font-weight: 800; color: var(--ink); }
-.dn input[type=number] { width: 82px; text-align: center; font-weight: 600; }
+.rbox input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 18px; margin-top: 1px; border-radius: 1px; background: var(--ward-hi); border: 1px solid var(--bg); }
+.dn.off .rbox input[type=range]::-webkit-slider-thumb { background: var(--dim); }
+.dbar { position: relative; height: 2px; background: var(--line2); }
+.dbar u { position: absolute; top: 0; bottom: 0; background: var(--ward); }
+.dbar i { position: absolute; top: -5px; width: 2px; height: 12px; background: var(--ink); }
+.dn .op { height: 30px; border-radius: var(--r); background: var(--s3); font: 600 15px var(--mono); color: var(--ink); }
+.dn input[type=number] { width: 80px; text-align: center; font: 600 14px var(--mono); }
 .dn.off .rng, .dn.off .op, .dn.off input[type=number] { opacity: .4; }
-.dn.onn input[type=number] { border-color: rgba(233,180,76,.5); color: var(--gold); }
-.dvempty { display: grid; place-items: center; text-align: center; padding: 60px 20px; gap: 14px; color: var(--ash); }
-.dvempty img { width: 92px; height: 92px; filter: drop-shadow(0 0 18px rgba(233,180,76,.35)); }
-.dvempty b { color: var(--ink); font: 400 20px "Marcellus SC", serif; }
+.dn.onn input[type=number] { border-color: var(--ward); color: var(--ward-hi); }
+.dvempty { display: grid; place-items: center; text-align: center; padding: 64px 20px; gap: 14px; color: var(--ash); }
+.dvempty svg { width: 64px; height: 64px; stroke-width: 1; }
+.dvempty b { color: var(--ink); font: 600 19px var(--cond); }
 .qs { display: flex; flex-wrap: wrap; gap: 6px; }
 
 /* ---------- Tracker ---------- */
-.trk { flex: 1; padding: 18px 24px; display: flex; flex-direction: column; gap: 18px; }
-.big4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; }
-.big4 div { background: var(--ledge); padding: 14px 16px; }
-.big4 b { display: block; font: 700 30px/1.05 "Barlow"; }
-.big4 div:first-child b { color: var(--gold); }
-.big4 span { color: var(--ash); font-size: 12.5px; }
-.chartw { position: relative; padding: 22px 14px 12px; }
+.trk { flex: 1; padding: 18px 24px; display: flex; flex-direction: column; gap: 20px; }
+.big4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.big4 div { background: var(--s1); padding: 13px 16px; }
+.big4 b { display: block; font: 600 28px/1.1 var(--mono); }
+.big4 div:first-child b { color: var(--ward-hi); }
+.big4 span { color: var(--ash); font-size: 12px; }
+.chartw { position: relative; padding: 24px 16px 12px; }
 .chart { position: relative; display: flex; align-items: flex-end; gap: 3px; height: 110px; border-bottom: 1px solid var(--line2); }
-.chart .bar { position: relative; flex: 1; min-width: 8px; max-width: 40px; height: 100%; display: flex; align-items: flex-end; cursor: default; }
-.chart .bar i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: var(--gold); opacity: .78; transition: opacity .1s; }
-.chart .bar:hover i { opacity: 1; }
-.chart .bar b { position: absolute; left: 50%; transform: translateX(-50%); font: 600 11.5px "Barlow"; color: var(--ash); white-space: nowrap; }
-.chart .avg { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--ash); opacity: .55; pointer-events: none; }
-.chart .avg span { position: absolute; right: 0; top: -17px; font-size: 11.5px; color: var(--ash); background: var(--ledge); padding: 0 4px; }
-.tip { position: fixed; z-index: 5; pointer-events: none; background: #0d1012; border: 1px solid var(--line2); border-radius: var(--r-s); padding: 6px 9px; font-size: 12.5px; box-shadow: 0 8px 24px rgba(0,0,0,.45); display: none; }
-.tip b { color: var(--ink); display: block; } .tip span { color: var(--ash); }
+.chart .bar { position: relative; flex: 1; min-width: 6px; max-width: 28px; height: 100%; display: flex; align-items: flex-end; cursor: default; }
+.chart .bar i { display: block; width: 100%; background: var(--s3); border-top: 2px solid var(--ward); transition: background .1s; }
+.chart .bar:hover i { background: var(--ward-lo); }
+.chart .bar b { position: absolute; left: 50%; transform: translateX(-50%); font: 500 11px var(--mono); color: var(--ash); white-space: nowrap; }
+.chart .avg { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--dim); pointer-events: none; }
+.chart .avg span { position: absolute; right: 0; top: -16px; font: 500 11px var(--mono); color: var(--ash); background: var(--s1); padding: 0 4px; }
+.tip { position: fixed; z-index: 5; pointer-events: none; background: var(--side); border: 1px solid var(--line2); border-radius: var(--r); padding: 6px 9px; font-size: 12.5px; box-shadow: 0 8px 24px rgba(0,0,0,.45); display: none; }
+.tip b { color: var(--ink); display: block; font-family: var(--mono); } .tip span { color: var(--ash); }
 .hist { display: flex; flex-direction: column; }
-.hrow { display: grid; grid-template-columns: 130px 1fr auto; gap: 14px; padding: 9px 4px; border-top: 1px solid var(--line); }
-.hrow span:first-child { color: var(--ash); } .hrow span:nth-child(2) { color: var(--rare); }
-.hrow b { color: var(--gold); }
+.hrow { display: grid; grid-template-columns: 120px 1fr auto; gap: 14px; padding: 8px 4px; border-top: 1px solid var(--line); }
+.hrow span:first-child { color: var(--dim); font: 500 12.5px var(--mono); } .hrow span:nth-child(2) { color: var(--ink); }
+.hrow b { font: 600 13px var(--mono); color: var(--ash); }
 
 /* ---------- Einstellungen ---------- */
-.set { flex: 1; padding: 18px 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-content: start; align-items: start; }
+.set { flex: 1; padding: 18px 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; align-items: start; }
 .set select { max-width: 230px; }
 .set .panel { padding: 14px 16px 6px; }
 .set .wide { grid-column: 1 / -1; }
-.modes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-.opt { display: flex; gap: 12px; padding: 11px 12px; border-radius: var(--r-s); border: 1px solid var(--line); cursor: pointer; }
+.modes { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.opt { display: flex; gap: 12px; padding: 10px 12px; border-radius: var(--r); border: 1px solid var(--line); border-left: 2px solid var(--line); cursor: pointer; }
 .opt:hover { border-color: var(--line2); }
-.opt .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #56616a; flex: none; margin-top: 2px; }
-.opt.on { border-color: rgba(233,180,76,.55); background: var(--gold-soft); } .opt.on .dot { border: 5px solid var(--gold); }
-.opt b { display: block; font-weight: 600; } .opt span { color: var(--ash); font-size: 12.5px; }
-.opt .tag, .tag { font-size: 11px; font-weight: 700; color: #1d1405; background: var(--gold); border-radius: 3px; padding: 1px 5px; margin-left: 6px; vertical-align: 1px; }
+.opt .dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line2); flex: none; margin-top: 3px; }
+.opt.on { border-color: var(--ward-lo); border-left-color: var(--ward); background: var(--ward-a); } .opt.on .dot { border: 4px solid var(--ward); }
+.opt b { display: block; } .opt span { color: var(--ash); font-size: 12.5px; }
+.opt .tag, .tag { font: 600 10.5px var(--cond); letter-spacing: .08em; text-transform: uppercase; color: var(--ward-hi); border: 1px solid var(--ward-lo); border-radius: var(--r); padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
 .chiprow { display: flex; gap: 6px; flex-wrap: wrap; }
-.sysgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 4px 0 10px; }
-.sysi { display: flex; gap: 10px; padding: 9px 10px; border-radius: var(--r-s); background: var(--slate); border: 1px solid var(--line); }
-.sysi i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; flex: none; color: #12161a; }
-.sysi.ok i { background: var(--good); } .sysi.info i { background: var(--ash); } .sysi.bad i { background: var(--bad); color: #fff; }
-.sysi.bad { border-color: rgba(224,100,79,.55); }
-.sysi b { display: block; font-size: 13px; font-weight: 600; } .sysi small { color: var(--ash); font-size: 12px; line-height: 1.35; display: block; }
+.sysgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 10px; }
+.sysi { display: flex; gap: 10px; padding: 9px 10px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); }
+.sysi i { font: 700 11px/18px var(--sans); font-style: normal; width: 18px; height: 18px; border-radius: var(--r); text-align: center; flex: none; border: 1px solid; }
+.sysi.ok i { color: var(--ward-hi); border-color: var(--ward-lo); } .sysi.info i { color: var(--ash); border-color: var(--line2); } .sysi.bad i { color: var(--bad); border-color: var(--bad); }
+.sysi.bad { border-color: rgba(212,96,78,.5); background: var(--bad-a); }
+.sysi b { display: block; font-size: 13px; } .sysi small { color: var(--ash); font-size: 12px; line-height: 1.35; display: block; }
 .sysi .chip { margin-top: 6px; }
-textarea { width: 100%; height: 120px; resize: vertical; font: 13px Consolas, monospace; }
+textarea { width: 100%; height: 120px; resize: vertical; font: 13px var(--mono); }
 details summary { cursor: pointer; color: var(--ash); padding: 10px 0; }
 details[open] summary { color: var(--ink); }
 
 /* ---------- Hilfe ---------- */
-.help { flex: 1; padding: 18px 24px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; align-content: start; }
+.help { flex: 1; padding: 18px 24px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; align-content: start; }
 .help .panel { padding: 16px 18px; }
 .step { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
 .step:first-of-type { border-top: 0; }
-.step .n { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold); display: grid; place-items: center; font: 400 15px "Marcellus SC", serif; }
+.step .n { width: 24px; height: 24px; border-radius: var(--r); border: 1px solid var(--ward-lo); color: var(--ward-hi); display: grid; place-items: center; font: 600 12px var(--mono); }
 .step b { display: block; } .step span { color: var(--ash); }
-ul.facts { padding-left: 18px; color: var(--ash); } ul.facts li { margin-bottom: 8px; }
+ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom: 8px; } ul.facts li::marker { color: var(--dim); }
 
-.toast { position: fixed; right: 20px; bottom: 18px; max-width: 420px; background: var(--ridge); color: var(--ink); border: 1px solid var(--line2); border-left: 3px solid var(--gold); padding: 9px 14px; border-radius: var(--r-s); font-weight: 500; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; pointer-events: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+.toast { position: fixed; right: 20px; bottom: 18px; max-width: 420px; background: var(--s2); color: var(--ink); border: 1px solid var(--line2); border-left: 2px solid var(--ward); padding: 9px 14px; border-radius: var(--r); font-weight: 500; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; pointer-events: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
 .toast.show { opacity: 1; transform: none; }
 
-@media (max-width: 1120px) { .mod { grid-template-columns: 18px 1fr; row-gap: 6px; } .mod .tiers { grid-column: 2; justify-content: flex-start; max-width: none; } .filt input { width: 150px; } .slip { width: 240px; } .cats { width: 172px; } .rside { width: 270px; } .set { grid-template-columns: 1fr; } .big4 b { font-size: 26px; } }
+@media (max-width: 1120px) { .mod { grid-template-columns: 16px 1fr; row-gap: 6px; } .mod .tiers { grid-column: 2; justify-content: flex-start; max-width: none; } .filt input { width: 150px; } .slip { width: 244px; } .cats { width: 172px; } .rside { width: 270px; } .set { grid-template-columns: 1fr; } .big4 b { font-size: 24px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><img src="icon.png" alt=""><div><b>Chaos Ward</b><small id="ver">Path of Exile 2</small></div></div>
+    <div class="brand"><img src="img/logo.svg" alt=""><div><b>Chaos Ward</b><small id="ver">Path of Exile 2</small></div></div>
     <nav class="nav" id="nav">
-      <button data-page="pMods" class="on"><img class="ni" src="img/mods.png" alt=""><span data-i18n="navMods"></span></button>
-      <button data-page="pMb"><img class="ni" src="img/nav_mb.svg" alt=""><span data-i18n="navMb"></span></button>
-      <button data-page="pDv"><img class="ni" src="img/divine.png" alt=""><span data-i18n="navDv"></span></button>
-      <button data-page="pStats"><svg viewBox="0 0 24 24"><path d="M3.5 20h17"/><rect x="5" y="12" width="3" height="5.5" rx=".8"/><rect x="10.5" y="7.5" width="3" height="10" rx=".8"/><rect x="16" y="10" width="3" height="7.5" rx=".8"/><path d="M5.5 8.5l5-3.5 4 2.5 4.5-3"/></svg><span data-i18n="navStats"></span></button>
+      <button data-page="pMods" class="on"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="5" height="5" rx=".6"/><path d="M4.8 7l1 1 1.7-2"/><path d="M11.5 7h9"/><rect x="3.5" y="14.5" width="5" height="5" rx=".6"/><path d="M11.5 17h9"/></svg><span data-i18n="navMods"></span></button>
+      <button data-page="pMb"><svg viewBox="0 0 24 24"><path d="M9.5 3h5"/><path d="M10.3 3v5.2L5.4 16.6A3 3 0 0 0 8 21h8a3 3 0 0 0 2.6-4.4L13.7 8.2V3"/><path d="M7.2 14.5h9.6"/></svg><span data-i18n="navMb"></span></button>
+      <button data-page="pDv"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><rect x="13" y="4" width="3" height="4" rx=".5" fill="var(--side)"/><rect x="7" y="10" width="3" height="4" rx=".5" fill="var(--side)"/><rect x="15" y="16" width="3" height="4" rx=".5" fill="var(--side)"/></svg><span data-i18n="navDv"></span></button>
+      <button data-page="pStats"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><path d="M6.5 17.5v-5M11 17.5v-11M15.5 17.5v-7M20 17.5v-3"/></svg><span data-i18n="navStats"></span></button>
       <div class="sep"></div>
       <button data-page="pSet"><svg viewBox="0 0 24 24"><path d="M19.20 8.30 L20.89 7.35 L21.70 9.32 L19.84 9.84 L19.84 14.16 L21.70 14.68 L20.89 16.65 L19.20 15.70 L15.70 19.20 L16.65 20.89 L14.68 21.70 L14.16 19.84 L9.84 19.84 L9.32 21.70 L7.35 20.89 L8.30 19.20 L4.80 15.70 L3.11 16.65 L2.30 14.68 L4.16 14.16 L4.16 9.84 L2.30 9.32 L3.11 7.35 L4.80 8.30 L8.30 4.80 L7.35 3.11 L9.32 2.30 L9.84 4.16 L14.16 4.16 L14.68 2.30 L16.65 3.11 L15.70 4.80Z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="navSet"></span></button>
       <button data-page="pHelp"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.4a2.7 2.7 0 015.3.6c0 1.8-2.7 2.2-2.7 4.1"/><circle cx="12" cy="17.3" r=".9" fill="currentColor" stroke="none"/></svg><span data-i18n="navHelp"></span></button>
@@ -352,7 +370,7 @@ ul.facts { padding-left: 18px; color: var(--ash); } ul.facts li { margin-bottom:
         <div class="rside scroll">
           <div><h3 class="sec" data-i18n="mbSlots"></h3><div class="slots" id="slots"></div><p class="hint" id="slotHint" style="margin-top:6px"></p></div>
           <div class="sw on" id="mbDupSw" style="border-top:0;padding:0"><span><b data-i18n="mbDupT"></b><small data-i18n="mbDupH"></small></span><div class="tg"></div></div>
-          <div><h3 class="sec" data-i18n="mbAnyT"></h3><div class="field"><span class="stepper"><button id="anyMinus">–</button><b id="anyVal">0</b><button id="anyPlus">+</button></span><span class="hint" data-i18n="mbAnyH"></span></div></div>
+          <div><h3 class="sec" data-i18n="mbAnyT"></h3><div class="field"><span class="stepper"><button id="anyMinus">−</button><b id="anyVal">0</b><button id="anyPlus">+</button></span><span class="hint" data-i18n="mbAnyH"></span></div></div>
           <div><h3 class="sec" data-i18n="mbEffT"></h3><div class="field"><input id="mbEff" type="number" min="25" max="50" step="1"><span class="hint" data-i18n="mbEffH"></span></div></div>
           <div class="ticket" id="mbTicket"></div>
           <button class="link" id="mbClear" data-i18n="mbClear" style="align-self:flex-start"></button>
@@ -476,7 +494,7 @@ const I18N = {
     hDv:"Werte neu würfeln, bis jede eingeschaltete Zahl deine Schwelle erreicht.",
     hStats:"So viele Orbs hat dich das Glück gekostet.", hSet:"Einmal einstellen, dann läuft alles von selbst.", hHelp:"In fünf Schritten zum ersten Treffer.",
     gOff:"Schutz aus", gOn:"Schutz an", gHit:"Treffer!", gCap:"Orbs seit dem letzten Treffer",
-    ctaOn:"Schutz einschalten", ctaOff:"Schutz ausschalten", ctaHit:"Fertig – Schutz aus",
+    ctaOn:"Schutz einschalten", ctaOff:"Schutz ausschalten", ctaHit:"Fertig, Schutz aus",
     catSearch:"Item-Art suchen", search:"Mod suchen …", fAll:"Alle", fP:"Präfixe", fS:"Suffixe", fSel:"Nur gewählte",
     prefixes:"Präfixe", suffixes:"Suffixe", modsN:"{n} Mods", tierTitle:"{t} · ab Level {l}",
     noMods:"Keine passenden Mods.", noCat:"Wähle links eine Item-Art.", loading:"Lade Mod-Daten …", loadErr:"Mods.tsv konnte nicht geladen werden.",
@@ -488,22 +506,22 @@ const I18N = {
     clearAll:"Alle Häkchen bei dieser Item-Art entfernen", clearConfirm:"Alle Häkchen bei dieser Item-Art entfernen?",
     mbHint:"Mageblood hat 4 Legacy-Plätze, Doppelte sind erlaubt. Stell ein, wie oft du jedes Legacy mindestens willst.",
     mbBanHint:"Tippe ein Legacy an, um es zu verbieten. Ist eins davon drauf, gibt es nie einen Treffer.",
-    mbWant:"Gewollt", mbBanTab:"Nicht gewollt", mbSlots:"Deine 4 Plätze", mbFree:"frei", mbTooMany:"Mehr als 4 geht nicht – Mageblood hat nur 4 Plätze.",
+    mbWant:"Gewollt", mbBanTab:"Nicht gewollt", mbSlots:"Deine 4 Plätze", mbFree:"frei", mbTooMany:"Mehr als 4 geht nicht, Mageblood hat nur 4 Plätze.",
     mbAnyT:"Beliebiges Legacy mehrfach", mbAnyH:"× dasselbe, egal welches (0 = aus)", mbEffT:"Effekt pro Duplikat", mbEffH:"% mindestens (25–50, leer = egal)",
     mbBanBtn:"verbieten", mbBanOn:"verboten", mbBanned:"verboten",
     mbDupT:"Jedes Duplikat = Treffer", mbDupH:"Stoppt bei irgendeinem doppelten Legacy. Verbotene zählen nicht.",
     mbAnyS:"beliebiges Legacy {n}×", mbDupS:"oder irgendein Duplikat", mbEffS:"Effekt pro Duplikat ≥ {n}%", mbNone:"Noch nichts eingestellt.", mbClear:"Alles zurücksetzen",
     mbRuleAll:"Stopp, wenn <strong>alles</strong> davon passt", mbRuleOr:"Stopp bei den Wünschen <strong>oder</strong> einem Duplikat",
-    dvEmptyT:"Welches Item willst du verbessern?", dvEmptyH:"Maus aufs Item, <b>Strg+C</b> – dann siehst du hier seine Mods.<br>Strg+<b>Alt</b>+C zeigt mir auch die genauen Bereiche, z. B. bei Uniques.",
+    dvEmptyT:"Welches Item willst du verbessern?", dvEmptyH:"Maus aufs Item, <b>Strg+C</b>, dann siehst du hier seine Mods.<br>Strg+<b>Alt</b>+C zeigt mir auch die genauen Bereiche, z. B. bei Uniques.",
     dvTake:"Letztes kopiertes Item übernehmen", dvPasteH:"Oder: im Spiel Strg+C, dann hier Strg+V.", dvItemH:"Neues Item? Einfach Strg+C darauf, solange dieser Reiter offen ist.",
-    dvMin:"mindestens", dvMax:"höchstens", dvNoRange:"Bereich unbekannt – Strg+Alt+C aufs Item zeigt ihn", dvFixed:"fester Wert", dvCur:"jetzt",
+    dvMin:"mindestens", dvMax:"höchstens", dvNoRange:"Bereich unbekannt. Strg+Alt+C aufs Item zeigt ihn", dvFixed:"fester Wert", dvCur:"jetzt",
     dvWhen:"Wann ist es ein Treffer?", dvAllBtn:"Alle Schwellen", dvOneBtn:"Eine reicht", dvQuick:"Schnell einstellen", dvTop20:"Obere 20 %", dvTop10:"Obere 10 %", dvAllOff:"Alle aus",
     dvQuickH:"Gilt für die eingeschalteten Zahlen, oder für alle, wenn keine an ist.", dvNone:"Noch keine Schwelle an. Schalte bei einer Zahl den Regler ein.",
     dvRuleAll:"Stopp, wenn <strong>alle</strong> passen", dvRuleOne:"Stopp, wenn <strong>eine</strong> passt",
     dvHow:"Schwellen einstellen, Schutz an, Rechtsklick auf Divine Orb, Shift halten und spammen. Bin ich bei einer Zahl unsicher, bleibt der Klick gesperrt.",
     dvForget:"Item und Schwellen vergessen", dvTestHit:"Divine-Treffer testen",
     sSinceHint:"Orbs seit dem letzten Treffer", sSessionHint:"Orbs diese Sitzung", sAvgHint:"Ø Orbs je Treffer", sTotalHint:"Orbs gesamt",
-    sChart:"Orbs je Treffer", sChartH:" · die letzten 30 Treffer, alt → neu", sHistory:"Letzte Treffer", sNoHits:"Noch keine Treffer – viel Glück!", sResetSession:"Sitzung zurücksetzen", sResetAll:"Alles zurücksetzen",
+    sChart:"Orbs je Treffer", sChartH:" · die letzten 30 Treffer, alt → neu", sHistory:"Letzte Treffer", sNoHits:"Noch keine Treffer. Viel Glück!", sResetSession:"Sitzung zurücksetzen", sResetAll:"Alles zurücksetzen",
     sResetConfirm:"Wirklich alle Zähler und die Treffer-Liste löschen?", orbs:"Orbs",
     secGuard:"Schutz", secHit:"Treffer", secOverlay:"Anzeigen im Spiel", secRead:"Erkennung",
     mode1:"Einfach", mode1d:"Nach jedem Orb-Klick kurz Pause. Kein Strg+C nötig.",
@@ -512,14 +530,14 @@ const I18N = {
     pauseTitle:"Pause (Einfach)", oKey:"Taste im Spiel", oShift:"Nur bremsen, wenn ich Shift halte<small>Für Dauer-Craften mit gedrückter Shift-Taste</small>",
     oUnsure:"Bei Unsicherheit freigeben<small>Bequemer, aber ein Treffer könnte durchrutschen. Bei Divine immer gesperrt.</small>",
     oSound:"Ton bei einem Treffer", oSnd:"Treffer-Sound", sndTest:"Anhören", sndCustomNone:"(keine Datei gewählt)",
-    snd_slot:"Spielautomat", snd_hit:"Amboss", snd_chime:"Glocke", snd_coin:"Münzen", snd_ping:"Kurzer Ping", snd_windows:"Windows-Ton", snd_custom:"Eigene Datei …",
-    oVolume:"Lautstärke<small>Gilt nur für Chaos Ward</small>", oHitAnim:"Treffer-Animation<small>Spielautomat: Walze rastet nach ~1 s ein. Sofort: TREFFER! ist direkt da</small>", animSlot:"Spielautomat", animInstant:"Sofort", oHbSecs:"Treffer-Leiste zeigen<small>Der Klick bleibt immer gesperrt</small>", hbUntil:"bis {k}",
+    snd_seal:"Siegel", snd_hit:"Amboss", snd_chime:"Glocke", snd_coin:"Münzen", snd_ping:"Kurzer Ping", snd_windows:"Windows-Ton", snd_custom:"Eigene Datei …",
+    oVolume:"Lautstärke<small>Gilt nur für Chaos Ward</small>", oHitAnim:"Treffer-Animation<small>Siegel: das Schloss rastet in einer halben Sekunde ein. Sofort: ohne Bewegung</small>", animSlot:"Siegel", animInstant:"Sofort", oHbSecs:"Treffer-Leiste zeigen<small>Der Klick bleibt immer gesperrt</small>", hbUntil:"bis {k}",
     oTestHits:"Treffer-Leiste ausprobieren", testHitChaos:"Chaos", testHitDv:"Divine",
     oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
     oPlace:"Fenster im Spiel verschieben<small>Meldungen, Treffer-Leiste und Item-Anzeige</small>", placeStart:"Verschieben", placeReset:"Standard",
     oDetect:"Item-Art automatisch erkennen<small>Beim Strg+C springe ich zur passenden Liste</small>", oFrac:"Fractured Mods nicht mitzählen",
     oOcr:"Texterkennung", ocrReset:"Neu einstellen", ocrFilterMax:"Farbkanal {n}", ocrFilterLum:"Helligkeit {n}",
-    ocrLine:"Filter {f} · letztes Strg+C: {l} erkannt · Sprache {g}", ocrNever:"noch nicht", ocrNoEn:"Englisches Sprachpaket fehlt – Windows-Einstellungen → Zeit und Sprache → Sprache hinzufügen → Englisch (USA), dann neu starten",
+    ocrLine:"Filter {f} · letztes Strg+C: {l} erkannt · Sprache {g}", ocrNever:"noch nicht", ocrNoEn:"Englisches Sprachpaket fehlt. Windows-Einstellungen → Zeit und Sprache → Sprache hinzufügen → Englisch (USA), dann neu starten",
     oDiag:"Diagnose aufzeichnen<small>Speichert unsichere Lesungen (max. 20)</small>", openDiag:"Ordner", oDiagPack:"Diagnose-Paket für Hilfe<small>Packt Systemcheck, Monitore, Einstellungen und unsichere Lesungen in eine ZIP auf dem Desktop</small>", diagPack:"Erstellen", oLearned:"Gelernte Schreibweisen:", oLearnedHint:"Aus deinen Strg+C nach „unsicher“", resetLearn:"Löschen",
     sysTitle:"Systemcheck", sysRe:"Erneut prüfen", sysHint:"Zeigt, ob auf diesem PC alles passt. Bei Problemen einen Screenshot davon schicken.", sysAdminBtn:"Als Administrator neu starten",
     langTitle:"Sprache", langHint:"Mod-Texte bleiben englisch, so stehen sie in den Spieldaten.",
@@ -531,8 +549,8 @@ const I18N = {
       ["Wünsche anhaken","Item-Art wählen und Mods anhaken. Tipp: Kopier dein Item mit Strg+C, dann wähle ich die Item-Art selbst."],
       ["Schutz einschalten","Im Spiel {key} drücken."],
       ["Craften","Maus aufs Item, einmal Strg+C. Dann Rechtsklick auf den Orb, Shift halten und spammen."],
-      ["Treffer!","Sobald es passt, dreht die Walze, und der Klick ist gesperrt. Mit {key} bist du fertig."]],
-    facts:["Steht „Nicht sicher lesbar“ da, drück einmal Strg+C – das prüft und entsperrt.","Strg+Alt+C zeigt im Spiel zusätzlich Präfix, Suffix und genaue Bereiche.","Tiers (T1 = bestes) kommen aus den Spieldaten.","Läuft das Spiel als Administrator, sagt dir der Systemcheck, was zu tun ist.","Im Schlau-Modus Strg+C ohne Shift drücken.","Probleme? Einstellungen → Diagnose-Paket erstellen und die ZIP-Datei vom Desktop schicken."]
+      ["Treffer!","Sobald es passt, rastet das Siegel ein und der Klick ist gesperrt. Mit {key} bist du fertig."]],
+    facts:["Steht „Nicht sicher lesbar“ da, drück einmal Strg+C, das prüft und entsperrt.","Strg+Alt+C zeigt im Spiel zusätzlich Präfix, Suffix und genaue Bereiche.","Tiers (T1 = bestes) kommen aus den Spieldaten.","Läuft das Spiel als Administrator, sagt dir der Systemcheck, was zu tun ist.","Im Schlau-Modus Strg+C ohne Shift drücken.","Probleme? Einstellungen → Diagnose-Paket erstellen und die ZIP-Datei vom Desktop schicken."]
   },
   en: {
     navMods:"Pick mods", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Settings", navHelp:"Help",
@@ -540,7 +558,7 @@ const I18N = {
     hDv:"Reroll values until every switched-on number reaches your threshold.",
     hStats:"How many orbs luck has cost you.", hSet:"Set it once, then everything runs by itself.", hHelp:"Five steps to your first hit.",
     gOff:"Guard off", gOn:"Guard on", gHit:"Hit!", gCap:"Orbs since your last hit",
-    ctaOn:"Turn guard on", ctaOff:"Turn guard off", ctaHit:"Done – guard off",
+    ctaOn:"Turn guard on", ctaOff:"Turn guard off", ctaHit:"Done, guard off",
     catSearch:"Search item type", search:"Search mods …", fAll:"All", fP:"Prefixes", fS:"Suffixes", fSel:"Picked only",
     prefixes:"Prefixes", suffixes:"Suffixes", modsN:"{n} mods", tierTitle:"{t} · from level {l}",
     noMods:"No matching mods.", noCat:"Pick an item type on the left.", loading:"Loading mod data …", loadErr:"Could not load Mods.tsv.",
@@ -552,22 +570,22 @@ const I18N = {
     clearAll:"Remove all picks for this item type", clearConfirm:"Remove all picks for this item type?",
     mbHint:"Mageblood has 4 legacy slots, duplicates allowed. Set how often you want each legacy at least.",
     mbBanHint:"Tap a legacy to ban it. If one of them rolls, it's never a hit.",
-    mbWant:"Wanted", mbBanTab:"Not wanted", mbSlots:"Your 4 slots", mbFree:"free", mbTooMany:"More than 4 isn't possible – Mageblood only has 4 slots.",
+    mbWant:"Wanted", mbBanTab:"Not wanted", mbSlots:"Your 4 slots", mbFree:"free", mbTooMany:"More than 4 isn't possible, Mageblood only has 4 slots.",
     mbAnyT:"Any legacy several times", mbAnyH:"× the same one, any (0 = off)", mbEffT:"Effect per duplicate", mbEffH:"% at least (25–50, empty = any)",
     mbBanBtn:"ban", mbBanOn:"banned", mbBanned:"banned",
     mbDupT:"Any duplicate = hit", mbDupH:"Stops on any doubled legacy. Banned ones don't count.",
     mbAnyS:"any legacy {n}×", mbDupS:"or any duplicate", mbEffS:"effect per duplicate ≥ {n}%", mbNone:"Nothing set yet.", mbClear:"Reset all",
     mbRuleAll:"Stop when <strong>all</strong> of it fits", mbRuleOr:"Stop on your wishes <strong>or</strong> any duplicate",
-    dvEmptyT:"Which item do you want to improve?", dvEmptyH:"Hover the item, <b>Ctrl+C</b> – then you'll see its mods here.<br>Ctrl+<b>Alt</b>+C also gives me exact ranges, e.g. for uniques.",
+    dvEmptyT:"Which item do you want to improve?", dvEmptyH:"Hover the item, <b>Ctrl+C</b>, then you'll see its mods here.<br>Ctrl+<b>Alt</b>+C also gives me exact ranges, e.g. for uniques.",
     dvTake:"Use last copied item", dvPasteH:"Or: Ctrl+C in game, then Ctrl+V here.", dvItemH:"New item? Just Ctrl+C on it while this tab is open.",
-    dvMin:"at least", dvMax:"at most", dvNoRange:"Range unknown – Ctrl+Alt+C on the item shows it", dvFixed:"fixed value", dvCur:"now",
+    dvMin:"at least", dvMax:"at most", dvNoRange:"Range unknown. Ctrl+Alt+C on the item shows it", dvFixed:"fixed value", dvCur:"now",
     dvWhen:"When is it a hit?", dvAllBtn:"All thresholds", dvOneBtn:"One is enough", dvQuick:"Quick set", dvTop20:"Top 20 %", dvTop10:"Top 10 %", dvAllOff:"All off",
     dvQuickH:"Applies to the switched-on numbers, or to all if none is on.", dvNone:"No threshold yet. Switch on the toggle at a number.",
     dvRuleAll:"Stop when <strong>all</strong> fit", dvRuleOne:"Stop when <strong>one</strong> fits",
     dvHow:"Set thresholds, guard on, right-click Divine Orb, hold Shift and spam. If I'm unsure about a number, the click stays locked.",
     dvForget:"Forget item and thresholds", dvTestHit:"Test divine hit",
     sSinceHint:"Orbs since your last hit", sSessionHint:"Orbs this session", sAvgHint:"Avg orbs per hit", sTotalHint:"Orbs total",
-    sChart:"Orbs per hit", sChartH:" · last 30 hits, old → new", sHistory:"Recent hits", sNoHits:"No hits yet – good luck!", sResetSession:"Reset session", sResetAll:"Reset everything",
+    sChart:"Orbs per hit", sChartH:" · last 30 hits, old → new", sHistory:"Recent hits", sNoHits:"No hits yet. Good luck!", sResetSession:"Reset session", sResetAll:"Reset everything",
     sResetConfirm:"Really clear all counters and the hit list?", orbs:"orbs",
     secGuard:"Guard", secHit:"Hits", secOverlay:"In-game overlays", secRead:"Detection",
     mode1:"Simple", mode1d:"Short pause after every orb click. No Ctrl+C needed.",
@@ -576,14 +594,14 @@ const I18N = {
     pauseTitle:"Pause (Simple)", oKey:"In-game key", oShift:"Only brake while I hold Shift<small>For spam-crafting with Shift held</small>",
     oUnsure:"Release when unsure<small>Smoother, but a hit could slip through. Divine always stays locked.</small>",
     oSound:"Sound on a hit", oSnd:"Hit sound", sndTest:"Listen", sndCustomNone:"(no file chosen)",
-    snd_slot:"Slot machine", snd_hit:"Anvil", snd_chime:"Bell", snd_coin:"Coins", snd_ping:"Short ping", snd_windows:"Windows sound", snd_custom:"Own file …",
-    oVolume:"Volume<small>Only affects Chaos Ward</small>", oHitAnim:"Hit animation<small>Slot machine: reel locks after ~1 s. Instant: HIT! shows right away</small>", animSlot:"Slot machine", animInstant:"Instant", oHbSecs:"Show hit bar<small>Clicking always stays locked</small>", hbUntil:"until {k}",
+    snd_seal:"Seal", snd_hit:"Anvil", snd_chime:"Bell", snd_coin:"Coins", snd_ping:"Short ping", snd_windows:"Windows sound", snd_custom:"Own file …",
+    oVolume:"Volume<small>Only affects Chaos Ward</small>", oHitAnim:"Hit animation<small>Seal: the lock clicks shut in half a second. Instant: no motion</small>", animSlot:"Seal", animInstant:"Instant", oHbSecs:"Show hit bar<small>Clicking always stays locked</small>", hbUntil:"until {k}",
     oTestHits:"Try the hit bar", testHitChaos:"Chaos", testHitDv:"Divine",
     oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
     oPlace:"Move in-game windows<small>Messages, hit bar and item display</small>", placeStart:"Move", placeReset:"Default",
     oDetect:"Detect item type automatically<small>Ctrl+C jumps to the matching list</small>", oFrac:"Don't count fractured mods",
     oOcr:"Text recognition", ocrReset:"Re-calibrate", ocrFilterMax:"colour channel {n}", ocrFilterLum:"brightness {n}",
-    ocrLine:"Filter {f} · last Ctrl+C: {l} read · language {g}", ocrNever:"not yet", ocrNoEn:"English language pack missing – Windows Settings → Time & language → Add a language → English (US), then restart",
+    ocrLine:"Filter {f} · last Ctrl+C: {l} read · language {g}", ocrNever:"not yet", ocrNoEn:"English language pack missing. Windows Settings → Time & language → Add a language → English (US), then restart",
     oDiag:"Record diagnostics<small>Saves unsure readings (max. 20)</small>", openDiag:"Folder", oDiagPack:"Diagnostic package for support<small>Puts system check, monitors, settings and unsure readings into a ZIP on your desktop</small>", diagPack:"Create", oLearned:"Learned spellings:", oLearnedHint:"From your Ctrl+C after “unsure”", resetLearn:"Clear",
     sysTitle:"System check", sysRe:"Check again", sysHint:"Shows whether everything fits on this PC. If something's wrong, send a screenshot of this.", sysAdminBtn:"Restart as administrator",
     langTitle:"Language", langHint:"Mod texts stay English, that's how the game data has them.",
@@ -595,12 +613,12 @@ const I18N = {
       ["Pick your wishes","Choose the item type and tick mods. Tip: copy your item with Ctrl+C and I pick the item type myself."],
       ["Turn the guard on","Press {key} in game."],
       ["Craft","Hover the item, Ctrl+C once. Then right-click the orb, hold Shift and spam."],
-      ["Hit!","As soon as it fits, the reel spins and your click is locked. Press {key} when you're done."]],
-    facts:["If it says “Couldn't read it reliably”, press Ctrl+C once – that checks and unlocks.","Ctrl+Alt+C additionally shows prefix, suffix and exact ranges in game.","Tiers (T1 = best) come from the game data.","If the game runs as administrator, the system check tells you what to do.","In Smart mode press Ctrl+C without Shift.","Problems? Settings → create diagnostic package and send the ZIP file from your desktop."]
+      ["Hit!","As soon as it fits, the seal locks and your click is blocked. Press {key} when you're done."]],
+    facts:["If it says “Couldn't read it reliably”, press Ctrl+C once, that checks and unlocks.","Ctrl+Alt+C additionally shows prefix, suffix and exact ranges in game.","Tiers (T1 = best) come from the game data.","If the game runs as administrator, the system check tells you what to do.","In Smart mode press Ctrl+C without Shift.","Problems? Settings → create diagnostic package and send the ZIP file from your desktop."]
   }
 };
 const PAUSES = [300, 500, 800, 1000, 1500, 2000];
-const SOUNDS = ["slot", "hit", "chime", "coin", "ping", "windows", "custom"];
+const SOUNDS = ["seal", "hit", "chime", "coin", "ping", "windows", "custom"];
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const post = (...a) => { try { window.chrome.webview.postMessage(a.map(x => String(x).replace(/\x1f/g, " ")).join("\x1f")); } catch (e) {} };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
@@ -613,6 +631,7 @@ let ST = { lang:"de", mode:3, pauseMs:800, shiftOnly:1, itemOverlay:1, autoDetec
 let DB = { groups:{}, cats:[], byId:{}, ver:"" };
 let STATS = { session:0, total:0, since:0, history:[] };
 let filter = "all", loaded = false, openGroup = "", SYS = [];
+const DVICON = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M7 9h10M7 15h10"/><rect x="12.2" y="7.5" width="2.6" height="3" rx=".4" fill="var(--bg)"/><rect x="8.6" y="13.5" width="2.6" height="3" rx=".4" fill="var(--bg)"/></svg>`;
 const GEM = { Amethyst:"#9b5de5", Basalt:"#3d3f45", Bismuth:"linear-gradient(135deg,#f72585,#7209b7,#4cc9f0,#80ed99)", Diamond:"#e8f1ff", Gold:"#e6b422",
   Granite:"#8d8a85", Jade:"#2a9d8f", Quicksilver:"#b8c6d1", Ruby:"#d62839", Sapphire:"#2f5bea", Silver:"#c0c4cc", Stibnite:"#5c677d", Sulphur:"#d4e157", Topaz:"#f4a261" };
 
@@ -718,7 +737,7 @@ function renderHunt() {
     (rulesN ? `<div class="none">${fmt("huntRules", { n: rulesN })}</div>` : "") +
     `<div class="rule">${need > 1 ? fmt("stopTxtMany", { n: need }) : t("stopTxtOne")}
       <div class="seg" id="stopSeg"><button data-v="1" class="${need <= 1 ? "on" : ""}">${t("stopOne")}</button><button data-v="n" class="${need > 1 ? "on" : ""}">${t("stopMany")}</button></div>
-      ${need > 1 ? `<div class="stepper"><button id="needMinus">–</button><b>${need}</b><button id="needPlus">+</button></div>` : ""}</div>`;
+      ${need > 1 ? `<div class="stepper"><button id="needMinus">−</button><b>${need}</b><button id="needPlus">+</button></div>` : ""}</div>`;
 }
 function renderMini() {
   const h = STATS.history || [], avg = h.length ? Math.round(h.reduce((a, x) => a + (+x.orbs || 0), 0) / h.length) : "–";
@@ -747,10 +766,10 @@ function renderMb() {
     if (mbTab === "ban") return `<div class="leg${bn ? " ban" : ""}" data-leg="${n}" style="cursor:pointer">${gem}<div class="nm">${n}</div><span class="x">${bn ? t("mbBanOn") : t("mbBanBtn")}</span></div>`;
     if (bn) return `<div class="leg ban off" data-leg="${n}">${gem}<div class="nm">${n}<small>${t("mbBanned")}</small></div></div>`;
     return `<div class="leg${c ? " on" : ""}" data-leg="${n}">${gem}<div class="nm">${n}</div>
-      <div class="st"><button data-d="-1">–</button><b>${c ? c + t("times") : "–"}</b><button data-d="1">+</button></div></div>`; }).join("");
+      <div class="st"><button data-d="-1">−</button><b>${c ? c + t("times") : "–"}</b><button data-d="1">+</button></div></div>`; }).join("");
   $("#mbDupSw").classList.toggle("on", !!+mb.dup);
   const slots = []; for (const [n, c] of Object.entries(mb.rules)) for (let i = 0; i < c; i++) slots.push(n);
-  $("#slots").innerHTML = [0, 1, 2, 3].map(i => slots[i] ? `<div class="slot f" style="border-color:${(GEM[slots[i]] || "").startsWith("#") ? GEM[slots[i]] : "var(--gold)"}">${slots[i]}</div>` : `<div class="slot">${t("mbFree")}</div>`).join("");
+  $("#slots").innerHTML = [0, 1, 2, 3].map(i => slots[i] ? `<div class="slot f" style="--c:${(GEM[slots[i]] || "").startsWith("#") ? GEM[slots[i]] : "var(--ward)"}">${slots[i]}</div>` : `<div class="slot">${t("mbFree")}</div>`).join("");
   $("#slotHint").textContent = used >= 4 ? t("mbTooMany") : "";
   $("#anyVal").textContent = mb.any || 0;
   if (document.activeElement !== $("#mbEff")) $("#mbEff").value = mb.eff ?? "";
@@ -760,7 +779,7 @@ function renderMb() {
   if (mb.eff !== "" && mb.eff != null) li.push(`<li>${fmt("mbEffS", { n: mb.eff })}</li>`);
   mb.ban.forEach(n => li.push(`<li class="ban">Legacy of ${n}</li>`));
   const wishes = Object.keys(mb.rules).length || +mb.any > 0;
-  $("#mbTicket").innerHTML = `<div class="band"><h3>Mageblood</h3><div class="sub">${t("huntT")}</div></div>` +
+  $("#mbTicket").innerHTML = `<div class="band"><h3>${t("huntT")}</h3><div class="sub">Mageblood</div></div>` +
     (li.length ? `<ul>${li.join("")}</ul>` : `<div class="none">${t("mbNone")}</div>`) +
     `<div class="rule">${+mb.dup && wishes ? t("mbRuleOr") : t("mbRuleAll")}</div>`;
 }
@@ -775,10 +794,10 @@ function dvDefault(n) { const lo = dvNum(n.lo), hi = dvNum(n.hi), st = dvStep(n)
 function renderDv() {
   const d = dvState(), box = $("#dvMain");
   if (!d.item || !d.lines.length) {
-    box.innerHTML = `<div class="dvempty"><img src="img/divine.png" alt=""><b>${t("dvEmptyT")}</b><div>${t("dvEmptyH")}</div>
+    box.innerHTML = `<div class="dvempty">${DVICON}<b>${t("dvEmptyT")}</b><div>${t("dvEmptyH")}</div>
       <button class="btn quiet" data-dvtake>${t("dvTake")}</button><div class="hint">${t("dvPasteH")}</div></div>`;
   } else {
-    box.innerHTML = `<div class="dv-item"><img src="img/divine.png" alt=""><div class="grow"><b>${esc(d.item.split("  ·  ")[0])}</b><small>${esc(d.item.split("  ·  ").slice(1).join(" · "))}${d.item.includes("  ·  ") ? " · " : ""}${t("dvItemH")}</small></div><button class="chip" data-dvtake>${t("dvTake")}</button></div>` +
+    box.innerHTML = `<div class="dv-item">${DVICON}<div class="grow"><b>${esc(d.item.split("  ·  ")[0])}</b><small>${esc(d.item.split("  ·  ").slice(1).join(" · "))}${d.item.includes("  ·  ") ? " · " : ""}${t("dvItemH")}</small></div><button class="chip" data-dvtake>${t("dvTake")}</button></div>` +
       d.lines.map(L => { const rs = d.rules[L.key] || {};
         const nums = L.nums.map((n, i0) => { const i = i0 + 1, r = rs[i], lo = dvNum(n.lo), hi = dvNum(n.hi), st = dvStep(n), has = lo != null && hi != null && lo !== hi;
           const val = r ? +r.val : dvDefault(n), op = r ? r.op : ">=", pct = x => has ? Math.max(0, Math.min(100, (x - lo) / (hi - lo) * 100)) : 0;
@@ -796,7 +815,7 @@ function renderDv() {
   const li = [];
   for (const L of d.lines) for (const [i, r] of Object.entries(d.rules[L.key] || {}))
     li.push(`<li>${esc(shortMod(L.text.replace(/-?\d+(?:\.\d+)?/g, m => "(" + m + "-" + m + ")")))}<b>${r.op === ">=" ? "≥" : "≤"} ${dvFmt(r.val)}</b></li>`);
-  $("#dvTicket").innerHTML = `<div class="band"><h3>${esc((d.item || "Divine").split("  ·  ")[0])}</h3><div class="sub">${t("huntT")}</div></div>` +
+  $("#dvTicket").innerHTML = `<div class="band"><h3>${t("huntT")}</h3><div class="sub">${esc((d.item || "Divine").split("  ·  ")[0])}</div></div>` +
     (li.length ? `<ul>${li.join("")}</ul>` : `<div class="none">${t("dvNone")}</div>`) + `<div class="rule">${t(+d.any ? "dvRuleOne" : "dvRuleAll")}</div>`;
 }
 function dvSet(key, i, op, val) { const d = dvState(); d.rules[key] = d.rules[key] || {};
@@ -838,7 +857,7 @@ function renderSettings() {
   $("#learnedN").textContent = ST.learned || 0;
   if (document.activeElement !== $("#vol")) $("#vol").value = ST.volume ?? 80;
   $("#volN").textContent = $("#vol").value + "%";
-  const cur = ST.soundName || "slot";
+  const cur = ST.soundName || "seal";
   $("#sndSel").innerHTML = SOUNDS.map(k => `<option value="${k}"${k === cur ? " selected" : ""}>${t("snd_" + k)}</option>`).join("");
   $("#sndFile").textContent = cur === "custom" ? (ST.soundCustom || t("sndCustomNone")) : "";
   $$("#hitAnim button").forEach(b => b.classList.toggle("on", b.dataset.v === (ST.hitAnim || "slot")));

@@ -20,7 +20,7 @@ DV_STATE = {'Any': 0, 'Item': 'Vortex Weaver', 'Lines': [
     {'Key': 'crit', 'Text': '+1.25% to Critical Hit Chance', 'Nums': [{'V': 1.25, 'Lo': 1.01, 'Hi': 1.5}]}],
     'Rules': {'spell': {1: ['>=', 172]}, 'mana': {1: ['>=', 315]}, 'crit': {1: ['>=', 1.3]}}}
 DV_VALS = {'spell': [176], 'mana': [325], 'cold': [19, 33], 'crit': [1.42]}
-TIMES = [0.05, 0.25, 0.5, 0.8, 0.95, 1.1, 1.3, 1.7, 2.5, 4.0]
+TIMES = [0.05, 0.15, 0.3, 0.45, 0.52, 0.58, 0.75, 1.05]
 
 
 def setup_root():
@@ -28,7 +28,7 @@ def setup_root():
         shutil.rmtree(ROOT)
     ROOT.mkdir(parents=True)
     os.symlink('/home/claude/app/ui', ROOT / 'ui')
-    for f in ['harness.html', 'gdip_shim.js', 'scene.js', 'titles.json', 'strings_de.json']:
+    for f in ['harness.html', 'gdip_shim.js', 'scene.js', 'strings_de.json', 'strings_en.json']:
         os.symlink(HERE / f, ROOT / f)
     shutil.copy(BG, ROOT / 'bg.png')
 
@@ -48,7 +48,7 @@ async def main():
             pg = await b.new_page(viewport={'width': 1400, 'height': 700})
             pg.on('pageerror', lambda e: errors.append(str(e)))
             pg.on('console', lambda m: m.type == 'error' and errors.append(m.text))
-            await pg.goto('http://localhost:8771/harness.html?hs=1.5')
+            await pg.goto('http://localhost:8771/harness.html?hs=' + os.environ.get('HS', '1.5') + '&lang=' + os.environ.get('LANG_HIT', 'de'))
             await pg.evaluate('window.ready')
             for name in (['chaos', 'dv'] if WHICH == 'all' else [WHICH]):
                 if name == 'chaos':
@@ -77,11 +77,11 @@ async def main():
                 sheet.save(OUT / f'sheet_{name}.png')
                 if VIDEO:
                     fd = OUT / f'frames_{name}'; fd.mkdir(exist_ok=True)
-                    n = int(4.6 * 60)
+                    fps = int(os.environ.get('FPS', '60')); n = int(float(os.environ.get('SECS', '1.8')) * fps)
                     for i in range(n):
-                        url = await pg.evaluate(f"frame({i / 60}, INFO)")
+                        url = await pg.evaluate(f"frame({i / fps}, INFO)")
                         (fd / f'{i:04d}.png').write_bytes(base64.b64decode(url.split(',')[1]))
-                    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-framerate', '60', '-i', str(fd / '%04d.png'), '-c:v', 'libx264',
+                    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-framerate', str(fps), '-i', str(fd / '%04d.png'), '-c:v', 'libx264',
                                     '-pix_fmt', 'yuv420p', '-crf', '18', str(OUT / f'Treffer-{name}.mp4')], check=True)
             await b.close()
     finally:

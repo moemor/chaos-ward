@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs>
-    <linearGradient id="l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A5530"/><stop offset="1" stop-color="#3E2312"/></linearGradient>
-    <linearGradient id="au" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF0C0"/><stop offset=".5" stop-color="#DDB063"/><stop offset="1" stop-color="#8A5C1E"/></linearGradient>
-    <radialGradient id="r" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#FFD0D0"/><stop offset=".3" stop-color="#F0424E"/><stop offset=".8" stop-color="#8E0F1C"/><stop offset="1" stop-color="#4A0610"/></radialGradient></defs>
-  <path d="M1.5 6.8Q12 13.4 22.5 6.8V13Q12 19.6 1.5 13Z" fill="url(#l)" stroke="#2A160A" stroke-width=".6"/>
-  <path d="M2.5 9.4Q12 15.2 21.5 9.4" fill="none" stroke="#C8925E" stroke-opacity=".5" stroke-width=".5" stroke-dasharray="1 1"/>
-  <rect x="7.6" y="7.6" width="8.8" height="9" rx="2" fill="url(#au)" stroke="#5E3A0E" stroke-width=".6"/>
-  <circle cx="12" cy="12.1" r="2.9" fill="url(#r)" stroke="#5E3A0E" stroke-width=".5"/>
-  <ellipse cx="11" cy="11.1" rx=".9" ry=".5" fill="#fff" opacity=".6"/></svg>

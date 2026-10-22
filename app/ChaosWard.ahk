@@ -31,7 +31,7 @@ CoordMode "Pixel", "Screen"
 try DllCall("SetThreadDpiAwarenessContext", "Ptr", -4, "Ptr")
 
 global APP         := "Chaos Ward"
-global APP_VER     := "7.4.2"
+global APP_VER     := "8.0.0"
 global APP_FILE    := "ChaosWard"
 global INSTALL_DIR := EnvGet("LOCALAPPDATA") "\ChaosWard"
 global OLD_DIR     := EnvGet("LOCALAPPDATA") "\PoE2-CraftSchutz"      ; alte Version (Craft-Schutz)
@@ -43,16 +43,17 @@ global HITS_FILE   := A_ScriptDir "\Treffer.txt"
 global LEARN_FILE  := A_ScriptDir "\Gelernt.txt"
 global DIAG_DIR    := A_ScriptDir "\Diagnose"
 global DATA_DIR    := EnvGet("LOCALAPPDATA") "\ChaosWard\webdata"
-global THEMES      := Map("obsidian", "15191C")                         ; v7: ein Stil (Schiefer + Gold)
+global THEMES      := Map("obsidian", "121314")                         ; v8: ein Stil ("Siegel")
 global PAUSES      := [300, 500, 800, 1000, 1500, 2000]
 global PAUSE_NAMES := ["0,3 s", "0,5 s", "0,8 s", "1 s", "1,5 s", "2 s"]
 global KEYS        := ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"]
 
-; Farben v7: Schiefer + PoE-Gold, Mod-Text im Spiel-Blau (wie im Item-Tooltip)
-global Clr := {Bg: "15191C", Panel: "15191C", Panel2: "1D2226", Field: "283036", Line: "313A41"
-    , Gold: "E9B44C", Gold2: "F6D58A", Text: "EDE6D6", Muted: "8F9A94", Dim: "66716B"
-    , Green: "78C48A", GreenDark: "1E4D2C", Red: "E0644F", RedDark: "5A1E1C", Blue: "8888FF", Amber: "E9A23B"
-    , Tip: "0B0C0E", Slate: "14181B", Band: "2A2216", BandLine: "5B4A2A", Rare: "F5F07A", Magic: "8888FF", Sand: "A89D86"}
+; Farben v8 "Siegel": Kohle + Stein, Grünblau = gewählt / Schutz an, Gold NUR für Treffer, Rot = Fehler / verboten
+global Clr := {Bg: "121314", Panel: "17181A", Panel2: "1E1F22", Field: "27292C", Line: "3A3D42"
+    , Gold: "D6A640", Gold2: "F0CF7A", Text: "E7E3DB", Muted: "9A968E", Dim: "66635D"
+    , Ward: "4FAE9B", Ward2: "8AD4C3", WardDark: "1B3631"
+    , Green: "4FAE9B", GreenDark: "1B3631", Red: "D4604E", RedDark: "4A1F1A", Blue: "A3A8FF", Amber: "D98A3D"
+    , Tip: "0E0F10", Slate: "121314", Band: "17181A", BandLine: "3A3D42", Rare: "E7E3DB", Magic: "A3A8FF", Sand: "9A968E"}
 
 global St    := {On: false, Locked: false, Hit: false}
 global Cfg   := {}
@@ -82,8 +83,8 @@ global TargetG := 0, TargetCtl := {}, LastItemName := "", PlaceGuis := Map()
 global HitHits := 0, HitBarErr := "", HITBAR_SECS := [0, 3, 5, 10], OcrCalib := ""
 global WatchSt := {N: 0, Hit: 0, TO: 0, Ms: 0}     ; Statistik der Änderungs-Erkennung (für das Diagnose-Paket)
 global HitSurf := 0, HitBmps := Map()          ; HitBmps: zwischengespeicherte Teilbilder der Treffer-Leiste
-global SOUNDS := ["slot", "hit", "chime", "coin", "ping", "windows", "custom"]
-global FontsOk := false                         ; Barlow / Marcellus SC aus ui\fonts geladen?
+global SOUNDS := ["seal", "hit", "chime", "coin", "ping", "windows", "custom"]
+global FontsOk := false                         ; IBM Plex aus ui\fonts geladen?
 global Dv := {Item: "", Lines: [], Rules: Map(), Any: 0}, CurPage := "", LastItemText := ""
 global GameLang := ""                           ; Spielsprache laut letztem Strg+C: "", "en", "other"
 global HitBarG := 0, HitBarT0 := 0, HitBarInfo := {Hits: 0, Orbs: 0}, HitBarPos := {X: 0, Y: 0, W: 0, H: 0}
@@ -191,7 +192,7 @@ ToggleGuard(*) {
 ShowOnBanner() {
     SetTimer(HideBanner, 0)
     how := Cfg.ShiftOnly ? T("bShift") : T("bClick")
-    ShowBanner(T("bOn"), how "   ·   " T("bOffKey"), Clr.Gold)
+    ShowBanner(T("bOn"), how "   ·   " T("bOffKey"), Clr.Ward)
 }
 
 ; reel = Walzen-Daten für die Treffer-Leiste (ReelFromItem / AutoEval / ReelDv), 0 = keine
@@ -214,10 +215,10 @@ TriggerHit(hits, style := "", sub := "", reel := 0) {
     HitSoundSynced(style)
 }
 
-; Sound passend zur Walze: "Spielautomat" startet sofort (rattert, Gewinn genau beim Einrasten),
+; Sound passend zum Siegel: "Siegel" startet sofort (Kerben ticken, Schloss rastet genau mit dem Bild ein),
 ; alle anderen Sounds spielen im Moment des Einrastens
 HitSoundSynced(style, force := false) {
-    if Cfg.SoundName = "slot" || Cfg.HitAnim = "instant" {   ; "Sofort": Ton sofort (Spielautomat nur der Gewinn-Teil)
+    if Cfg.SoundName = "seal" || Cfg.HitAnim = "instant" {   ; "Sofort": Ton sofort (Siegel nur das Einrasten)
         PlayHitSound(force, style)
         return
     }
@@ -247,8 +248,8 @@ SoundFile(style := "") {
     switch Cfg.SoundName {
         case "windows":
             return ""
-        case "slot":                              ; Spielautomat: eigene Fassung für Chaos und Divine
-            f := A_ScriptDir "\ui\hit\slot_" (style = "dv" ? "dv" : "chaos") (Cfg.HitAnim = "instant" ? "_win" : "") ".wav"
+        case "seal":                              ; Siegel: eigene Fassung für Chaos und Divine, "Sofort" ohne Anlauf
+            f := A_ScriptDir "\ui\hit\seal_" (style = "dv" ? "dv" : "chaos") (Cfg.HitAnim = "instant" ? "_now" : "") ".wav"
             if FileExist(f)
                 return f
         case "custom":
@@ -527,20 +528,30 @@ NewOverlay(bg := "") {
 LoadFonts() {
     global FontsOk
     n := 0
-    for f in ["Barlow-Regular", "Barlow-Medium", "Barlow-SemiBold", "Barlow-Bold", "MarcellusSC-Regular"] {
+    for f in ["IBMPlexSans-Regular", "IBMPlexSans-Medium", "IBMPlexSans-SemiBold", "IBMPlexSans-Bold"
+            , "IBMPlexSansCondensed-Medium", "IBMPlexSansCondensed-SemiBold", "IBMPlexMono-Medium", "IBMPlexMono-SemiBold"] {
         p := A_ScriptDir "\ui\fonts\" f ".ttf"
         if FileExist(p)
             try n += DllCall("gdi32\AddFontResourceEx", "Str", p, "UInt", 0x10, "Ptr", 0) > 0
     }
-    FontsOk := n >= 4
+    FontsOk := n >= 6
 }
 
-; Schrift für die Anzeigen: Barlow / Marcellus SC, sonst Segoe UI.
-; Text mit Zeichen, die Barlow nicht hat (✔ → 🔒 ...), bleibt in Segoe UI (Windows ergänzt dort fehlende Zeichen)
-OvFont(g, opts, face := "Barlow", text := "") {
+; Schrift für die Anzeigen: IBM Plex (eine Familie), sonst Segoe UI.
+;  face: "" = Plex Sans (Stärke aus opts: w400/w500/w600/w700), "cond" = Plex Sans Condensed, "mono" = Plex Mono.
+;  Windows kennt die Zwischenstärken nur unter eigenem Namen ("IBM Plex Sans SemiBold"), daher die Umsetzung hier.
+;  Text mit Zeichen, die Plex nicht hat (✔ 🔒 ...), bleibt in Segoe UI (Windows ergänzt dort fehlende Zeichen)
+OvFont(g, opts, face := "", text := "") {
     g.SetFont(opts, "Segoe UI")
-    if FontsOk && !RegExMatch(text, "[^\x{20}-\x{17F}\x{2013}-\x{2026}\x{2039}\x{203A}\x{20AC}\x{201E}\n\r\t]")
-        g.SetFont(opts, face)
+    if !FontsOk || RegExMatch(text, "[^\x{20}-\x{17F}\x{2013}-\x{2026}\x{2039}\x{203A}\x{20AC}\x{201E}\x{2212}\x{2265}\x{2264}\x{00D7}\n\r\t]")
+        return
+    w := RegExMatch(opts, "\bw(\d+)", &m) ? Integer(m[1]) : 400
+    fam := face = "cond" ? "IBM Plex Sans Condensed" : face = "mono" ? "IBM Plex Mono" : "IBM Plex Sans"
+    if face = "cond" || face = "mono"
+        fam .= w >= 600 ? " SemiBold" : " Medium", w := 400
+    else if w = 500 || w = 600
+        fam .= w = 500 ? " Medium" : " SemiBold", w := 400
+    g.SetFont(RegExReplace(opts, "\bw\d+", "w" w), fam)
 }
 
 ; 1-px-Rahmen (normale Fenster haben keinen); nach dem Anzeigen mit OvFrameFit einpassen
@@ -577,21 +588,21 @@ ShowOverlay(g, x, y, alpha, posKey := "", fixW := 0, fixH := 0) {
     return gh
 }
 
-; Meldung oben in der Mitte: dunkle Schiefer-Fläche, Akzent links, feiner Rahmen
+; Meldung oben in der Mitte: Kohle-Fläche, Akzent als Kante oben, feiner Rahmen
 ShowBanner(title, sub := "", accent := "", big := false) {
     global Banner
     if accent = ""
-        accent := Clr.Gold
+        accent := Clr.Ward
     old := Banner
     g := NewOverlay()
     g.MarginX := OvPx(big ? 36 : 24)
     g.MarginY := OvPx(big ? 18 : 11)
     fr := OvFrame(g, Clr.Line)
-    bar := g.AddText("x0 y0 w" OvPx(4) " h10 Background" accent)
+    bar := g.AddText("x0 y0 w10 h" OvPx(2) " Background" accent)
     if big
-        OvFont(g, FS(28) " w400 c" accent, "Marcellus SC", title)
+        OvFont(g, FS(24) " w600 c" accent, "cond", title)
     else
-        OvFont(g, FS(13) " w600 c" Clr.Text, , title)
+        OvFont(g, FS(12.5) " w600 c" Clr.Text, , title)
     t1 := g.AddText("xm ym Center +0x80", title)
     t2 := 0
     if sub != "" {
@@ -608,7 +619,7 @@ ShowBanner(title, sub := "", accent := "", big := false) {
     t1.Move(, , w)
     h := ShowOverlay(g, "center", big ? 140 : 30, big ? 245 : 238, "Banner")
     g.GetPos(, , &gw)
-    bar.Move(, , , h)
+    bar.Move(, , gw)
     OvFrameFit(fr, gw, h)
     Banner := g
     if IsObject(old)
@@ -622,47 +633,47 @@ HideBanner() {
     Banner := 0
 }
 
-; Item-Anzeige im Tooltip-Stil des Spiels: goldenes Kopfband, Mods in Blau, Tier-Chips, Treffer in Gold
+; Item-Anzeige im Stil "Siegel": Name + Art oben, Mods als Liste, Treffer in Gold, Tiers als kleine Marken
 ShowItem(item, cat, hits, need) {
     global ItemG
     old := ItemG
     g := NewOverlay(Clr.Tip)
     g.MarginX := 0, g.MarginY := 0
-    pad := OvPx(18), gap := OvPx(8)
-    fr := OvFrame(g, Clr.BandLine)
-    band := g.AddText("x0 y0 w1 h1 Background" Clr.Band)
-    bline := g.AddText("x0 y0 w1 h1 Background" Clr.BandLine)
-    g.SetFont(FS(9) " w400 c" Clr.Gold, "Segoe UI Symbol")
-    dl := g.AddText("x0 y0 Background" Clr.Band " +0x80", "◆")
-    dr := g.AddText("x0 y0 Background" Clr.Band " +0x80", "◆")
+    pad := OvPx(16), gap := OvPx(8)
+    fr := OvFrame(g, Clr.Line)
+    done := hits >= need && hits > 0
+    topk := g.AddText("x0 y0 w1 h1 Background" (done ? Clr.Gold : Clr.Ward))     ; Kante oben: Grünblau, bei Treffer Gold
+    hline := g.AddText("x0 y0 w1 h1 Background" Clr.Line)
     n1 := item.NameLines.Length ? item.NameLines[1] : item.Name, n2 := ""
     loop item.NameLines.Length - 1
         n2 .= (n2 = "" ? "" : "  ") item.NameLines[A_Index + 1]
-    OvFont(g, FS(15) " w400 c" Clr.Rare, "Marcellus SC", n1)
-    h1 := g.AddText("x0 y0 Center Background" Clr.Band " +0x80", n1)
+    OvFont(g, FS(13) " w600 c" Clr.Text, , n1)
+    h1 := g.AddText("x0 y0 +0x80", n1)
     head := [h1]
     if n2 != "" {
-        OvFont(g, FS(10.5) " w500 c" Clr.Rare, , n2)
-        head.Push(g.AddText("x0 y0 Center Background" Clr.Band " +0x80", n2))
+        OvFont(g, FS(10.5) " w500 c" Clr.Text, , n2)
+        head.Push(g.AddText("x0 y0 +0x80", n2))
     }
-    OvFont(g, FS(9) " w400 c" Clr.Sand)
-    head.Push(g.AddText("x0 y0 Center Background" Clr.Band " +0x80", IsObject(cat) ? cat.Main " › " cat.Sub : T("oUnknown")))
+    OvFont(g, FS(9.5) " w400 c" Clr.Muted)
+    head.Push(g.AddText("x0 y0 +0x80", IsObject(cat) ? cat.Main " › " cat.Sub : T("oUnknown")))
     rows := []
     for mod in item.Mods {
-        col := mod.Hit ? Clr.Gold2 : mod.Fractured ? "C8B9A0" : Clr.Magic
+        col := mod.Hit ? Clr.Gold2 : mod.Fractured ? Clr.Muted : Clr.Text
         mk := 0
-        if mod.Hit || mod.Fractured {             ; Zeichen aus Segoe UI Symbol (hat Barlow nicht)
-            g.SetFont(FS(10) " w700 c" (mod.Hit ? Clr.Gold : "C8B9A0"), "Segoe UI Symbol")
-            mk := g.AddText("x0 y0 +0x80", mod.Hit ? "✔" : "◆")
+        if mod.Hit {                              ; Haken aus Segoe UI Symbol (hat Plex nicht)
+            g.SetFont(FS(10) " w700 c" Clr.Gold, "Segoe UI Symbol")
+            mk := g.AddText("x0 y0 +0x80", "✔")
         }
         OvFont(g, FS(11) " " (mod.Hit ? "w600" : "w400") " c" col, , mod.Text)
         tx := g.AddText("x0 y0 +0x4080", mod.Text)           ; 0x4000 = zu lang -> "…"
         chip := 0
-        if mod.Tier {
-            gold := mod.Hit || mod.Tier = 1
-            OvFont(g, FS(8.5) " w700 c" (gold ? "1D1405" : mod.Tier = 2 ? Clr.Gold : Clr.Muted))
-            kind := mod.Kind = "P" || mod.Kind = "S" ? " · " mod.Kind : ""
-            chip := g.AddText("x0 y0 Center +0x80 Background" (gold ? Clr.Gold : mod.Tier = 2 ? "3A3020" : Clr.Field), " T" mod.Tier kind " ")
+        lbl := (mod.Tier ? "T" mod.Tier : "") (mod.Fractured ? (mod.Tier ? " " : "") "FR" : "")
+        if lbl != "" {
+            kind := mod.Tier && (mod.Kind = "P" || mod.Kind = "S") ? " " mod.Kind : ""
+            fg := mod.Hit ? "1A1406" : mod.Tier = 1 ? Clr.Ward2 : Clr.Muted
+            bg := mod.Hit ? Clr.Gold : mod.Tier = 1 ? Clr.WardDark : Clr.Panel2
+            OvFont(g, FS(8.5) " w600 c" fg, "mono", lbl kind)
+            chip := g.AddText("x0 y0 Center +0x80 Background" bg, " " lbl kind " ")
         }
         rows.Push({T: tx, C: chip, M: mk})
     }
@@ -670,56 +681,55 @@ ShowItem(item, cat, hits, need) {
         OvFont(g, FS(10.5) " w400 c" Clr.Muted)
         rows.Push({T: g.AddText("x0 y0 +0x80", T("oNoMods")), C: 0, M: 0})
     }
-    fline := g.AddText("x0 y0 w1 h1 Background3A3122")
-    done := hits >= need && hits > 0
-    OvFont(g, FS(10) " " (done ? "w700 c" Clr.Gold : "w400 c" Clr.Muted))
-    foot := g.AddText("x0 y0 Center +0x80", StrReplace(StrReplace(T("oHits"), "{n}", hits), "{m}", need))
+    fline := g.AddText("x0 y0 w1 h1 Background" Clr.Line)
+    OvFont(g, FS(9.5) " " (done ? "w600 c" Clr.Gold2 : "w400 c" Clr.Muted))
+    foot := g.AddText("x0 y0 +0x80", StrReplace(StrReplace(T("oHits"), "{n}", hits), "{m}", need))
 
-    ; --- Maße: alles mittig wie im Spiel-Tooltip
-    W := OvPx(340)
+    ; --- Maße: links bündig, Tiers rechts in einer Spalte
+    W := OvPx(320), cmax := 0
     for c in head {
         c.GetPos(, , &cw)
-        W := Max(W, cw + 2 * pad + OvPx(40))
+        W := Max(W, cw + 2 * pad)
     }
     for r in rows {
         r.T.GetPos(, , &tw, &th), r.W := tw, r.H := th, r.CW := 0, r.CH := 0, r.MW := 0, r.MH := 0
         if r.C
-            r.C.GetPos(, , &cw2, &ch2), r.CW := cw2, r.CH := ch2
+            r.C.GetPos(, , &cw2, &ch2), r.CW := cw2, r.CH := ch2, cmax := Max(cmax, cw2)
         if r.M
             r.M.GetPos(, , &mw2, &mh2), r.MW := mw2 + OvPx(6), r.MH := mh2
-        W := Max(W, r.MW + tw + (r.C ? gap + r.CW : 0) + 2 * pad)
     }
+    mkW := 0
+    for r in rows
+        mkW := Max(mkW, r.MW)
+    for r in rows
+        W := Max(W, mkW + r.W + (cmax ? gap + cmax : 0) + 2 * pad)
     W := Min(W, OvPx(760))
-    y := OvPx(10)
+    y := OvPx(12)
     for i, c in head {
         c.GetPos(, , , &ch)
         c.Move(pad, y, W - 2 * pad, ch)
-        if i = 1 {
-            dl.GetPos(, , &dw, &dh)
-            dl.Move(OvPx(9), y + (ch - dh) // 2), dr.Move(W - OvPx(9) - dw, y + (ch - dh) // 2)
-        }
-        y += ch + (i = 1 ? OvPx(1) : 0)
+        y += ch + (i < head.Length ? OvPx(1) : 0)
     }
+    y += OvPx(10)
+    topk.Move(0, 0, W, OvPx(2)), hline.Move(0, y, W, 1)
     y += OvPx(9)
-    band.Move(0, 0, W, y), bline.Move(0, y, W, 1)
-    y += OvPx(11)
     for r in rows {
-        rw := Min(r.W, W - 2 * pad - r.MW - (r.C ? gap + r.CW : 0))
-        x := (W - r.MW - rw - (r.C ? gap + r.CW : 0)) // 2
+        rw := Min(r.W, W - 2 * pad - mkW - (cmax ? gap + cmax : 0))
+        x := pad
         if r.M
             r.M.Move(x, y + (r.H - r.MH) // 2)
-        x += r.MW
+        x += mkW
         r.T.Move(x, y, rw, r.H)
         if r.C
-            r.C.Move(x + rw + gap, y + (r.H - r.CH) // 2)
-        y += r.H + OvPx(4)
+            r.C.Move(W - pad - r.CW, y + (r.H - r.CH) // 2)
+        y += r.H + OvPx(3)
     }
-    y += OvPx(6)
-    fline.Move(pad, y, W - 2 * pad, 1)
+    y += OvPx(7)
+    fline.Move(0, y, W, 1)
     y += OvPx(7)
     foot.GetPos(, , , &fh)
     foot.Move(pad, y, W - 2 * pad, fh)
-    H := y + fh + OvPx(9)
+    H := y + fh + OvPx(8)
     ShowOverlay(g, "right", 120, 240, "Item", W, H)
     OvFrameFit(fr, W, H)
     ItemG := g
@@ -748,7 +758,7 @@ HideItemNow() {
 }
 
 RoundCorners(hwnd) {
-    v := Buffer(4, 0), NumPut("Int", 2, v)          ; DWMWCP_ROUND (Windows 11)
+    v := Buffer(4, 0), NumPut("Int", 1, v)          ; DWMWCP_DONOTROUND (Windows 11): kantig wie die App
     try DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", hwnd, "UInt", 33, "Ptr", v, "UInt", 4)
 }
 
@@ -1440,14 +1450,11 @@ LoadConfig() {
     Cfg.PosItem := IniRead(INI, "Positionen", "ItemAnzeige", "")
     Cfg.PosHit := IniRead(INI, "Positionen", "TrefferLeiste", "")
     Cfg.Volume := Integer(IniRead(INI, "Einstellungen", "Lautstaerke", "80"))
-    Cfg.SoundName := IniRead(INI, "Einstellungen", "TrefferSound", "slot")
+    Cfg.SoundName := IniRead(INI, "Einstellungen", "TrefferSound", "seal")
+    if Cfg.SoundName = "slot"                   ; v8: der Spielautomat ist dem Siegel gewichen
+        Cfg.SoundName := "seal"
     if !HasVal(SOUNDS, Cfg.SoundName)
-        Cfg.SoundName := "slot"
-    if IniRead(INI, "Einstellungen", "V7Sound", "0") != "1" {   ; v7: einmalig auf den neuen Spielautomaten-Sound
-        if Cfg.SoundName = "hit"
-            Cfg.SoundName := "slot"
-        try IniWrite("1", INI, "Einstellungen", "V7Sound")
-    }
+        Cfg.SoundName := "seal"
     Cfg.SoundCustom := IniRead(INI, "Einstellungen", "EigenerSound", "")
     Cfg.HitAnim := IniRead(INI, "Einstellungen", "TrefferAnimation", "slot") = "instant" ? "instant" : "slot"
     hs := IniRead(INI, "Einstellungen", "TrefferLeisteSek", "0")
@@ -2124,7 +2131,7 @@ T(key) {
         "bOcrFail", "Texterkennung nicht verfügbar",
         "bReleased", "Nicht sicher gelesen - freigegeben",
         "bLearned", "Gemerkt: {n} neue Schreibweise(n) gelernt",
-        "hTitle", "TREFFER!", "hTitleDv", "GÖTTLICH!", "hSubDv", "Alle {n} Schwellen erreicht", "hSubDvOne", "Schwelle erreicht", "hDivines", "DIVINES",
+        "hTitle", "TREFFER", "hTitleDv", "TREFFER", "hSubDv", "Alle {n} Schwellen erreicht", "hSubDvOne", "Schwelle erreicht", "hDivines", "DIVINES",
         "hSpin", "Walze dreht …", "hSpinDv", "Werte rollen …",
         "mbAny", "Beliebiges Legacy mindestens {n}×",
         "mbEff", "Effekt pro Duplikat mindestens {n}%",
@@ -2148,7 +2155,7 @@ T(key) {
         "mbOr", "Stopp bei Wunsch-Legacies ODER irgendeinem Duplikat",
         "mbDup", "Irgendein Legacy doppelt (egal welche Kombi)",
         "mbBan", "Nicht gewollt",
-        "hSub", "{n} Wunsch-Mods gefunden",
+        "hSub", "{n} Wunsch-Mods gefunden", "hLocked", "Klick gesperrt",
         "hHint", "{k} drücken, wenn du fertig bist",
         "hOrbs", "ORBS",
         "pTitle", "DU SUCHST",
@@ -2205,7 +2212,7 @@ T(key) {
         "bOcrFail", "Text recognition not available",
         "bReleased", "Not read reliably - released",
         "bLearned", "Learned {n} new spelling(s)",
-        "hTitle", "HIT!", "hTitleDv", "DIVINE!", "hSubDv", "All {n} thresholds reached", "hSubDvOne", "Threshold reached", "hDivines", "DIVINES",
+        "hTitle", "HIT", "hTitleDv", "HIT", "hSubDv", "All {n} thresholds reached", "hSubDvOne", "Threshold reached", "hDivines", "DIVINES",
         "hSpin", "Reel spinning …", "hSpinDv", "Rolling values …",
         "mbAny", "Any Legacy at least {n}×",
         "mbEff", "Effect per duplicate at least {n}%",
@@ -2229,7 +2236,7 @@ T(key) {
         "mbOr", "Stop on wished legacies OR any duplicate",
         "mbDup", "Any legacy duplicated (any combination)",
         "mbBan", "Not wanted",
-        "hSub", "{n} wished mods found",
+        "hSub", "{n} wished mods found", "hLocked", "Click locked",
         "hHint", "Press {k} when you're done",
         "hOrbs", "ORBS",
         "pTitle", "YOU'RE LOOKING FOR",
@@ -3089,7 +3096,7 @@ PlaceStart() {
         g := Gui("+AlwaysOnTop -Caption +ToolWindow -DPIScale")
         g.BackColor := Clr.Panel2
         g.MarginX := OvPx(16), g.MarginY := OvPx(12)
-        OvFont(g, FS(13) " w600 c" Clr.Gold2, , "✥  " names[key])
+        OvFont(g, FS(13) " w600 c" Clr.Ward2, , "✥  " names[key])
         g.AddText("xm ym w" d.W - OvPx(32) " +0x80", "✥  " names[key])
         OvFont(g, FS(9) " w400 c" Clr.Muted, , T("plDrag"))
         g.AddText("xm y+" OvPx(4) " w" d.W - OvPx(32) " +0x80", T("plDrag"))
@@ -3583,7 +3590,7 @@ ShowHitBar(hits, orbs, style := "", sub := "", reel := 0) {
         reel := HitReelReady(reel, style, hits)
         if sub = ""
             sub := HitSubText(reel, style, hits)
-        HitBarInfo := {Hits: hits, Orbs: orbs, Style: style, Sub: sub, Reel: reel, Ms: 0, Iv: 33}
+        HitBarInfo := {Hits: hits, Orbs: orbs, Style: style, Sub: sub, Reel: reel, Ms: 0, Iv: 33, Still: false}
         HitBarG := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x80000 +E0x20 +E0x08000000")
         if !Cfg.StreamVisible
             try DllCall("SetWindowDisplayAffinity", "Ptr", HitBarG.Hwnd, "UInt", 0x11)
@@ -3596,7 +3603,7 @@ ShowHitBar(hits, orbs, style := "", sub := "", reel := 0) {
         HitBarPos := {X: pt.X - W // 2, Y: pt.Y - Round(126 * hs), W: W, H: H, S: hs}   ; Leiste (168 hoch) sitzt mittig
         HitSurfOpen(W, H)                        ; feste Zeichenfläche (schnell); klappt das nicht -> alter Weg
         HitTimerRes(true)
-        HitBarT0 := A_TickCount - (Cfg.HitAnim = "instant" ? Round(HitLand(style) * 1000) : 0)
+        HitBarT0 := A_TickCount - (Cfg.HitAnim = "instant" ? Round(HitStill(style) * 1000) : 0)
         HitBarStep()                             ; erster Frame sofort (Fehler fallen hier auf)
         SetTimer(HitBarStep, HitBarInfo.Iv)
         if Cfg.HitBarSecs > 0 && St.Hit             ; Leiste blendet aus, Klick bleibt gesperrt
@@ -3682,6 +3689,12 @@ HitBarFrame() {
         return
     }
     secs := (A_TickCount - HitBarT0) / 1000
+    if HitBarInfo.Still {                        ; Endbild steht: nichts mehr zu tun
+        SetTimer(HitBarStep, 0)
+        return
+    }
+    if secs >= HitStill(HitBarInfo.Style)        ; letztes Bild zeichnen, danach still
+        HitBarInfo.Still := true, secs := HitStill(HitBarInfo.Style)
     t0 := 0, t1 := 0, fq := 0
     DllCall("QueryPerformanceCounter", "Int64*", &t0)
     try {
@@ -3826,417 +3839,134 @@ RenderHitFrame(W, H, secs, info) {
     return hbm
 }
 
-; Die Szene im Spielautomaten-Stil. Zeichenraster 900x420, Leiste 720x168 mittig.
-;  Chaos/Mageblood: Mod-Walze rattert und rastet auf dem Treffer ein.  Divine: Ziffern-Walzen je Wert.
-;  Nach dem Einrasten: Strahlen, Titel stempelt ein, Münzen (Chaos) bzw. Lichtfunken (Divine).
-;  Alles hängt nur von secs ab -> sieht bei 30 und 60 Bildern/s gleich aus. Der Klick ist da längst gesperrt.
+; Die Szene im Stil "Siegel". Zeichenraster 900x420, Leiste 700x140 mittig.
+;  Ablauf (alles hängt nur von secs ab, sieht bei 20 und 30 Bildern/s gleich aus; der Klick ist längst gesperrt):
+;   0,00-0,46 s  die 24 Kerben des Siegels leuchten reihum auf, die Kante oben läuft mit
+;   0,40-0,56 s  das Schloss dreht sich und rastet ein, die Mitte wird Gold
+;   0,50-1,00 s  ein einzelner Ring läuft nach außen, Text und Zähler sind da
+;   danach       steht alles still (es wird nichts mehr gezeichnet)
 DrawHitScene(g, secs, info) {
-    static MOTES := [[0.08, 0.0, 34, 3.0], [0.19, 0.37, 41, 2.4], [0.31, 0.71, 29, 3.4], [0.44, 0.15, 38, 2.8], [0.57, 0.52, 33, 2.2]
-                   , [0.68, 0.88, 44, 3.1], [0.79, 0.27, 31, 2.6], [0.91, 0.63, 39, 3.3], [0.25, 0.94, 36, 2.0], [0.73, 0.06, 28, 2.9]]
-    static COINS := 0, icon := 0, dvImg := 0, raysW := 0, raysF := 0, imgTried := false
-    if !IsObject(COINS) {                               ; Münzen: feste Zufallswerte, Flug mit Schwerkraft
-        COINS := []
-        loop 26 {
-            i := A_Index - 1
-            COINS.Push({A: -0.314 - HitRnd(i) * 2.513, V: 260 + HitRnd(i + 9) * 260, S: 0.7 + HitRnd(i + 3) * 0.6, Sp: 6 + HitRnd(i + 5) * 10})
-        }
-    }
-    if !imgTried {                                      ; Bilder nur einmal laden
-        imgTried := true
-        for nm in ["wide", "fine"] {
-            f := A_ScriptDir "\ui\hit\rays_" nm ".png", im := 0
-            if FileExist(f)
-                DllCall("gdiplus\GdipLoadImageFromFile", "WStr", f, "Ptr*", &im)
-            if nm = "wide"
-                raysW := im
-            else
-                raysF := im
-        }
-        if FileExist(A_ScriptDir "\ui\icon.png")
-            DllCall("gdiplus\GdipLoadImageFromFile", "WStr", A_ScriptDir "\ui\icon.png", "Ptr*", &icon)
-        if FileExist(A_ScriptDir "\ui\img\divine.png")
-            DllCall("gdiplus\GdipLoadImageFromFile", "WStr", A_ScriptDir "\ui\img\divine.png", "Ptr*", &dvImg)
-    }
-    isDv := info.Style = "dv"
-    land := HitLand(info.Style), after := secs - land
-    cx := 450, cy := 210, pw := 720, ph := 168, px := cx - pw / 2, py := cy - ph / 2
-    pulse := 0.78 + 0.22 * Sin(secs * 4)
+    isDv := info.Style = "dv", reel := info.Reel
+    cx := 450, cy := 210, pw := 700, ph := 140, px := cx - pw / 2, py := cy - ph / 2
+    lock := HitLand(info.Style)
+    p := HitEase((secs - 0.04) / 0.42)                  ; Fortschritt der Kerben
+    kl := Max(0, Min(1, (secs - (lock - 0.14)) / 0.14)) ; 0..1 Schloss dreht / Mitte wird Gold
+    kt := HitEase((secs - 0.26) / 0.26)                 ; Text blendet ein
+    rise := 6 * (1 - HitEase(secs / 0.16))              ; Leiste schiebt sich 6 px nach oben ein
 
-    ; --- 1) Licht erst nach dem Einrasten (der "Gewinn"-Moment): Schein, Lichtschacht, zwei Strahlen-Schichten
-    if after > 0 {
-        ra := Min(1, after / 0.15)
-        burst := 1 + 0.7 * Exp(-after * 2.6)
-        lit := ra * (after < 1.2 ? 1 : 0.62 + 0.08 * Sin(secs * 1.7))
-        tint := isDv ? [1.0, 0.95, 0.82] : [1.0, 0.82, 0.52]
-        SoftGlow(g, cx, cy, isDv ? 410 : 390, isDv ? 185 : 170, Min(1, 0.5 * lit * burst), isDv ? 0xFFF4D6 : 0xFFC86A)
-        if isDv {                                       ; weicher Lichtschacht von oben (4 Lagen = weiche Kanten)
-            loop 4 {
-                la := Round((after < 1.2 ? 34 : 20 + 6 * Sin(secs * 2)) * ra)
-                br := 0, shW := 30 + A_Index * 22, shB := 120 + A_Index * 38
-                DllCall("gdiplus\GdipCreateLineBrushFromRect", "Ptr", RectF(cx - shB, -10, shB * 2, cy + 40), "UInt", (la << 24) | 0xFFF8E1, "UInt", 0x00FFF8E1, "Int", 1, "Int", 0, "Ptr*", &br)
-                pts := Buffer(32)
-                NumPut("Float", cx - shW, "Float", -10, "Float", cx + shW, "Float", -10, "Float", cx + shB, "Float", cy + 30, "Float", cx - shB, "Float", cy + 30, pts)
-                DllCall("gdiplus\GdipFillPolygon", "Ptr", g, "Ptr", br, "Ptr", pts, "Int", 4, "Int", 0)
-                DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-            }
-        }
-        if raysW && raysF {                             ; elliptisch ins Fenster eingepasst -> nichts wird abgeschnitten
-            DrawRayLayer(g, raysW, cx, cy, 448, 212, secs * (isDv ? 6 : 9), tint, Min(1, (isDv ? 0.95 : 0.9) * lit * burst))
-            DrawRayLayer(g, raysF, cx, cy, 440, 206, -secs * (isDv ? 11 : 15) + 7, tint, Min(1, (isDv ? 0.75 : 0.62) * lit * burst))
-        } else {                                        ; Ersatz, falls die Bilder fehlen
-            nr := isDv ? 28 : 18
-            br := Brush((Round(255 * (isDv ? 0.30 : 0.26) * lit) << 24) | (isDv ? 0xFFF4D6 : 0xE9B44C))
-            loop nr {
-                a1 := (secs * (isDv ? 10 : 16) + A_Index * 360 / nr) * 0.0174533, a2 := a1 + (isDv ? 0.05 : 0.07)
-                pts := Buffer(24)
-                NumPut("Float", cx, "Float", cy, "Float", cx + Cos(a1) * 620, "Float", cy + Sin(a1) * 620
-                     , "Float", cx + Cos(a2) * 620, "Float", cy + Sin(a2) * 620, pts)
-                DllCall("gdiplus\GdipFillPolygon", "Ptr", g, "Ptr", br, "Ptr", pts, "Int", 3, "Int", 0)
-            }
-            DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-        }
-    }
-
-    ; --- 2) Pop-in der Leiste, kleiner Ruck beim Einrasten, danach ganz leichtes Atmen
-    sc := 0.6 + 0.4 * HitBack(secs / 0.28)
-    if after > 0 && after < 0.18
-        sc *= 1 + 0.05 * Sin(after / 0.18 * 3.14159)
-    else if after > 1.5
-        sc *= 1 + 0.006 * Sin(secs * 3)
     gs := 0
     DllCall("gdiplus\GdipSaveGraphics", "Ptr", g, "UInt*", &gs)
-    DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g, "Float", cx, "Float", cy, "Int", 0)
-    DllCall("gdiplus\GdipScaleWorldTransform", "Ptr", g, "Float", sc, "Float", sc, "Int", 0)
-    DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g, "Float", -cx, "Float", -cy, "Int", 0)
+    DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g, "Float", 0, "Float", rise, "Int", 0)
 
-    ; --- 3+4) Leuchten, Fläche und Walzen-Fenster kommen fertig aus dem Zwischenspeicher, nur der Goldrahmen pulsiert live
-    rx := px + 22, ry := py + 22, rw := isDv ? 262 : 292, rh := ph - 44
-    HitPanelDraw(g, px, py, pw, ph, rx, ry, rw, rh, after > 0)
-    path := RoundPath(px, py, pw, ph, 18)
-    pen := PenOf((Round(255 * (0.55 + 0.45 * pulse)) << 24) | 0xE9B44C, 2)
-    DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", path)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    DllCall("gdiplus\GdipDeletePath", "Ptr", path)
-    win := RoundPath(rx, ry, rw, rh, 10)
-    gw := 0
-    DllCall("gdiplus\GdipSaveGraphics", "Ptr", g, "UInt*", &gw)
-    DllCall("gdiplus\GdipSetClipPath", "Ptr", g, "Ptr", win, "Int", 0)
-    if isDv
-        HitReelDigits(g, secs, info, rx, ry, rw, rh, land)
-    else
-        HitReelMods(g, secs, info, rx, ry, rw, rh, land)
-    DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gw)
-    if after > 0 && after < 0.35 {                      ; Blitz beim Einrasten
-        br := Brush((Round(107 * (1 - after / 0.35)) << 24) | 0xFFF6DC)
-        DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", win)
-        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    }
-    pen := PenOf(0xFF283036, 1)
-    DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", win)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    DllCall("gdiplus\GdipDeletePath", "Ptr", win)
+    ; --- 1) Fläche mit Schatten (aus dem Zwischenspeicher), Kante oben läuft mit den Kerben
+    HitPanelDraw(g, px, py, pw, ph)
+    br := Brush(0xFF3A3D42)
+    DllCall("gdiplus\GdipFillRectangle", "Ptr", g, "Ptr", br, "Float", px, "Float", py, "Float", pw, "Float", 2)
+    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+    br := Brush(0xFFD6A640)
+    DllCall("gdiplus\GdipFillRectangle", "Ptr", g, "Ptr", br, "Float", px, "Float", py, "Float", pw * p, "Float", 2)
+    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
 
-    ; --- 5) Wappen oben auf dem Rahmen: Chaos-Ward-Maske bzw. Divine-Kopf
-    HitCrest(g, cx, py - 4, after, pulse, isDv ? dvImg : icon, secs)
+    ; --- 2) Siegel links
+    sx := px + 76, sy := py + ph / 2
+    HitSeal(g, sx, sy, p, kl, secs - lock)
 
-    ; --- 6) Titel stempelt ein, darunter Untertitel + Hinweis
-    tx := rx + rw + 28, limit := px + pw - 158
-    if after > 0 {
-        k := Min(1, after / 0.22), s2 := 1 + 0.7 * (1 - HitBack(k))
-        ttl := T(isDv ? "hTitleDv" : "hTitle")
-        if !info.HasOwnProp("TitleFs")
-            HitTitleFit(info, ttl, limit - tx - 10)
-        gt := 0
-        DllCall("gdiplus\GdipSaveGraphics", "Ptr", g, "UInt*", &gt)
-        DllCall("gdiplus\GdipSetClipRect", "Ptr", g, "Float", tx - 30, "Float", py - 40, "Float", limit - tx + 30, "Float", ph + 80, "Int", 0)
-        DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g, "Float", tx, "Float", py + 58, "Int", 0)
-        DllCall("gdiplus\GdipScaleWorldTransform", "Ptr", g, "Float", s2, "Float", s2, "Int", 0)
-        HitTitle(g, ttl, info, isDv, pulse, k, after)
-        DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gt)
-        DrawText(g, info.Sub, tx, py + 89, limit - tx, 22, 14, 1, (Round(255 * k) << 24) | 0xEDE6D6, 0)
-        DrawText(g, T("hHint"), tx, py + 113, limit - tx, 22, 13, 1, (Round(255 * k) << 24) | 0xE9B44C, 0)
-    } else {
-        DrawText(g, T(isDv ? "hSpinDv" : "hSpin"), tx, py + 73, limit - tx, 22, 14, 1, 0xFF8F9A94, 0)
-    }
-
-    ; --- 7) Zähler rechts als goldene Walzenziffern (zählt hoch)
-    ox := px + pw - 130
-    pen := PenOf(0xFF313A41, 1)
-    DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", ox - 12, "Float", py + 26, "Float", ox - 12, "Float", py + ph - 26)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    shown := Round(info.Orbs * HitEase((secs - 0.1) / 1.1))
-    ds := String(Max(0, shown))
-    while StrLen(ds) < 3
-        ds := "0" ds
-    nd := StrLen(ds), stp := Min(34, 116 / nd), cwd := stp - 4, x0 := ox + 59 - (nd * stp - 4) / 2
-    loop nd {
-        x := x0 + (A_Index - 1) * stp
-        cell := GoldCell(g, x, py + 46, cwd, 44, 6)
-        DllCall("gdiplus\GdipDeletePath", "Ptr", cell)
-        DrawText(g, SubStr(ds, A_Index, 1), x - 8, py + 48, cwd + 16, 42, Min(28, cwd * 0.95), 1, 0xFF1B1406, 1)
-    }
-    DrawText(g, T(isDv ? "hDivines" : "hOrbs"), ox + 4, py + 100, 110, 20, 12, 1, 0xFF8F9A94, 1)
-    DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gs)
-
-    ; --- 8) Münzen (Chaos) bzw. Lichtfunken (Divine) springen aus dem Walzenfenster
-    if after > 0 && after < 1.6 {
-        a := Max(0, 1 - after / 1.6)
-        for m in COINS {
-            x := rx + rw / 2 + Cos(m.A) * m.V * after * (isDv ? 0.6 : 1)
-            y := cy + Sin(m.A) * m.V * after + (isDv ? -40 : 420) * after * after
-            if isDv
-                Star(g, x, y, 5 + 6 * m.S * a, (Round(255 * a) << 24) | 0xFFF4D6)
-            else
-                Coin(g, x, y, 7 * m.S, after * m.Sp, a)
-        }
-    }
-    ; --- 9) Funkeln im Leerlauf, bei Divine zusätzlich aufsteigende Lichtpunkte
-    if after > 0.4 {
-        fa := Min(1, (after - 0.4) / 0.4)
-        loop 10 {
-            i := A_Index - 1
-            a := Sin(secs * (3 + HitRnd(i) * 4) + i)
-            if a > 0
-                Star(g, px - 20 + HitRnd(i + 20) * (pw + 40), py - 20 + HitRnd(i + 40) * (ph + 40), 4 + 10 * a ** 3, (Round(255 * fa * a ** 3) << 24) | 0xFFF4D6)
-        }
+    ; --- 3) Text: Kennung, Treffer, Hinweis
+    tx := px + 150, ox := px + pw - 132, tw := ox - tx - 18
+    ta := Round(255 * kt), dy := 5 * (1 - kt)
+    if ta > 0 {
+        tier := RegExMatch(reel.HasOwnProp("Sub") ? reel.Sub : "", "^(T\d+)", &tm) ? tm[1] : ""
+        lbl := T("hTitle") (isDv ? "  ·  " info.Sub : tier != "" ? "  ·  " tier : "")
+        hint := T("hLocked") "  ·  " T("hHint")
         if isDv {
-            for mo in MOTES {
-                ph2 := Mod(secs / mo[4] + mo[2], 1)      ; 0..1 Weg nach oben
-                x := px + mo[1] * pw + 8 * Sin(secs * 2 + mo[3])
-                y := py + ph + 30 - ph2 * (ph + 120)
-                a := Round(200 * Sin(ph2 * 3.14159) * fa)
-                if a <= 0
-                    continue
-                br := Brush((a << 24) | 0xFFF6D8)
-                rad := 2 + Mod(A_Index, 3)
-                DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", x - rad, "Float", y - rad, "Float", rad * 2, "Float", rad * 2)
-                DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+            DrawText(g, lbl, tx, py + 16 + dy, tw, 20, 13, 1, (ta << 24) | 0xF0CF7A, 0, "cond")
+            vals := reel.Values, nv := Min(3, vals.Length), y0 := py + 40 + (3 - nv) * 11
+            loop nv {
+                v := vals[A_Index], yy := y0 + (A_Index - 1) * 23 + dy
+                DrawText(g, v.Label, tx, yy, tw - 150, 23, 14.5, 0, (ta << 24) | 0xE7E3DB, 0)
+                if v.HasOwnProp("Need") && v.Need != ""
+                    DrawText(g, v.Need, tx + tw - 150, yy, 70, 23, 12, 0, (ta << 24) | 0x66635D, 2, "mono")
+                DrawText(g, v.Digits v.Unit, tx + tw - 80, yy, 80, 23, 16, 1, (ta << 24) | 0xF0CF7A, 2, "mono")
             }
+            DrawText(g, hint, tx, py + ph - 27 + dy, tw, 20, 12, 0, (ta << 24) | 0x9A968E, 0)
+        } else {
+            main := info.Hits <= 1 && reel.Target <= reel.Lines.Length && info.Style != "mb" ? reel.Lines[reel.Target] : info.Sub
+            DrawText(g, lbl, tx, py + 28 + dy, tw, 20, 13, 1, (ta << 24) | 0xF0CF7A, 0, "cond")
+            DrawText(g, main, tx, py + 50 + dy, tw, 34, 21, 1, (ta << 24) | 0xE7E3DB, 0)
+            DrawText(g, hint, tx, py + 88 + dy, tw, 20, 12.5, 0, (ta << 24) | 0x9A968E, 0)
         }
     }
+
+    ; --- 4) Zähler rechts: Orbs bis zum Treffer, zählt hoch
+    pen := PenOf(0xFF2A2C30, 1)
+    DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", ox, "Float", py + 22, "Float", ox, "Float", py + ph - 22)
+    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
+    shown := Round(info.Orbs * HitEase((secs - 0.08) / (lock + 0.04)))
+    DrawText(g, String(Max(0, shown)), ox, py + 34, px + pw - ox, 46, shown >= 10000 ? 28 : 34, 1, kl >= 1 ? 0xFFE7E3DB : 0xFF9A968E, 1, "mono")
+    DrawText(g, T(isDv ? "hDivines" : "hOrbs"), ox, py + 84, px + pw - ox, 20, 11.5, 1, 0xFF9A968E, 1, "cond")
+    DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gs)
 }
 
-; Wann rastet die Walze ein? (Sound "Spielautomat" ist genau darauf geschnitten)
-HitLand(style) => style = "dv" ? 1.05 : 0.9
+; Wann rastet das Schloss ein? (Sound "Siegel" ist genau darauf geschnitten)
+HitLand(style) => 0.56
+; Ab wann steht das Bild still (danach wird nicht mehr gezeichnet)
+HitStill(style) => 1.05
 
 HitEase(x) => 1 - (1 - Max(0, Min(1, x))) ** 3
 HitBack(x) {                                            ; Feder-Kurve: schießt leicht über das Ziel hinaus
     x := Max(0, Min(1, x))
     return 1 + 2.7 * (x - 1) ** 3 + 1.7 * (x - 1) ** 2
 }
-HitRnd(i) {                                             ; feste "Zufalls"-Zahl 0..1 je Index
-    v := Sin(i * 127.1 + 311.7) * 43758.5453
-    return v - Floor(v)
-}
 
-; Chaos/Mageblood: Mod-Zeilen rattern vorbei und rasten auf dem Treffer ein (6 volle Umdrehungen)
-HitReelMods(g, secs, info, rx, ry, rw, rh, land) {
-    reel := info.Reel, lines := reel.Lines, n := lines.Length
-    after := secs - land, LH := 36, mid := ry + rh / 2
-    total := n * 6 + reel.Target - 1
-    if secs < land
-        p := HitEase(secs / land) * total
-    else
-        p := total + Sin(Min(1, after / 0.25) * 3.14159) * 0.12 * Exp(-after * 6)
-    speed := secs < land ? (1 - Min(1, secs / land)) * 3 : 0
-    hl := after > 0 ? Min(1, after / 0.12) : 0
-    br := Brush((Round(255 * (0.10 + 0.12 * hl)) << 24) | 0xE9B44C)   ; Gewinnlinie
-    DllCall("gdiplus\GdipFillRectangle", "Ptr", g, "Ptr", br, "Float", rx, "Float", mid - LH / 2, "Float", rw, "Float", LH)
-    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    pen := PenOf((Round(255 * (0.35 + 0.65 * hl)) << 24) | 0xE9B44C, 1.5)
-    DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", rx, "Float", mid - LH / 2, "Float", rx + rw, "Float", mid - LH / 2)
-    DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", rx, "Float", mid + LH / 2, "Float", rx + rw, "Float", mid + LH / 2)
+; Das Siegel: Ring, 24 Kerben (leuchten reihum), Scheibe mit Schlüsselloch (dreht sich beim Einrasten)
+;  p = Anteil der leuchtenden Kerben, kl = 0..1 Einrasten, after = Sekunden seit dem Einrasten
+HitSeal(g, x, y, p, kl, after) {
+    RO := 46
+    pen := PenOf(kl >= 1 ? 0xFFD6A640 : 0xFF3A3D42, 1.6)
+    DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", x - RO, "Float", y - RO, "Float", RO * 2, "Float", RO * 2)
     DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    fl := Floor(p), fp := p - fl
-    loop 7 {
-        k := A_Index - 4
-        y := mid + (k - fp) * LH
-        fade := 1 - Min(1, Abs(y - mid) / (rh * 0.62))
-        if fade <= 0.02
-            continue
-        li := Mod(Mod(fl + k, n) + n, n) + 1
-        isT := after > 0 && k = 0
-        col := isT ? 0xD6D6FF : 0x8888FF, size := isT ? 17 : 15, a := Round(255 * fade)
-        if speed > 0.4 {                                ; Bewegungsunschärfe: zwei blasse Kopien
-            off := Min(3, speed) * 2.2, ga := Round(a * 0.3)
-            DrawText(g, lines[li], rx + 16, y - LH / 2 - off, rw - 28, LH, size, 1, (ga << 24) | col, 0)
-            DrawText(g, lines[li], rx + 16, y - LH / 2 + off, rw - 28, LH, size, 1, (ga << 24) | col, 0)
-            a := Round(a * 0.6)
-        }
-        DrawText(g, lines[li], rx + 16, y - LH / 2, rw - 28, LH, size, 1, (a << 24) | col, 0)
+    lit := p * 24
+    penOff := PenOf(0xFF3A3D42, 2), penOn := PenOf(0xFFF0CF7A, 2)
+    for pn in [penOff, penOn]
+        DllCall("gdiplus\GdipSetPenStartCap", "Ptr", pn, "Int", 2), DllCall("gdiplus\GdipSetPenEndCap", "Ptr", pn, "Int", 2)
+    loop 24 {
+        i := A_Index - 1, a := i * 0.2617994
+        r1 := Mod(i, 6) ? 35 : 32, r2 := 41
+        DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", i < lit ? penOn : penOff
+            , "Float", x + r1 * Sin(a), "Float", y - r1 * Cos(a), "Float", x + r2 * Sin(a), "Float", y - r2 * Cos(a))
     }
-}
-
-; Divine: Ziffern-Walzen je erreichtem Wert, rasten nacheinander ein (links -> rechts, oben -> unten)
-HitReelDigits(g, secs, info, rx, ry, rw, rh, land) {
-    vals := info.Reel.Values, nv := Min(3, vals.Length), nd := 0
-    loop nv
-        nd += StrLen(RegExReplace(vals[A_Index].Digits, "\D"))
-    k := 0, y0 := ry + (rh - nv * 40) / 2 + 4
-    loop nv {
-        v := vals[A_Index], yy := y0 + (A_Index - 1) * 40
-        str := v.Digits, unitW := v.Unit != "" ? 20 : 0, wsum := 0
-        loop parse str
-            wsum += IsDigit(A_LoopField) ? 26 : 11
-        xs := rx + rw - 12 - unitW - wsum, x := xs, lastStop := 0
-        loop parse str {
-            ch := A_LoopField
-            if !IsDigit(ch) {                           ; Komma/Minus: fest, ohne Walze
-                DrawText(g, ch, x - 7, yy, 25, 32, 18, 1, 0xFFEDE6D6, 1)
-                x += 11
-                continue
-            }
-            k++
-            stp := nd > 1 ? 0.4 + (land - 0.48) * (k - 1) / (nd - 1) : land - 0.08
-            lastStop := stp
-            cell := GoldCell(g, x, yy, 23, 32, 5)
-            gc := 0
-            DllCall("gdiplus\GdipSaveGraphics", "Ptr", g, "UInt*", &gc)
-            DllCall("gdiplus\GdipSetClipPath", "Ptr", g, "Ptr", cell, "Int", 1)   ; Schnitt mit dem Walzenfenster
-            spinning := secs < stp, dt := secs - stp
-            q := spinning ? secs * 22 + k * 3 : Integer(ch) + (dt < 0.2 ? Sin(dt / 0.2 * 3.14159) * 0.15 * Exp(-dt * 8) : 0)
-            qf := Floor(q)
-            loop 3 {
-                kk := A_Index - 2
-                dg := Mod(Mod(qf + kk, 10) + 10, 10)
-                DrawText(g, dg, x - 8, yy + 1 + (kk - (q - qf)) * 30, 39, 32, 22, 1, spinning ? 0xC81B1406 : 0xFF1B1406, 1)
-            }
-            DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gc)
-            DllCall("gdiplus\GdipDeletePath", "Ptr", cell)
-            x += 26
-        }
-        if v.Unit != ""
-            DrawText(g, v.Unit, x - 1, yy, 34, 32, 16, 1, 0xFFEDE6D6, 0)
-        ok := secs > lastStop + 0.1
-        DrawText(g, v.Label, rx + 14, yy, xs - rx - 14 - 24, 32, 13, 1, 0xFF8F9A94, 0)
-        if ok
-            CheckMark(g, xs - 17, yy + 16, 0xFFE9B44C)
-    }
-}
-
-; Wappen: dunkle Münze mit Goldring auf dem oberen Rahmen, federt beim Einrasten
-HitCrest(g, x, y, after, pulse, img, secs) {
-    s := 1
-    if after > 0 && after < 0.32
-        s := 1 + 0.2 * Sin(after / 0.32 * 3.14159)
-    r := 34 * s
-    if after > 0
-        SoftGlow(g, x, y, 70 * s, 62 * s, Min(1, 0.55 * pulse * Min(1, after / 0.2)), 0xFFD78A)
-    br := Brush(0xFF15191C)
+    DllCall("gdiplus\GdipDeletePen", "Ptr", penOff), DllCall("gdiplus\GdipDeletePen", "Ptr", penOn)
+    ; Scheibe: dunkel -> Gold
+    k := kl * kl * (3 - 2 * kl)
+    cr := Round(0x1E + (0xD6 - 0x1E) * k), cg := Round(0x1F + (0xA6 - 0x1F) * k), cb := Round(0x22 + (0x40 - 0x22) * k)
+    br := Brush(0xFF000000 | (cr << 16) | (cg << 8) | cb), r := 25
     DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", x - r, "Float", y - r, "Float", r * 2, "Float", r * 2)
     DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    pen := PenOf((Round(255 * (0.7 + 0.3 * pulse)) << 24) | 0xE9B44C, 2.5)
-    DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", x - r, "Float", y - r, "Float", r * 2, "Float", r * 2)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    pen := PenOf(0x50E9B44C, 1)
-    DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", x - r + 5, "Float", y - r + 5, "Float", r * 2 - 10, "Float", r * 2 - 10)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    if img {
-        d := Round(54 * s)
-        DllCall("gdiplus\GdipDrawImageRectI", "Ptr", g, "Ptr", img, "Int", Round(x - d / 2), "Int", Round(y - d / 2), "Int", d, "Int", d)
-    }
-    if after > 0 {                                      ; kreisender Funke
-        an := secs * 2.2
-        Star(g, x + Cos(an) * (r + 5), y + Sin(an) * (r + 5), 7 + 3 * pulse, 0xF0FFFFFF)
-    }
-}
-
-; Titelgröße einmal je Treffer ausmessen (passt sicher vor den Zähler)
-HitTitleFit(info, ttl, maxW) {
-    hf := HitFonts(), fsz := 46, w := 0
-    loop {
-        path := HitTitlePath(ttl, fsz, hf)
-        rb := Buffer(16, 0)
-        DllCall("gdiplus\GdipGetPathWorldBounds", "Ptr", path, "Ptr", rb, "Ptr", 0, "Ptr", 0)
-        DllCall("gdiplus\GdipDeletePath", "Ptr", path)
-        w := NumGet(rb, 8, "Float")
-        if w <= maxW || fsz <= 22
-            break
-        fsz -= 2
-    }
-    info.TitleFs := fsz, info.TitleW := w
-}
-
-HitTitlePath(ttl, fsz, hf) {
-    static fmt := 0
-    if !fmt {
-        DllCall("gdiplus\GdipCreateStringFormat", "Int", 0x1000, "Int", 0, "Ptr*", &fmt)
-        DllCall("gdiplus\GdipSetStringFormatLineAlign", "Ptr", fmt, "Int", 1)
-    }
+    ; Schlüsselloch: steht quer und dreht sich beim Einrasten in die Senkrechte
+    ang := 90 * (1 - HitBack(kl))
+    gs := 0
+    DllCall("gdiplus\GdipSaveGraphics", "Ptr", g, "UInt*", &gs)
+    DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g, "Float", x, "Float", y, "Int", 0)
+    DllCall("gdiplus\GdipRotateWorldTransform", "Ptr", g, "Float", ang, "Int", 0)
     path := 0
     DllCall("gdiplus\GdipCreatePath", "Int", 0, "Ptr*", &path)
-    DllCall("gdiplus\GdipAddPathString", "Ptr", path, "WStr", ttl, "Int", -1, "Ptr", hf.Title, "Int", hf.TitleStyle
-        , "Float", fsz, "Ptr", RectF(0, -fsz, 900, fsz * 2), "Ptr", fmt)
-    return path
-}
-
-; Goldschrift: weiches Leuchten, dunkle Kontur, Verlauf, Glanz-Wisch
-HitTitle(g, ttl, info, isDv, pulse, k, after) {
-    hf := HitFonts(), path := HitTitlePath(ttl, info.TitleFs, hf), ka := Round(255 * k)
-    loop 3 {
-        pen := PenOf((Round(41 * pulse * k) << 24) | 0xFFD678, 4 + A_Index * 5)
-        DllCall("gdiplus\GdipSetPenLineJoin", "Ptr", pen, "Int", 2)
-        DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", path)
+    DllCall("gdiplus\GdipAddPathEllipse", "Ptr", path, "Float", -5.5, "Float", -11, "Float", 11, "Float", 11)
+    pts := Buffer(32)
+    NumPut("Float", -3, "Float", -3, "Float", 3, "Float", -3, "Float", 4.8, "Float", 12, "Float", -4.8, "Float", 12, pts)
+    DllCall("gdiplus\GdipAddPathPolygon", "Ptr", path, "Ptr", pts, "Int", 4)
+    DllCall("gdiplus\GdipSetPathFillMode", "Ptr", path, "Int", 1)       ; überlappende Teile bleiben gefüllt
+    br := Brush(k > 0.5 ? 0xFF121314 : 0xFF66635D)
+    DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", path)
+    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+    DllCall("gdiplus\GdipDeletePath", "Ptr", path)
+    DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gs)
+    ; ein einzelner Ring läuft nach außen
+    if after > 0 && after < 0.5 {
+        e := HitEase(after / 0.5), rr := RO + 30 * e
+        pen := PenOf((Round(150 * (1 - e)) << 24) | 0xD6A640, 2)
+        DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", x - rr, "Float", y - rr, "Float", rr * 2, "Float", rr * 2)
         DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
     }
-    pen := PenOf((ka << 24) | 0x3A2508, 4)
-    DllCall("gdiplus\GdipSetPenLineJoin", "Ptr", pen, "Int", 2)
-    DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", path)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    br := 0, hh := info.TitleFs / 2
-    DllCall("gdiplus\GdipCreateLineBrushFromRect", "Ptr", RectF(0, -hh - 1, 600, hh * 2 + 2), "UInt", (ka << 24) | (isDv ? 0xFFFFFF : 0xFFF4C4)
-        , "UInt", (ka << 24) | (isDv ? 0xE0A93A : 0xC98A2A), "Int", 1, "Int", 0, "Ptr*", &br)
-    DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", path)
-    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    if after > 0.3 {
-        sw := Mod(after - 0.3, isDv ? 1.4 : 1.8) / 0.7
-        if sw <= 1 {
-            DllCall("gdiplus\GdipSetClipPath", "Ptr", g, "Ptr", path, "Int", 1)
-            sx := -80 + sw * (info.TitleW + 160), hh2 := info.TitleFs
-            pts := Buffer(32)
-            NumPut("Float", sx, "Float", -hh2, "Float", sx + 34, "Float", -hh2, "Float", sx + 6, "Float", hh2, "Float", sx - 28, "Float", hh2, pts)
-            br := Brush(0xA8FFFFFF)
-            DllCall("gdiplus\GdipFillPolygon", "Ptr", g, "Ptr", br, "Ptr", pts, "Int", 4, "Int", 0)
-            DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-        }
-    }
-    DllCall("gdiplus\GdipDeletePath", "Ptr", path)
-}
-
-; goldene Walzen-Zelle (Verlauf wie eine polierte Münze); gibt den Umriss zurück (Aufrufer löscht ihn)
-GoldCell(g, x, y, w, h, r) {
-    static cols := 0, pos := 0
-    if !cols {
-        cols := Buffer(20), pos := Buffer(20)
-        NumPut("UInt", 0xFF8D6A24, "UInt", 0xFFF6D58A, "UInt", 0xFFFFF3D0, "UInt", 0xFFF2CD76, "UInt", 0xFF8D6A24, cols)
-        NumPut("Float", 0, "Float", 0.18, "Float", 0.5, "Float", 0.82, "Float", 1, pos)
-    }
-    path := RoundPath(x, y, w, h, r), br := 0
-    DllCall("gdiplus\GdipCreateLineBrushFromRect", "Ptr", RectF(x, y - 1, w, h + 2), "UInt", 0xFF8D6A24, "UInt", 0xFF8D6A24, "Int", 1, "Int", 0, "Ptr*", &br)
-    DllCall("gdiplus\GdipSetLinePresetBlend", "Ptr", br, "Ptr", cols, "Ptr", pos, "Int", 5)
-    DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", path)
-    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    pen := PenOf(0x66000000, 1)
-    DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", path)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    return path
-}
-
-; Münze im Flug: dreht sich (wird schmal/breit), Verlauf von dunkel- zu hellgold
-Coin(g, x, y, r, spin, a) {
-    if a <= 0.02
-        return
-    w := Max(1, Abs(Cos(spin)) * r), al := Round(255 * a) << 24, br := 0
-    DllCall("gdiplus\GdipCreateLineBrushFromRect", "Ptr", RectF(x - w - 1, y - r, w * 2 + 2, r * 2), "UInt", al | 0x8D6A24, "UInt", al | 0xB8882E, "Int", 0, "Int", 0, "Ptr*", &br)
-    cols := Buffer(12), pos := Buffer(12)
-    NumPut("UInt", al | 0x8D6A24, "UInt", al | 0xFFF0C2, "UInt", al | 0xB8882E, cols)
-    NumPut("Float", 0, "Float", 0.5, "Float", 1, pos)
-    DllCall("gdiplus\GdipSetLinePresetBlend", "Ptr", br, "Ptr", cols, "Ptr", pos, "Int", 3)
-    DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", x - w, "Float", y - r, "Float", w * 2, "Float", r * 2)
-    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    pen := PenOf((Round(200 * a) << 24) | 0x5A3C0A, 1.2)
-    DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", x - w, "Float", y - r, "Float", w * 2, "Float", r * 2)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
 }
 
 ; Haken als Linie (die mitgelieferte Schrift hat kein ✓)
@@ -4250,8 +3980,7 @@ CheckMark(g, x, y, argb) {
 }
 
 ; ---------------------------------------------------------------------------
-;  Zwischenspeicher: teure Teile (Strahlen mit Farbe/Deckkraft, weicher Schein, Leisten-Fläche) werden
-;  einmal als Bild gezeichnet und danach nur noch kopiert -> viel weniger Arbeit je Bild
+;  Zwischenspeicher: die Fläche mit weichem Schatten wird einmal gezeichnet und danach nur kopiert
 ; ---------------------------------------------------------------------------
 HitCacheGet(key) => HitBmps.Has(key) ? HitBmps[key] : 0
 
@@ -4267,193 +3996,79 @@ HitCacheNew(key, w, h, &g2) {
     return bmp
 }
 
-; Leuchten um die Leiste + Fläche + Glanzkante + Walzen-Fenster, in voller Auflösung (Maßstab der Anzeige)
-HitPanelDraw(g, px, py, pw, ph, rx, ry, rw, rh, lit) {
+; Schatten + Fläche + Haarlinie, in voller Auflösung (Maßstab der Anzeige)
+HitPanelDraw(g, px, py, pw, ph) {
     hs := HitBarPos.HasOwnProp("S") ? HitBarPos.S : 1
-    x0 := px - 30, y0 := py - 30, lw := pw + 60, lh := ph + 60
-    key := "panel|" (lit ? 1 : 0) "|" rw "|" Round(hs * 100)
+    x0 := px - 24, y0 := py - 24, lw := pw + 48, lh := ph + 48
+    key := "panel8|" pw "|" ph "|" Round(hs * 100)
     if !(bmp := HitCacheGet(key)) {
         bmp := HitCacheNew(key, Ceil(lw * hs), Ceil(lh * hs), &g2)
         DllCall("gdiplus\GdipScaleWorldTransform", "Ptr", g2, "Float", hs, "Float", hs, "Int", 0)
         DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g2, "Float", -x0, "Float", -y0, "Int", 0)
-        loop 10 {
-            i := A_Index
-            a := Round(255 * (lit ? 0.42 : 0.18) * 0.9 * (1 - i / 11) ** 2)
-            path := RoundPath(px - i * 2.4, py - i * 2.4, pw + i * 4.8, ph + i * 4.8, 18 + i * 2.4)
-            pen := PenOf((a << 24) | 0xE9B44C, 3)
-            DllCall("gdiplus\GdipDrawPath", "Ptr", g2, "Ptr", pen, "Ptr", path)
-            DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-            DllCall("gdiplus\GdipDeletePath", "Ptr", path)
+        loop 12 {                                       ; weicher Schatten nach unten
+            i := 13 - A_Index
+            br := Brush((Round(26 * (1 - i / 13) ** 1.6) << 24) | 0x000000)
+            DllCall("gdiplus\GdipFillRectangle", "Ptr", g2, "Ptr", br, "Float", px - i, "Float", py - i + 6, "Float", pw + i * 2, "Float", ph + i * 2)
+            DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
         }
-        path := RoundPath(px, py, pw, ph, 18), br := 0
-        DllCall("gdiplus\GdipCreateLineBrushFromRect", "Ptr", RectF(px, py - 1, pw, ph + 2), "UInt", 0xFC232A2F, "UInt", 0xFC15191C, "Int", 1, "Int", 0, "Ptr*", &br)
-        DllCall("gdiplus\GdipFillPath", "Ptr", g2, "Ptr", br, "Ptr", path)
+        br := Brush(0xF8121314)
+        DllCall("gdiplus\GdipFillRectangle", "Ptr", g2, "Ptr", br, "Float", px, "Float", py, "Float", pw, "Float", ph)
         DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-        DllCall("gdiplus\GdipDeletePath", "Ptr", path)
-        pen := PenOf(0x1EFFFFFF, 1.2)                   ; feine Glanzkante oben
-        DllCall("gdiplus\GdipDrawLine", "Ptr", g2, "Ptr", pen, "Float", px + 18, "Float", py + 2, "Float", px + pw - 18, "Float", py + 2)
+        pen := PenOf(0xFF2A2C30, 1)
+        DllCall("gdiplus\GdipDrawRectangle", "Ptr", g2, "Ptr", pen, "Float", px + 0.5, "Float", py + 0.5, "Float", pw - 1, "Float", ph - 1)
         DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-        path := RoundPath(rx, ry, rw, rh, 10)
-        br := Brush(0xFF0E1113)
-        DllCall("gdiplus\GdipFillPath", "Ptr", g2, "Ptr", br, "Ptr", path)
-        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-        DllCall("gdiplus\GdipDeletePath", "Ptr", path)
         DllCall("gdiplus\GdipDeleteGraphics", "Ptr", g2)
     }
     DllCall("gdiplus\GdipDrawImageRect", "Ptr", g, "Ptr", bmp, "Float", x0, "Float", y0, "Float", lw, "Float", lh)
 }
 
-; Strahlen-Textur gedreht und elliptisch gestreckt; Farbe/Deckkraft werden je Stufe einmal vorberechnet
-DrawRayLayer(g, img, cx, cy, rx, ry, deg, tint, alpha) {
-    if alpha <= 0.01
-        return
-    lvl := Max(1, Round(Min(1, alpha) * 12))
-    key := "ray|" img "|" tint[2] "|" lvl
-    if !(bmp := HitCacheGet(key)) {
-        w := 0, h := 0, attr := 0
-        DllCall("gdiplus\GdipGetImageWidth", "Ptr", img, "UInt*", &w)
-        DllCall("gdiplus\GdipGetImageHeight", "Ptr", img, "UInt*", &h)
-        bmp := HitCacheNew(key, w, h, &g2)
-        DllCall("gdiplus\GdipCreateImageAttributes", "Ptr*", &attr)
-        cm := Buffer(100, 0)                            ; 5x5-Farbmatrix: R,G,B tönen, A = Deckkraft
-        NumPut("Float", tint[1], cm, 0), NumPut("Float", tint[2], cm, 24), NumPut("Float", tint[3], cm, 48)
-        NumPut("Float", lvl / 12, cm, 72), NumPut("Float", 1.0, cm, 96)
-        DllCall("gdiplus\GdipSetImageAttributesColorMatrix", "Ptr", attr, "Int", 0, "Int", 1, "Ptr", cm, "Ptr", 0, "Int", 0)
-        DllCall("gdiplus\GdipDrawImageRectRect", "Ptr", g2, "Ptr", img, "Float", 0, "Float", 0, "Float", w, "Float", h
-            , "Float", 0, "Float", 0, "Float", w, "Float", h, "Int", 2, "Ptr", attr, "Ptr", 0, "Ptr", 0)
-        DllCall("gdiplus\GdipDisposeImageAttributes", "Ptr", attr)
-        DllCall("gdiplus\GdipDeleteGraphics", "Ptr", g2)
-    }
-    gState := 0
-    DllCall("gdiplus\GdipSaveGraphics", "Ptr", g, "UInt*", &gState)
-    DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g, "Float", cx, "Float", cy, "Int", 0)
-    DllCall("gdiplus\GdipScaleWorldTransform", "Ptr", g, "Float", rx / 256, "Float", ry / 256, "Int", 0)
-    DllCall("gdiplus\GdipRotateWorldTransform", "Ptr", g, "Float", deg, "Int", 0)
-    DllCall("gdiplus\GdipDrawImageRect", "Ptr", g, "Ptr", bmp, "Float", -256, "Float", -256, "Float", 512, "Float", 512)
-    DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gState)
-}
-
-; weicher, elliptischer Schein (Verlauf von der Mitte nach außen); je Größe/Stufe einmal vorberechnet
-SoftGlow(g, cx, cy, rx, ry, alpha, rgb) {
-    if alpha <= 0.01
-        return
-    lvl := Max(1, Round(Min(1, alpha) * 16))
-    key := "glow|" Round(rx / 20) "|" Round(ry / 20) "|" rgb "|" lvl
-    if !(bmp := HitCacheGet(key)) {
-        bw := Max(16, Round(rx)), bh := Max(16, Round(ry))   ; halbe Auflösung reicht für einen weichen Verlauf
-        bmp := HitCacheNew(key, bw, bh, &g2)
-        op := 0, pg := 0
-        DllCall("gdiplus\GdipCreatePath", "Int", 0, "Ptr*", &op)
-        DllCall("gdiplus\GdipAddPathEllipse", "Ptr", op, "Float", 0, "Float", 0, "Float", bw, "Float", bh)
-        DllCall("gdiplus\GdipCreatePathGradientFromPath", "Ptr", op, "Ptr*", &pg)
-        if pg {
-            DllCall("gdiplus\GdipSetPathGradientCenterColor", "Ptr", pg, "UInt", (Round(255 * lvl / 16) << 24) | rgb)
-            col := Buffer(4), NumPut("UInt", rgb & 0xFFFFFF, col), cnt := 1
-            DllCall("gdiplus\GdipSetPathGradientSurroundColorsWithCount", "Ptr", pg, "Ptr", col, "Int*", &cnt)
-            DllCall("gdiplus\GdipFillPath", "Ptr", g2, "Ptr", pg, "Ptr", op)
-            DllCall("gdiplus\GdipDeleteBrush", "Ptr", pg)
-        }
-        DllCall("gdiplus\GdipDeletePath", "Ptr", op)
-        DllCall("gdiplus\GdipDeleteGraphics", "Ptr", g2)
-    }
-    DllCall("gdiplus\GdipDrawImageRect", "Ptr", g, "Ptr", bmp, "Float", cx - rx, "Float", cy - ry, "Float", rx * 2, "Float", ry * 2)
-}
-
-; Divine Orb: Kugel mit Verlauf (weiß -> gold), Lichtkranz, Glanzpunkt, kreisender Funke
-DrawDivineOrb(g, ocx, ocy, rad, secs, pulse) {
-    loop 3 {                                     ; Lichtkranz
-        br := Brush((Round((34 - A_Index * 9) * pulse) << 24) | 0xFFE7A8)
-        rr2 := rad + A_Index * 7
-        DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", ocx - rr2, "Float", ocy - rr2, "Float", rr2 * 2, "Float", rr2 * 2)
-        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    }
-    op := 0, pg := 0
-    DllCall("gdiplus\GdipCreatePath", "Int", 0, "Ptr*", &op)
-    DllCall("gdiplus\GdipAddPathEllipse", "Ptr", op, "Float", ocx - rad, "Float", ocy - rad, "Float", rad * 2, "Float", rad * 2)
-    DllCall("gdiplus\GdipCreatePathGradientFromPath", "Ptr", op, "Ptr*", &pg)
-    if pg {
-        DllCall("gdiplus\GdipSetPathGradientCenterColor", "Ptr", pg, "UInt", 0xFFFFFFFF)
-        col := Buffer(4), NumPut("UInt", 0xFFB9761E, col), cnt := 1
-        DllCall("gdiplus\GdipSetPathGradientSurroundColorsWithCount", "Ptr", pg, "Ptr", col, "Int*", &cnt)
-        cp := Buffer(8), NumPut("Float", ocx - rad * 0.3, "Float", ocy - rad * 0.35, cp)
-        DllCall("gdiplus\GdipSetPathGradientCenterPoint", "Ptr", pg, "Ptr", cp)
-        DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", pg, "Ptr", op)
-        DllCall("gdiplus\GdipDeleteBrush", "Ptr", pg)
-    }
-    pen := PenOf(0xFFFFE9A8, 2)
-    DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", op)
-    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
-    DllCall("gdiplus\GdipDeletePath", "Ptr", op)
-    loop 3 {                                     ; leuchtender Kern
-        cr := rad * (0.42 - A_Index * 0.1)
-        br := Brush((Round((70 + A_Index * 50) * pulse) << 24) | 0xFFFFFF)
-        DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", ocx - cr, "Float", ocy - cr, "Float", cr * 2, "Float", cr * 2)
-        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    }
-    loop 2 {                                     ; langsam drehendes Lichtkreuz im Kern
-        ra := secs * 0.9 + A_Index * 0.785, len := rad * (A_Index = 1 ? 0.95 : 0.6), wd := rad * 0.09
-        pts := Buffer(64)
-        NumPut("Float", ocx + Cos(ra) * len, "Float", ocy + Sin(ra) * len, "Float", ocx + Cos(ra + 1.5708) * wd, "Float", ocy + Sin(ra + 1.5708) * wd
-             , "Float", ocx + Cos(ra + 1.5708) * len, "Float", ocy + Sin(ra + 1.5708) * len, "Float", ocx + Cos(ra + 3.1416) * wd, "Float", ocy + Sin(ra + 3.1416) * wd
-             , "Float", ocx + Cos(ra + 3.1416) * len, "Float", ocy + Sin(ra + 3.1416) * len, "Float", ocx + Cos(ra + 4.7124) * wd, "Float", ocy + Sin(ra + 4.7124) * wd
-             , "Float", ocx + Cos(ra + 4.7124) * len, "Float", ocy + Sin(ra + 4.7124) * len, "Float", ocx + Cos(ra) * wd, "Float", ocy + Sin(ra) * wd, pts)
-        br := Brush((Round((A_Index = 1 ? 210 : 140) * pulse) << 24) | 0xFFFBEA)
-        DllCall("gdiplus\GdipFillPolygon", "Ptr", g, "Ptr", br, "Ptr", pts, "Int", 8, "Int", 0)
-        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    }
-    br := Brush(0xD0FFFFFF)                      ; Glanzpunkt
-    DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", ocx - rad * 0.55, "Float", ocy - rad * 0.62, "Float", rad * 0.5, "Float", rad * 0.32)
-    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    an := secs * 2.2                             ; kreisender Funke
-    Star(g, ocx + Cos(an) * (rad + 6), ocy + Sin(an) * (rad + 6), 9 + 3 * pulse, 0xF0FFFFFF)
-}
-
-; Schriften für die Treffer-Leiste: Barlow + Marcellus SC aus ui\fonts (eigene Sammlung), sonst Segoe UI
+; Schriften für die Treffer-Leiste: IBM Plex aus ui\fonts (eigene Sammlung), sonst Segoe UI
+;  Body = Plex Sans (normal/fett), Semi = Plex Sans SemiBold, Cond = Plex Sans Condensed SemiBold, Mono = Plex Mono SemiBold
 HitFonts() {
     static res := 0
     if IsObject(res)
         return res
-    coll := 0, body := 0, ttl := 0
+    coll := 0, fam := Map()
     try {
         DllCall("gdiplus\GdipNewPrivateFontCollection", "Ptr*", &coll)
         if coll {
-            for f in ["Barlow-Regular", "Barlow-Bold", "MarcellusSC-Regular"]
+            for f in ["IBMPlexSans-Regular", "IBMPlexSans-Bold", "IBMPlexSans-SemiBold", "IBMPlexSansCondensed-SemiBold", "IBMPlexMono-SemiBold"]
                 if FileExist(A_ScriptDir "\ui\fonts\" f ".ttf")
                     DllCall("gdiplus\GdipPrivateAddFontFile", "Ptr", coll, "WStr", A_ScriptDir "\ui\fonts\" f ".ttf")
-            DllCall("gdiplus\GdipCreateFontFamilyFromName", "WStr", "Barlow", "Ptr", coll, "Ptr*", &body)
-            DllCall("gdiplus\GdipCreateFontFamilyFromName", "WStr", "Marcellus SC", "Ptr", coll, "Ptr*", &ttl)
+            for k, nm in Map("Body", "IBM Plex Sans", "Semi", "IBM Plex Sans SemiBold", "Cond", "IBM Plex Sans Condensed SemiBold", "Mono", "IBM Plex Mono SemiBold") {
+                ff := 0
+                DllCall("gdiplus\GdipCreateFontFamilyFromName", "WStr", nm, "Ptr", coll, "Ptr*", &ff)
+                if ff
+                    fam[k] := ff
+            }
         }
     }
-    if !body
-        body := FontFamily()
-    res := {Body: body, Title: ttl ? ttl : body, TitleStyle: ttl ? 0 : 1, Coll: coll}
+    body := fam.Has("Body") ? fam["Body"] : FontFamily()
+    res := {Body: body, Semi: fam.Has("Semi") ? fam["Semi"] : 0, Cond: fam.Has("Cond") ? fam["Cond"] : 0
+        , Mono: fam.Has("Mono") ? fam["Mono"] : 0, Coll: coll}
     return res
 }
 
 HitFont() => HitFonts().Body
 
 ; Schrift-Objekte je Größe nur einmal anlegen (spart Zeit in jedem Bild)
-HitFontObj(size, bold) {
+;  bold: 0 = normal, 1 = halbfett (SemiBold), 2 = fett.  face: "" | "cond" | "mono"
+HitFontObj(size, bold, face := "") {
     static cache := Map()
-    key := Round(size, 1) "|" (bold ? 1 : 0)
+    key := Round(size, 1) "|" bold "|" face
     if cache.Has(key)
         return cache[key]
-    fam := HitFonts().Body, font := 0
-    if DllCall("gdiplus\GdipCreateFont", "Ptr", fam, "Float", size, "Int", bold ? 1 : 0, "Int", 2, "Ptr*", &font) || !font {
-        font := 0                                       ; Fett nicht vorhanden -> normal
+    hf := HitFonts(), style := 0
+    fam := face = "cond" ? hf.Cond : face = "mono" ? hf.Mono : bold = 1 ? hf.Semi : 0
+    if !fam
+        fam := hf.Body, style := bold ? 1 : 0
+    font := 0
+    if DllCall("gdiplus\GdipCreateFont", "Ptr", fam, "Float", size, "Int", style, "Int", 2, "Ptr*", &font) || !font {
+        font := 0                                       ; Stil nicht vorhanden -> normal
         DllCall("gdiplus\GdipCreateFont", "Ptr", fam, "Float", size, "Int", 0, "Int", 2, "Ptr*", &font)
     }
     cache[key] := font
     return font
-}
-
-Star(g, x, y, r, argb) {
-    pts := Buffer(64), q := r * 0.22
-    NumPut("Float", x, "Float", y - r, "Float", x + q, "Float", y - q, "Float", x + r, "Float", y, "Float", x + q, "Float", y + q
-         , "Float", x, "Float", y + r, "Float", x - q, "Float", y + q, "Float", x - r, "Float", y, "Float", x - q, "Float", y - q, pts)
-    br := Brush(argb)
-    DllCall("gdiplus\GdipFillPolygon", "Ptr", g, "Ptr", br, "Ptr", pts, "Int", 8, "Int", 0)
-    DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
 }
 
 Brush(argb) {
@@ -4492,8 +4107,8 @@ RoundPath(x, y, w, h, r) {
     return path
 }
 
-; align: 0 = links, 1 = mittig; zu lang -> "…"
-DrawText(g, text, x, y, w, h, size, bold, argb, align) {
+; align: 0 = links, 1 = mittig, 2 = rechts; zu lang -> "…".  bold/face siehe HitFontObj
+DrawText(g, text, x, y, w, h, size, bold, argb, align, face := "") {
     static fmts := Map()
     if !fmts.Has(align) {
         fmt := 0
@@ -4506,7 +4121,7 @@ DrawText(g, text, x, y, w, h, size, bold, argb, align) {
     if ((argb >> 24) & 0xFF) = 0
         return
     br := Brush(argb)
-    DllCall("gdiplus\GdipDrawString", "Ptr", g, "WStr", String(text), "Int", -1, "Ptr", HitFontObj(size, bold), "Ptr", RectF(x, y, w, h), "Ptr", fmts[align], "Ptr", br)
+    DllCall("gdiplus\GdipDrawString", "Ptr", g, "WStr", String(text), "Int", -1, "Ptr", HitFontObj(size, bold, face), "Ptr", RectF(x, y, w, h), "Ptr", fmts[align], "Ptr", br)
     DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
 }
 
@@ -4590,7 +4205,8 @@ ReelDv(vals) {
         for idx, r in Dv.Rules[L.Key] {
             if nums.Length < idx || nums[idx] = ""
                 continue
-            out.Push({Label: DvLabel(L.Text) (L.Nums.Length > 1 ? " · " idx : ""), Digits: NumStr(nums[idx]), Unit: DvUnit(L.Text, idx)})
+            out.Push({Label: DvLabel(L.Text) (L.Nums.Length > 1 ? " · " idx : ""), Digits: NumStr(nums[idx]), Unit: DvUnit(L.Text, idx)
+                , Need: (r.Op = "<=" ? "≤ " : "≥ ") NumStr(r.Val)})
         }
     }
     return out.Length ? {Values: out} : 0
@@ -4608,8 +4224,8 @@ ReelDvTest() {
     r := ReelDv(vals)
     if IsObject(r)
         return r
-    return {Values: [{Label: "Physical Damage", Digits: "87", Unit: "%"}, {Label: "Lightning Damage", Digits: "162", Unit: ""}
-        , {Label: "Crit Damage Bonus", Digits: "24", Unit: "%"}]}
+    return {Values: [{Label: "Physical Damage", Digits: "87", Unit: "%", Need: "≥ 80"}, {Label: "Lightning Damage", Digits: "162", Unit: "", Need: "≥ 150"}
+        , {Label: "Crit Damage Bonus", Digits: "24", Unit: "%", Need: "≥ 20"}]}
 }
 
 ; Test-Knopf Chaos: zuletzt kopiertes Item, sonst ein Beispiel

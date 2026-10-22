@@ -1,5 +1,5 @@
-﻿CHAOS WARD v7.4.2  (früher "Craft-Schutz")  -  in 3 Schritten startklar
-   (Am einfachsten: "ChaosWard-Setup-7.4.2.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
+﻿CHAOS WARD v8.0.0  (früher "Craft-Schutz")  -  in 3 Schritten startklar
+   (Am einfachsten: "ChaosWard-Setup-8.0.0.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
     Deinstallieren: Windows-Einstellungen -> Apps -> Chaos Ward.)
 ==============================================
 
@@ -26,13 +26,12 @@
    - Die Texterkennung stellt sich beim Strg+C selbst auf deinen Bildschirm ein
      (mit und ohne HDR). Spielsprache Englisch, Fenster-Vollbild.
    - Steht "Nicht sicher lesbar" da: einmal Strg+C drücken, das prüft und entsperrt.
-   - TREFFER! = ein Wunsch-Mod ist drauf, Klicken ist gesperrt. Die Walze dreht kurz
-     und rastet auf deinem Mod ein (bei Divine: Ziffern-Walzen mit den erreichten Werten).
-     Lieber ohne Warten? Einstellungen -> Treffer-Animation -> "Sofort".
+   - TREFFER = ein Wunsch-Mod ist drauf, Klicken ist gesperrt. Das Siegel rastet in einer
+     halben Sekunde ein und zeigt deinen Mod (bei Divine: die erreichten Werte).
+     Lieber ganz ohne Bewegung? Einstellungen -> Treffer-Animation -> "Sofort".
    - F6 = fertig.
-   - Einstellungen: Treffer-Sound wählen (neu: "Spielautomat", passt zur Walze; auch eigene .wav),
-     wie lange die Treffer-Leiste
-     stehen bleibt, und "Texterkennung -> Neu einstellen" nach Monitor-/HDR-Wechsel.
+   - Einstellungen: Treffer-Sound wählen ("Siegel" passt genau zur Animation; auch eigene .wav),
+     wie lange die Treffer-Leiste stehen bleibt, und "Texterkennung -> Neu einstellen" nach Monitor-/HDR-Wechsel.
    - Einstellungen -> "Fenster im Spiel verschieben": Meldungen, Treffer-Leiste und
      Item-Anzeige mit der Maus hinziehen, dann "Fertig".
    - Reiter "Mageblood": Wunsch-Legacies mit +/- einstellen (Doppelte erlaubt),

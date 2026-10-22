@@ -15,6 +15,6 @@ Kurz gesagt (nicht verbindlich, es gilt der Lizenztext):
 Nicht von dieser Lizenz erfasst (eigene Lizenzen, liegen jeweils bei):
   - ChaosWard.exe = AutoHotkey v2 (GPL, siehe LIZENZ-AutoHotkey.txt)
   - lib\WebView2.ahk (thqby, MIT) und lib\OCR.ahk (Descolada, MIT)
-  - ui\fonts\ = Barlow und Marcellus SC (SIL Open Font License, siehe OFL-*.txt)
+  - ui\fonts\ = IBM Plex Sans, Sans Condensed und Mono (SIL Open Font License, siehe OFL-IBMPlex.txt)
   - Mod-Daten (Mods.tsv) stammen aus den Spieldaten von Path of Exile 2; Path of Exile ist eine
     Marke von Grinding Gear Games. Chaos Ward ist ein Fan-Projekt und nicht mit GGG verbunden.

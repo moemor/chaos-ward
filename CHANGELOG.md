@@ -2,6 +2,14 @@
 
 All notable changes to Chaos Ward. Versions follow `major.minor.patch`.
 
+## 8.0.0 (October 2026)
+* 🎨 New look "Seal": one font family (IBM Plex), calm charcoal and stone, square shapes and one set of line icons.
+* 🎯 Colours now mean something: teal = picked or guard on, gold only for a hit, red = banned or error.
+* 🔒 New logo and a new hit display: the seal's notches light up, the lock turns and clicks shut, then everything stays still. No more slot machine, coins or sparkles.
+* 🔊 New sound "Seal", timed to the lock. Old "Slot machine" settings switch to it automatically.
+* 🔍 The in-game item display and messages use the same style.
+* ⚡ The hit bar stops drawing once it stands still, so it costs nothing while it stays on screen.
+
 ## 7.4.2 (October 2026)
 * 🏷️ Author name is now moemor everywhere (app, license, setup).
 

@@ -25,9 +25,9 @@ DV = {"item": "Vortex Weaver  ·  Chiming Staff", "any": 0, "lines": [
 STATE = {"type": "state", "lang": "de", "theme": "obsidian", "mode": 3, "pauseMs": 800, "shiftOnly": 1, "itemOverlay": 1,
          "autoDetect": 1, "sound": 1, "ignoreFractured": 1, "unsureRelease": 0, "streamVisible": 1, "volume": 70, "diag": 1, "learned": 3,
          "key": "F6", "keys": ["F2","F3","F4","F5","F6","F7"], "activeCat": "boots_dex_armour", "on": 1, "hit": 0,
-         "wishes": {}, "need": {}, "rules": "# test\nMovement Speed >= 30", "ver": "7.0", "installed": 1,
+         "wishes": {}, "need": {}, "rules": "# test\nMovement Speed >= 30", "ver": "8.0.0", "installed": 1,
          "mb": {"rules": {"Ruby": 2, "Sapphire": 1}, "any": 0, "eff": 40, "ban": ["Basalt","Granite"], "dup": 1}, "legacies": L,
-         "soundName": "slot", "soundCustom": "", "hitBarSecs": 5, "ocr": {"best": 1215, "last": "6 Zeilen", "lang": "en-US", "en": 1}, "dv": DV}
+         "soundName": "seal", "soundCustom": "", "hitBarSecs": 5, "ocr": {"best": 1215, "last": "6 Zeilen", "lang": "en-US", "en": 1}, "dv": DV}
 STATS = {"type": "stats", "session": 137, "total": 4821, "since": 23, "history": [
   {"t": "21.10. 15:40", "name": "Eagle Branch  ·  Dueling Wand", "orbs": 58},
   {"t": "21.10. 15:02", "name": "Doom Stride  ·  Velour Shoes", "orbs": 121},

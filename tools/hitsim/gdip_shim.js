@@ -77,8 +77,9 @@ const FileExist = () => "A";
 
 // ---------------- GDI+ ----------------
 const IMAGES = {};        // Dateiname -> Image (vom Testgerüst vorgeladen)
-let TITLES = null;        // vorberechnete Titel-Umrisse (Marcellus SC)
-const FAMS = { Barlow: { name: "Barlow", asc: 1112, desc: 249, upm: 1000 }, "Marcellus SC": { name: "Marcellus SC", asc: 1995, desc: 573, upm: 2048 } };
+let TITLES = null;        // (alt) vorberechnete Titel-Umrisse
+const FAMS = { Body: { name: "Plex", w: 400, asc: 1120, desc: 275, upm: 1000 }, Semi: { name: "Plex", w: 600, asc: 1120, desc: 275, upm: 1000 },
+  Cond: { name: "Plex Cond", w: 600, asc: 1025, desc: 275, upm: 1000 }, Mono: { name: "Plex Mono", w: 600, asc: 1025, desc: 275, upm: 1000 } };
 function rgba(argb) { argb = argb >>> 0; const a = (argb >>> 24) / 255, r = (argb >> 16) & 255, g = (argb >> 8) & 255, b = argb & 255; return `rgba(${r},${g},${b},${a})`; }
 class GPath { constructor() { this.ops = []; } }
 function path2d(p) {
@@ -87,6 +88,7 @@ function path2d(p) {
     if (o[0] === "arc") { const [, x, y, w, h, s, sw] = o; P.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, s * Math.PI / 180, (s + sw) * Math.PI / 180, sw < 0); }
     else if (o[0] === "ell") { const [, x, y, w, h] = o; P.moveTo(x + w, y + h / 2); P.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, 2 * Math.PI); P.closePath(); }
     else if (o[0] === "close") P.closePath();
+    else if (o[0] === "poly") { const pts = o[1]; pts.forEach(([x, y], i) => P[i ? "lineTo" : "moveTo"](x, y)); P.closePath(); }
     else if (o[0] === "text") { const t = textGeom(o); P.addPath(new Path2D(t.d), new DOMMatrix([t.s, 0, 0, -t.s, t.x, t.base])); }
   }
   return P;
@@ -124,6 +126,10 @@ const GP = {
   GdipAddPathArc(p, x, y, w, h, s, sw) { p.ops.push(["arc", x, y, w, h, s, sw]); },
   GdipAddPathEllipse(p, x, y, w, h) { p.ops.push(["ell", x, y, w, h]); p.ell = [x, y, w, h]; },
   GdipClosePathFigure(p) { p.ops.push(["close"]); },
+  GdipAddPathPolygon(p, pts, n) { const a = []; for (let i = 0; i < n; i++) a.push([F(pts, 2 * i), F(pts, 2 * i + 1)]); p.ops.push(["poly", a]); },
+  GdipSetPathFillMode(p, m) { p.fill = m; },
+  GdipSetPenStartCap(pen, c) { pen.cap = c === 2 ? "round" : "butt"; }, GdipSetPenEndCap(pen, c) { pen.cap = c === 2 ? "round" : "butt"; },
+  GdipDrawRectangle(g, pen, x, y, w, h) { const c = g.ctx; c.strokeStyle = rgba(pen.argb); c.lineWidth = pen.w; c.strokeRect(x, y, w, h); },
   GdipAddPathString(p, str, len, fam, style, size, rectBuf, fmt) { p.ops.push(["text", str, fam, size, rectOf(rectBuf)]); },
   GdipGetPathWorldBounds(p, rb) { const o = p.ops.find(x => x[0] === "text"); const t = textGeom(o); rb.v.set(0, t.xmin); rb.v.set(4, 0); rb.v.set(8, t.xmax - t.xmin); rb.v.set(12, o[3]); },
   GdipDeletePath() {}, GdipDeleteBrush() {}, GdipDeletePen() {}, GdipDeleteStringFormat() {}, GdipDeleteFont() {}, GdipDeleteGraphics() {},
@@ -143,14 +149,14 @@ const GP = {
       const gr = c.createRadialGradient(0, 0, 0, 0, 0, 1); gr.addColorStop(0, rgba(br.center)); gr.addColorStop(1, rgba(br.surround));
       c.fillStyle = gr; c.beginPath(); c.arc(0, 0, 1, 0, 2 * Math.PI); c.fill(); c.restore(); return;
     }
-    c.fillStyle = fillStyleOf(c, br); c.fill(path2d(p));
+    c.fillStyle = fillStyleOf(c, br); c.fill(path2d(p), p.fill === 1 ? "nonzero" : "evenodd");
   },
   GdipDrawPath(g, pen, p) { const c = g.ctx; c.strokeStyle = rgba(pen.argb); c.lineWidth = pen.w; c.lineJoin = pen.join; c.stroke(path2d(p)); },
   GdipFillEllipse(g, br, x, y, w, h) { const c = g.ctx; c.fillStyle = fillStyleOf(c, br); c.beginPath(); c.ellipse(x + w / 2, y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, 2 * Math.PI); c.fill(); },
   GdipDrawEllipse(g, pen, x, y, w, h) { const c = g.ctx; c.strokeStyle = rgba(pen.argb); c.lineWidth = pen.w; c.beginPath(); c.ellipse(x + w / 2, y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, 2 * Math.PI); c.stroke(); },
   GdipFillRectangle(g, br, x, y, w, h) { const c = g.ctx; c.fillStyle = fillStyleOf(c, br); c.fillRect(x, y, w, h); },
   GdipFillPolygon(g, br, pts, n) { const c = g.ctx; c.fillStyle = fillStyleOf(c, br); c.beginPath(); for (let i = 0; i < n; i++) c[i ? "lineTo" : "moveTo"](F(pts, 2 * i), F(pts, 2 * i + 1)); c.closePath(); c.fill(); },
-  GdipDrawLine(g, pen, x1, y1, x2, y2) { const c = g.ctx; c.strokeStyle = rgba(pen.argb); c.lineWidth = pen.w; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); },
+  GdipDrawLine(g, pen, x1, y1, x2, y2) { const c = g.ctx; c.strokeStyle = rgba(pen.argb); c.lineWidth = pen.w; c.lineCap = pen.cap || "butt"; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); },
   GdipDrawLines(g, pen, pts, n) { const c = g.ctx; c.strokeStyle = rgba(pen.argb); c.lineWidth = pen.w; c.lineJoin = pen.join; c.beginPath(); for (let i = 0; i < n; i++) c[i ? "lineTo" : "moveTo"](F(pts, 2 * i), F(pts, 2 * i + 1)); c.stroke(); },
   GdipLoadImageFromFile(f, ref) { const n = f.split("\\").pop(); ref.set(IMAGES[n] || 0); },
   GdipGetImageWidth(im, ref) { ref.set(im.width); }, GdipGetImageHeight(im, ref) { ref.set(im.height); },
@@ -167,12 +173,12 @@ const GP = {
   GdipDrawImageRect(g, im, x, y, w, h) { g.ctx.drawImage(im, x, y, w, h); },
   GdipDisposeImageAttributes() {},
   GdipCreateBitmapFromScan0() { throw new Error("nicht nachgebaut"); },
-  GdipCreateFont(fam, size, style, unit, ref) { ref.set({ fam, size, bold: style & 1 }); },
+  GdipCreateFont(fam, size, style, unit, ref) { ref.set({ fam, size, weight: style & 1 ? 700 : fam.w }); },
   GdipCreateStringFormat(flags, lang, ref) { ref.set({ flags, align: 0, line: 0, trim: 0 }); },
   GdipSetStringFormatAlign(f, a) { f.align = a; }, GdipSetStringFormatLineAlign(f, a) { f.line = a; }, GdipSetStringFormatTrimming(f, t) { f.trim = t; },
   GdipDrawString(g, str, len, font, rb, fmt, br) {
     const c = g.ctx, [x, y, w, h] = rectOf(rb), fm = font.fam, sz = font.size, pad = sz / 6;
-    c.font = `${font.bold ? 700 : 400} ${sz}px "${fm.name}"`; c.fillStyle = fillStyleOf(c, br);
+    c.font = `${font.weight} ${sz}px "${fm.name}"`; c.fillStyle = fillStyleOf(c, br);
     let s = String(str); const avail = w - 2 * pad;
     if (fmt.trim === 3 && c.measureText(s).width > avail) { while (s.length > 1 && c.measureText(s + "…").width > avail) s = s.slice(0, -1); s += "…"; }
     const lineH = (fm.asc + fm.desc) / fm.upm * sz, base = (fmt.line === 1 ? y + (h - lineH) / 2 : y) + fm.asc / fm.upm * sz;
@@ -190,5 +196,5 @@ function DllCall(name, ...a) {
 const HitBmps = new Map();
 let HitBarPos = { S: 1.5 };
 function HitCacheNew(key, w, h, ref) { const cv = document.createElement("canvas"); cv.width = w; cv.height = h; const g2 = { ctx: cv.getContext("2d"), n: 0 }; ref.set(g2); HitBmps.set(key, cv); cv.toString = () => "bmp:" + key; return cv; }
-function HitFonts() { return { Body: FAMS.Barlow, Title: FAMS["Marcellus SC"], TitleStyle: 0 }; }
-function FontFamily() { return FAMS.Barlow; }
+function HitFonts() { return { Body: FAMS.Body, Semi: FAMS.Semi, Cond: FAMS.Cond, Mono: FAMS.Mono }; }
+function FontFamily() { return FAMS.Body; }

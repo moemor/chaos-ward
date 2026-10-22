@@ -7,8 +7,8 @@
 > 🚫🤖 **No macro.** Chaos Ward never reads game memory, never presses keys and never clicks for you. It only reads what *you* copy with Ctrl+C and, in Automatic mode, the item tooltip on your screen. The most it ever does is hold back your own clicks.
 
 <p align="center">
-  <img src="docs/images/hit_chaos.gif" alt="Chaos hit: the reel locks onto the mod that hit" width="640"><br>
-  <img src="docs/images/hit_dv.gif" alt="Divine hit: digit reels show the values you reached" width="640">
+  <img src="docs/images/hit_chaos.gif" alt="Chaos hit: the seal locks and shows the mod that hit" width="640"><br>
+  <img src="docs/images/hit_dv.gif" alt="Divine hit: the seal locks and shows the values you reached" width="640">
 </p>
 
 📜 © 2026 moemor · Licensed under PolyForm Noncommercial 1.0.0 (see [`LICENSE.txt`](LICENSE.txt)) · Fan project, not affiliated with or endorsed by Grinding Gear Games.
@@ -30,8 +30,8 @@ Chaos Ward was designed, directed and tested by moemor and developed with the he
   - ⚡ *Automatic* (recommended): press Ctrl+C once, then spam. Chaos Ward reads the tooltip after every click and locks on a hit.
   - 🧠 *Smart*: locked after every click until you press Ctrl+C.
   - ⏸️ *Simple*: a short pause after every orb click.
-- 🎰 **Slot-machine hit display**: a reel spins and locks onto the mod that hit (Divine: digit reels with the values you reached), with its own sound. An *Instant* option skips the spin.
-- 🔍 **In-game item display**: shows your item like the game tooltip, with tier chips and your hits in gold.
+- 🔒 **Hit display**: a seal locks in half a second and shows the mod that hit (Divine: the values you reached), with a matching sound. Then it stays still. An *Instant* option skips the motion.
+- 🔍 **In-game item display**: shows your item with tier marks and your hits in gold.
 - 📊 **Tracker**: orbs since the last hit, this session, total, average per hit and a history.
 - 🖥️ **Works on many setups**: multiple monitors, 1080p to 4K, ultrawide, Windows scaling, HDR and SDR. A built-in system check explains anything that doesn't fit.
 - 🌍 German and English interface.
@@ -60,7 +60,7 @@ Chaos Ward was designed, directed and tested by moemor and developed with the he
 2. ☑️ In **Pick mods**, choose the item type and tick the mods you want (or press Ctrl+C on your item and Chaos Ward picks the type).
 3. 🟢 Press **F6** in game to turn the guard on.
 4. 🖱️ Hover the item, press Ctrl+C once, then right-click the orb, hold Shift and spam.
-5. 🎉 On a hit the reel locks and your click is blocked. Press **F6** when you're done.
+5. 🎉 On a hit the seal locks and your click is blocked. Press **F6** when you're done.
 
 ## 🔐 Privacy
 
@@ -151,5 +151,5 @@ See [`CHANGELOG.md`](CHANGELOG.md).
 
 - **AutoHotkey v2** (`app/ChaosWard.exe`, renamed `AutoHotkey64.exe`): GPL, see `app/LIZENZ-AutoHotkey.txt`
 - **WebView2.ahk** by thqby and **OCR.ahk** by Descolada: MIT
-- **Barlow** and **Marcellus SC** fonts: SIL Open Font License (`app/ui/fonts/`)
+- **IBM Plex** fonts (Sans, Sans Condensed, Mono): SIL Open Font License (`app/ui/fonts/`)
 - Mod data derived from the Path of Exile 2 game files (via RePoE). Path of Exile is a trademark of Grinding Gear Games.
