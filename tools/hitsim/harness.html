@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Barlow"; src: url(/ui/fonts/Barlow-Regular.ttf); font-weight: 400; }
+@font-face { font-family: "Barlow"; src: url(/ui/fonts/Barlow-Bold.ttf); font-weight: 700; }
+@font-face { font-family: "Marcellus SC"; src: url(/ui/fonts/MarcellusSC-Regular.ttf); }
+body { margin: 0; background: #000; }
+</style></head><body>
+<canvas id="out"></canvas>
+<script src="gdip_shim.js"></script>
+<script src="scene.js"></script>
+<script>
+const HS = +(new URLSearchParams(location.search).get("hs") || 1.5);
+HitBarPos = { S: HS };
+const W = Math.round(900 * HS), H = Math.round(420 * HS);
+const out = document.getElementById("out"); out.width = W; out.height = H;
+const layer = document.createElement("canvas"); layer.width = W; layer.height = H;
+const G = { ctx: layer.getContext("2d"), n: 0 };
+let BG = null;
+function load(src) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(src); im.src = src; }); }
+window.ready = (async () => {
+  for (const [k, f] of [["rays_wide.png", "/ui/hit/rays_wide.png"], ["rays_fine.png", "/ui/hit/rays_fine.png"], ["icon.png", "/ui/icon.png"], ["divine.png", "/ui/img/divine.png"]]) { IMAGES[k] = await load(f); const n = k; IMAGES[k].toString = () => "img:" + n; }
+  BG = await load("bg.png");
+  TITLES = await (await fetch("titles.json")).json();
+  STR = await (await fetch("strings_de.json")).json();
+  await document.fonts.load('700 16px "Barlow"'); await document.fonts.load('400 16px "Barlow"'); await document.fonts.load('40px "Marcellus SC"');
+  return true;
+})();
+// wie ShowHitBar: Walze vorbereiten, Untertitel, dann pro Bild wie HitBarStep
+window.makeInfo = (style, hits, orbs, reel, dv) => {
+  if (dv) Dv = dv;
+  reel = HitReelReady(reel, style, hits);
+  return { Hits: hits, Orbs: orbs, Style: style, Sub: HitSubText(reel, style, hits), Reel: reel, Ms: 0, Iv: 16 };
+};
+window.frame = (secs, info, bg = true) => {
+  GP.GdipResetWorldTransform(G); GP.GdipGraphicsClear(G, 0);
+  HitGfxSetup(G, W);
+  DrawHitScene(G, secs, info);
+  const c = out.getContext("2d"); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, W, H);
+  if (bg && BG) c.drawImage(BG, 0, 0, W, H);
+  c.globalAlpha = secs < 0.12 ? secs / 0.12 : 1; c.drawImage(layer, 0, 0); c.globalAlpha = 1;
+  return out.toDataURL("image/png");
+};
+</script></body></html>

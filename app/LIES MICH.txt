@@ -1,0 +1,80 @@
+﻿CHAOS WARD v7.4.2  (früher "Craft-Schutz")  -  in 3 Schritten startklar
+   (Am einfachsten: "ChaosWard-Setup-7.4.2.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
+    Deinstallieren: Windows-Einstellungen -> Apps -> Chaos Ward.)
+==============================================
+
+1) Diesen Ordner entpacken
+   Rechtsklick auf die ZIP-Datei -> "Alle extrahieren..." -> "Extrahieren".
+   (Nicht direkt aus der ZIP heraus starten!)
+   Hast du eine ältere Version schon? Einfach genauso machen - es wird ein Update,
+   deine Einstellungen bleiben.
+
+2) Doppelklick auf  "ChaosWard.exe"
+   Bei "Soll ich Chaos Ward einrichten?" auf  JA  klicken.
+   Fertig - auf dem Desktop ist jetzt ein Symbol "Chaos Ward".
+   (Die alte Version "Craft-Schutz" wird dabei ersetzt, deine Wünsche bleiben.)
+   (Zeigt Windows "Der Computer wurde durch Windows geschützt":
+    "Weitere Informationen" -> "Trotzdem ausführen".)
+
+3) Im Spiel
+   - Im Fenster "Mods wählen": Item-Art wählen und Wunsch-Mods anhaken.
+   - Spiel auf "Fenster-Vollbild" (Windowed Fullscreen) stellen.
+   - F6 drücken = Chaos Ward AN.
+   - Modus "Automatisch" (Einstellungen): Maus aufs Item, EINMAL Strg+C.
+   - Rechtsklick auf Chaos Orb, Shift halten, aufs Item spammen.
+     Die App liest nach jedem Klick den Tooltip vom Bildschirm mit.
+   - Die Texterkennung stellt sich beim Strg+C selbst auf deinen Bildschirm ein
+     (mit und ohne HDR). Spielsprache Englisch, Fenster-Vollbild.
+   - Steht "Nicht sicher lesbar" da: einmal Strg+C drücken, das prüft und entsperrt.
+   - TREFFER! = ein Wunsch-Mod ist drauf, Klicken ist gesperrt. Die Walze dreht kurz
+     und rastet auf deinem Mod ein (bei Divine: Ziffern-Walzen mit den erreichten Werten).
+     Lieber ohne Warten? Einstellungen -> Treffer-Animation -> "Sofort".
+   - F6 = fertig.
+   - Einstellungen: Treffer-Sound wählen (neu: "Spielautomat", passt zur Walze; auch eigene .wav),
+     wie lange die Treffer-Leiste
+     stehen bleibt, und "Texterkennung -> Neu einstellen" nach Monitor-/HDR-Wechsel.
+   - Einstellungen -> "Fenster im Spiel verschieben": Meldungen, Treffer-Leiste und
+     Item-Anzeige mit der Maus hinziehen, dann "Fertig".
+   - Reiter "Mageblood": Wunsch-Legacies mit +/- einstellen (Doppelte erlaubt),
+     unter "Nicht gewollt" Legacies verbieten (dann nie ein Treffer),
+     "Jedes Duplikat = Treffer" stoppt bei irgendeinem doppelten Legacy.
+   - Reiter "Divine": Reiter öffnen, Maus aufs Item, Strg+C (Strg+Alt+C zeigt auch die
+     genauen Bereiche). Bei jeder Zahl den Regler einschalten und Mindestwert einstellen,
+     dann Divine Orbs spammen - die App sperrt, sobald alle (oder eine) Schwelle passen.
+     Klappt Strg+C im Spiel nicht: im Divine-Reiter Strg+V drücken oder
+     "Letztes kopiertes Item übernehmen" klicken.
+   - Reiter "Tracker": Orbs seit letztem Treffer, Sitzung, gesamt, Ø pro Treffer, letzte Treffer.
+
+Läuft es nicht richtig?
+   Einstellungen -> "Systemcheck": zeigt rot, was auf diesem PC nicht passt
+   Noch einfacher: Einstellungen -> "Diagnose-Paket: Erstellen" legt eine ZIP-Datei auf den Desktop,
+   die alles enthält, was ich zum Helfen brauche.
+   (z.B. Spiel als Administrator gestartet, Spiel nicht auf Englisch, echtes Vollbild,
+   fehlendes englisches Sprachpaket). Screenshot davon an mich schicken.
+   Mehrere Monitore, 1080p bis 4K, Ultrawide und Windows-Skalierung werden unterstützt:
+   die Anzeigen erscheinen auf dem Monitor des Spiels und wachsen mit der Auflösung.
+
+Was ist in diesem Ordner?
+   ChaosWard.exe          = das offizielle, signierte AutoHotkey v2.0.19 (nur umbenannt)
+   ChaosWard.ahk          = das eigentliche Programm (lesbarer Text, kannst du ansehen)
+   Mods.tsv               = alle Mods je Item-Art aus den Spieldaten (Stand 0.5.5)
+   ui\                    = die Oberfläche (läuft mit WebView2, ist in Windows 10/11 eingebaut)
+   ui\fonts\              = Schriften Barlow und Marcellus SC (SIL Open Font License, nur für
+                            Chaos Ward geladen, nichts wird in Windows installiert)
+   lib\                   = WebView2-Baustein (thqby, MIT) und Texterkennung (Descolada, MIT)
+   LIZENZ.txt             = Lizenz von Chaos Ward (kostenlos, nicht für den Verkauf)
+   LIZENZ-AutoHotkey.txt  = Lizenz von AutoHotkey (GPL)
+
+Sicherheit / Bann:
+   Das Programm liest NIE den Spielspeicher, drückt NIE Tasten oder klickt für dich
+   und schickt nichts ins Internet. Es liest die Zwischenablage, wenn DU Strg+C
+   drückst, und im Modus "Automatisch" den Tooltip auf deinem Bildschirm (nur was
+   du auch siehst). Es kann DEINE Klicks zurückhalten - nie mehr.
+   Eine offizielle Freigabe von GGG für einzelne Tools gibt es nicht - wer ganz
+   sicher gehen will, fragt kurz beim Support von Grinding Gear Games nach.
+
+Entfernen: Programm öffnen -> "Vom PC entfernen".
+
+(c) 2026 moemor. Kostenlos nutzen ja, verkaufen oder als eigenes Produkt ausgeben nein.
+Details: LIZENZ.txt
+Gefällt dir Chaos Ward? Unterstützen: https://ko-fi.com/chaosward

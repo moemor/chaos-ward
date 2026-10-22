@@ -1,0 +1,26 @@
+1 ICON "icon.ico"
+1 24 "setup.manifest"
+1 VERSIONINFO
+FILEVERSION 7,4,2,0
+PRODUCTVERSION 7,4,2,0
+FILEOS 0x40004
+FILETYPE 1
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040704B0"
+    BEGIN
+      VALUE "CompanyName", "moemor"
+      VALUE "FileDescription", "Chaos Ward Setup"
+      VALUE "FileVersion", "7.4.2"
+      VALUE "ProductName", "Chaos Ward"
+      VALUE "ProductVersion", "7.4.2"
+      VALUE "LegalCopyright", "(c) 2026 moemor"
+      VALUE "OriginalFilename", "ChaosWard-Setup.exe"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0407, 1200
+  END
+END

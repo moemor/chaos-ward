@@ -1,0 +1,20 @@
+Chaos Ward
+Copyright (c) 2026 moemor. Alle Rechte vorbehalten, soweit unten nicht anders erlaubt.
+
+Required Notice: Copyright (c) 2026 moemor (Chaos Ward)
+
+Lizenz für das Programm Chaos Ward (ChaosWard.ahk, Oberfläche in ui\, Sounds, Bilder und Texte):
+PolyForm Noncommercial License 1.0.0
+Vollständiger, verbindlicher Lizenztext: https://polyformproject.org/licenses/noncommercial/1.0.0
+
+Kurz gesagt (nicht verbindlich, es gilt der Lizenztext):
+  - Benutzen, lesen, prüfen und für eigene, nicht kommerzielle Zwecke ändern: erlaubt.
+  - Weitergeben: erlaubt, aber nur zusammen mit dieser Datei und dem Hinweis oben.
+  - Verkaufen, als eigenes Produkt herausbringen oder kommerziell nutzen: NICHT erlaubt.
+
+Nicht von dieser Lizenz erfasst (eigene Lizenzen, liegen jeweils bei):
+  - ChaosWard.exe = AutoHotkey v2 (GPL, siehe LIZENZ-AutoHotkey.txt)
+  - lib\WebView2.ahk (thqby, MIT) und lib\OCR.ahk (Descolada, MIT)
+  - ui\fonts\ = Barlow und Marcellus SC (SIL Open Font License, siehe OFL-*.txt)
+  - Mod-Daten (Mods.tsv) stammen aus den Spieldaten von Path of Exile 2; Path of Exile ist eine
+    Marke von Grinding Gear Games. Chaos Ward ist ein Fan-Projekt und nicht mit GGG verbunden.

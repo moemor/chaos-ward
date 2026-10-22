@@ -1,0 +1,46 @@
+name: 🐛 Bug report
+description: Something doesn't work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for reporting! Please attach the diagnostic package: in Chaos Ward open **Settings → Diagnostic package → Create** and drag the ZIP file from your desktop into this form."
+  - type: input
+    id: version
+    attributes:
+      label: Chaos Ward version
+      description: Shown at the top left of the app, e.g. 7.3.1
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Guard mode
+      options: ["Automatic", "Smart", "Simple"]
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it happen?
+      options: ["Pick mods (Chaos)", "Mageblood", "Divine", "Hit display / sound", "In game item display", "Install / setup", "Other"]
+    validations:
+      required: true
+  - type: input
+    id: setup
+    attributes:
+      label: Monitor setup
+      description: Resolution, Windows scaling, HDR on or off, number of monitors
+      placeholder: "2560x1440, 125 %, HDR on, 2 monitors"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Diagnostic package and screenshots
+      description: Drag the ZIP file and screenshots here.

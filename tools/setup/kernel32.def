@@ -1,0 +1,15 @@
+LIBRARY kernel32.dll
+EXPORTS
+GetModuleFileNameW
+CreateFileW
+ReadFile
+WriteFile
+CloseHandle
+SetFilePointerEx
+GetFileSizeEx
+CreateDirectoryW
+GetTempPathW
+GetTickCount
+VirtualAlloc
+ExitProcess
+CreateProcessW

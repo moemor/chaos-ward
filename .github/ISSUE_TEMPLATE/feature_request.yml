@@ -1,0 +1,16 @@
+name: 💡 Feature request
+description: An idea to make Chaos Ward better
+labels: ["idea"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: What should Chaos Ward do?
+    validations:
+      required: true
+  - type: textarea
+    id: situation
+    attributes:
+      label: Crafting situation
+      description: When would you use it? Which item, which currency?

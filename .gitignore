@@ -1,0 +1,10 @@
+*.obj
+*.lib
+*.res
+stub.exe
+*.exe.tmp
+__pycache__/
+icon.ico
+!app/ui/icon.ico
+Diagnose/
+Einstellungen.ini

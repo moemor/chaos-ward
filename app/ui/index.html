@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chaos Ward</title>
+<style>
+@font-face { font-family: "Barlow"; src: url(fonts/Barlow-Regular.ttf); font-weight: 400; }
+@font-face { font-family: "Barlow"; src: url(fonts/Barlow-Medium.ttf); font-weight: 500; }
+@font-face { font-family: "Barlow"; src: url(fonts/Barlow-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: "Barlow"; src: url(fonts/Barlow-Bold.ttf); font-weight: 700; }
+@font-face { font-family: "Marcellus SC"; src: url(fonts/MarcellusSC-Regular.ttf); font-weight: 400; }
+
+:root {
+  --slate: #15191C;   /* Grund */
+  --side: #121518;    /* Seitenleiste */
+  --ledge: #1D2226;   /* Flächen */
+  --ridge: #283036;   /* angehoben / aktiv */
+  --line: #2F383E;    /* Haarlinien */
+  --line2: #3C474E;
+  --ink: #EDE6D6;     /* Text */
+  --ash: #8F9A94;     /* Nebentext */
+  --dim: #66716B;
+  --gold: #E9B44C;    /* an / Treffer / gewählt */
+  --gold-hi: #F6D58A;
+  --gold-deep: #9C7425;
+  --gold-soft: rgba(233,180,76,.12);
+  --magic: #8888FF;   /* Mod-Zeilen wie im Spiel */
+  --magic-hi: #BDBDFF;
+  --rare: #F5F07A;    /* Item-Namen */
+  --good: #78C48A;
+  --bad: #E0644F;
+  --r-s: 6px; --r-m: 10px;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body { background: var(--slate); color: var(--ink); font: 400 14px/1.45 "Barlow", "Segoe UI", system-ui, sans-serif; font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; overflow: hidden; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+input, select, textarea { font: inherit; color: var(--ink); background: var(--ledge); border: 1px solid var(--line); border-radius: var(--r-s); padding: 7px 10px; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--gold-deep); box-shadow: 0 0 0 3px rgba(233,180,76,.12); }
+input[type=range] { padding: 0; border: 0; background: transparent; accent-color: var(--gold); box-shadow: none; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-thumb { background: #2c353b; border-radius: 6px; border: 2px solid var(--slate); }
+.muted { color: var(--ash); } small { font-size: 12px; }
+kbd { font: 600 11px "Barlow"; color: var(--ash); border: 1px solid var(--line2); border-radius: 4px; padding: 1px 6px; }
+
+.app { display: grid; grid-template-columns: 216px 1fr; height: 100vh; }
+
+/* ---------- Seitenleiste ---------- */
+.side { background: linear-gradient(180deg, #171B1E, var(--side)); border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 16px 12px 12px; min-height: 0; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 4px 20px; }
+.brand img { width: 42px; height: 42px; filter: drop-shadow(0 2px 8px rgba(233,180,76,.25)); }
+.brand b { font: 400 20px/1 "Marcellus SC", serif; display: block; letter-spacing: .01em; }
+.brand small { color: var(--ash); font-size: 11.5px; display: block; margin-top: 3px; }
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.nav button { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: var(--r-s); color: var(--ash); font-weight: 500; font-size: 15px; text-align: left; }
+.nav button:hover { color: var(--ink); background: rgba(255,255,255,.03); }
+.nav button.on { color: var(--ink); background: var(--ridge); box-shadow: inset 2px 0 0 var(--gold); }
+.nav .ni { width: 24px; height: 24px; flex: none; margin: -2px; filter: saturate(.7) brightness(.85); transition: filter .15s; object-fit: contain; }
+.nav button:hover .ni, .nav button.on .ni { filter: none; }
+.nav svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.nav button.on svg { color: var(--gold); }
+.nav .sep { height: 1px; background: var(--line); margin: 10px 6px; }
+
+/* Schutz-Feld mit Walzen-Zähler */
+.guard { margin-top: auto; border-radius: var(--r-m); padding: 13px 13px 12px; background: var(--ledge); border: 1px solid var(--line); transition: border-color .2s, background .2s; }
+.guard.on { background: radial-gradient(120% 90% at 50% 0%, rgba(233,180,76,.15), transparent 60%), var(--ledge); border-color: #4a3d22; }
+.guard.hit { background: radial-gradient(120% 90% at 50% 0%, rgba(233,180,76,.32), transparent 70%), #2a2416; border-color: var(--gold); }
+.guard-top { display: flex; align-items: center; gap: 9px; }
+.lamp { width: 10px; height: 10px; border-radius: 50%; background: #4b555c; flex: none; }
+.guard.on .lamp, .guard.hit .lamp { background: var(--gold); box-shadow: 0 0 0 4px rgba(233,180,76,.15), 0 0 14px var(--gold); }
+.guard.hit .lamp { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 7px rgba(233,180,76,.08), 0 0 20px var(--gold); } }
+.guard-top b { font-weight: 600; font-size: 15px; }
+.guard-top kbd { margin-left: auto; }
+.reel { display: flex; gap: 3px; margin: 12px 0 6px; justify-content: center; }
+.reel span { width: 29px; height: 41px; border-radius: 5px; display: grid; place-items: center; font: 700 25px/1 "Barlow"; color: #1b1406;
+  background: linear-gradient(180deg, #8d6a24 0%, #f6d58a 18%, #fff3d0 50%, #f2cd76 82%, #8d6a24 100%); box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 2px 0 rgba(0,0,0,.4); }
+.guard:not(.on):not(.hit) .reel span { background: linear-gradient(180deg, #252c31, #39434a 50%, #252c31); color: var(--ash); }
+.guard-cap { text-align: center; color: var(--ash); font-size: 12px; }
+.guard-btn { width: 100%; margin-top: 11px; padding: 9px; border-radius: var(--r-s); font-weight: 600; background: var(--gold); color: #1d1405; }
+.guard-btn:hover { filter: brightness(1.07); }
+.guard.on .guard-btn { background: var(--ridge); color: var(--ink); }
+
+/* ---------- Hauptbereich ---------- */
+.main { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.page { display: none; flex: 1; min-height: 0; flex-direction: column; } .page.on { display: flex; }
+.head { display: flex; align-items: flex-end; gap: 16px; padding: 18px 24px 14px; border-bottom: 1px solid var(--line); flex: none; }
+.head h1 { font: 400 26px/1.1 "Marcellus SC", serif; letter-spacing: .01em; }
+.head p { color: var(--ash); margin-top: 3px; max-width: 72ch; }
+.head .grow { flex: 1; }
+.body { flex: 1; min-height: 0; display: flex; }
+.scroll { overflow: auto; min-height: 0; }
+.panel { background: var(--ledge); border: 1px solid var(--line); border-radius: var(--r-m); }
+h3.sec { font: 600 15px "Barlow"; margin: 0 0 10px; }
+.hint { color: var(--ash); font-size: 12.5px; }
+
+/* Schalter, Segmente, Chips, Knöpfe */
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--slate); border: 1px solid var(--line); border-radius: var(--r-s); padding: 3px; gap: 2px; }
+.seg button { padding: 7px 8px; border-radius: 4px; color: var(--ash); font-weight: 500; white-space: nowrap; }
+.seg button.on { background: var(--ridge); color: var(--ink); box-shadow: inset 0 -2px 0 var(--gold); }
+.chip { padding: 5px 12px; border-radius: 999px; color: var(--ash); border: 1px solid var(--line2); font-size: 13px; white-space: nowrap; }
+.chip:hover { color: var(--ink); border-color: var(--ash); }
+.chip.on { color: #1d1405; background: var(--gold); border-color: var(--gold); font-weight: 600; }
+.btn { padding: 8px 14px; border-radius: var(--r-s); font-weight: 600; background: var(--gold); color: #1d1405; }
+.btn:hover { filter: brightness(1.07); }
+.btn.quiet { background: var(--ridge); color: var(--ink); }
+.btn.quiet:hover { background: #313a41; filter: none; }
+.link { color: var(--ash); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line2); }
+.link:hover { color: var(--bad); text-decoration-color: currentColor; }
+.sw { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px solid var(--line); }
+.sw:first-of-type { border-top: 0; }
+.sw > span { flex: 1; min-width: 0; } .sw > span small { display: block; color: var(--ash); font-size: 12.5px; margin-top: 1px; }
+.tg { width: 40px; height: 24px; border-radius: 999px; background: #39434a; position: relative; flex: none; cursor: pointer; transition: background .15s; }
+.tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #dfe4e1; transition: left .15s; }
+.on > .tg, .tg.on { background: var(--gold); } .on > .tg::after, .tg.on::after { left: 19px; background: #fff8e6; }
+.stepper { display: inline-flex; align-items: center; gap: 8px; }
+.stepper button { width: 30px; height: 30px; border-radius: var(--r-s); background: var(--ridge); font-size: 17px; font-weight: 600; }
+.stepper b { min-width: 22px; text-align: center; font-size: 17px; }
+
+/* ---------- Mods wählen ---------- */
+.cats { width: 196px; flex: none; border-right: 1px solid var(--line); padding: 14px 10px; }
+.cats input { width: 100%; margin-bottom: 10px; }
+.grp > button { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 8px 4px; color: var(--ash); font-size: 12.5px; }
+.grp > button:hover { color: var(--ink); }
+.grp .chev { transition: transform .15s; } .grp.open .chev { transform: rotate(90deg); }
+.grp .items { display: none; } .grp.open .items { display: block; }
+.cat { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 6px 8px; border-radius: var(--r-s); font-size: 14px; text-align: left; gap: 6px; }
+.cat em { font-style: normal; color: var(--ash); font-size: 12px; }
+.cat:hover { background: rgba(255,255,255,.03); }
+.cat.on { background: var(--ridge); } .cat.on em { color: var(--gold); }
+.cat .badge { min-width: 19px; padding: 0 5px; border-radius: 9px; background: var(--gold); color: #1d1405; font: 700 11px/18px "Barlow"; text-align: center; }
+
+.mods { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.filt { display: flex; gap: 6px; padding: 12px 18px 10px; align-items: center; flex-wrap: wrap; }
+.filt input { width: 180px; padding: 5px 10px; margin-left: auto; }
+.filt .count { color: var(--ash); font-size: 13px; }
+.list { padding: 0 18px 18px; }
+.secl { color: var(--ash); font-size: 12.5px; padding: 12px 4px 6px; }
+.mod { display: grid; grid-template-columns: 18px 1fr auto; align-items: center; gap: 12px; padding: 9px 12px; border-radius: var(--r-s); border: 1px solid transparent; cursor: pointer; }
+.mod + .mod { margin-top: 2px; }
+.mod:hover { background: rgba(255,255,255,.025); }
+.mod .tx { color: var(--magic); font-size: 15px; }
+.mod .tx i { font-style: normal; color: var(--magic-hi); }
+.chk { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #56616a; display: grid; place-items: center; }
+.mod.on { background: linear-gradient(90deg, rgba(233,180,76,.10), rgba(233,180,76,.02)); border-color: rgba(233,180,76,.28); }
+.mod.on .chk { background: var(--gold); border-color: var(--gold); }
+.mod.on .chk::after { content: ""; width: 9px; height: 5px; border: 2px solid #1d1405; border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px,-1px); }
+.tiers { display: flex; gap: 3px; flex-wrap: wrap; justify-content: flex-end; max-width: 236px; }
+.tiers b { min-width: 25px; padding: 2px 0; text-align: center; border-radius: 4px; font: 600 11.5px "Barlow"; color: var(--dim); background: var(--ledge); border: 1px solid var(--line); cursor: pointer; }
+.tiers b:hover { color: var(--ink); border-color: var(--ash); }
+.mod.on .tiers b { color: var(--ash); }
+.tiers b.rng { color: var(--ink) !important; background: rgba(233,180,76,.14); border-color: rgba(233,180,76,.35); }
+.tiers b.sel { color: #1d1405 !important; background: var(--gold); border-color: var(--gold); }
+.tiers .val { color: var(--gold); font: 600 12px "Barlow"; padding: 2px 4px; }
+.empty { color: var(--ash); padding: 40px 10px; text-align: center; }
+
+/* Deine Jagd: wie ein Item-Tooltip im Spiel */
+.slip > *, .rside > * { flex: none; }
+.slip { width: 272px; flex: none; border-left: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.ticket { border-radius: 4px; background: rgba(8,9,11,.92); border: 1px solid #5b4a2a; box-shadow: 0 0 0 1px #000 inset, 0 10px 30px rgba(0,0,0,.35); text-align: center; overflow: hidden; }
+.ticket .band { position: relative; padding: 10px 26px 9px; background: linear-gradient(180deg, #3a2f1b, #1f190f); border-bottom: 1px solid #6b5631; }
+.ticket .band::before, .ticket .band::after { content: ""; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -5px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 8px rgba(233,180,76,.6); }
+.ticket .band::before { left: 9px; } .ticket .band::after { right: 9px; }
+.ticket h3 { font: 400 16px/1.15 "Marcellus SC", serif; color: var(--rare); }
+.ticket .sub { font-size: 12px; color: #c9b98f; margin-top: 2px; }
+.ticket ul { list-style: none; padding: 12px 12px 4px; display: flex; flex-direction: column; gap: 7px; }
+.ticket li { color: var(--magic); font-size: 14px; line-height: 1.3; }
+.ticket li b { display: inline-block; margin-left: 6px; font: 700 11px/1 "Barlow"; color: #1d1405; background: var(--gold); border-radius: 3px; padding: 3px 5px 2px; vertical-align: 1px; }
+.ticket li.ban { color: #d98a7c; text-decoration: line-through; text-decoration-color: rgba(224,100,79,.6); }
+.ticket .none { color: var(--ash); font-size: 13px; padding: 6px 4px 8px; }
+.ticket .rule { margin: 8px 12px 12px; padding-top: 10px; border-top: 1px solid #3a3122; font-size: 12.5px; color: #a89d86; }
+.ticket .rule strong { color: var(--ink); font-weight: 600; }
+.ticket .rule .seg { margin-top: 8px; background: transparent; }
+.ticket .rule .stepper { margin-top: 8px; justify-content: center; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border-radius: var(--r-m); overflow: hidden; background: var(--line); border: 1px solid var(--line); }
+.tiles div { background: var(--ledge); padding: 10px 12px; }
+.tiles b { display: block; font: 700 20px/1.1 "Barlow"; }
+.tiles span { color: var(--ash); font-size: 12px; }
+
+/* ---------- Mageblood ---------- */
+.legs { flex: 1; padding: 16px 22px; }
+.legs .seg { max-width: 360px; margin-bottom: 14px; }
+.leggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(218px, 1fr)); gap: 8px; }
+.leg { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: var(--r-m); background: var(--ledge); border: 1px solid var(--line); }
+.leg.on { border-color: rgba(233,180,76,.45); background: linear-gradient(90deg, rgba(233,180,76,.10), rgba(233,180,76,.02)), var(--ledge); }
+.gem { width: 26px; height: 26px; border-radius: 50%; flex: none; box-shadow: inset -4px -5px 8px rgba(0,0,0,.45), inset 3px 3px 6px rgba(255,255,255,.35); }
+.leg .nm { flex: 1; font-weight: 600; min-width: 0; } .leg .nm small { display: block; color: var(--ash); font-weight: 400; font-size: 11.5px; }
+.leg .st { display: flex; align-items: center; gap: 4px; }
+.leg .st button { width: 26px; height: 26px; border-radius: 5px; background: var(--ridge); font-weight: 700; }
+.leg .st b { min-width: 24px; text-align: center; color: var(--gold); }
+.leg.ban { border-color: rgba(224,100,79,.5); background: rgba(224,100,79,.08); }
+.leg.ban .gem { filter: grayscale(.8) brightness(.7); } .leg.ban .nm { text-decoration: line-through; color: var(--ash); }
+.leg.off { opacity: .45; }
+.leg .x { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line2); font-size: 12px; color: var(--ash); }
+.leg.ban .x { background: var(--bad); border-color: var(--bad); color: #fff; }
+.rside { width: 300px; flex: none; border-left: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.slot { height: 50px; border-radius: var(--r-s); border: 1.5px dashed var(--line2); display: grid; place-items: center; font-size: 11.5px; color: var(--dim); text-align: center; padding: 2px; }
+.slot.f { border-style: solid; color: var(--ink); font-weight: 600; background: var(--slate); }
+.field { display: flex; align-items: center; gap: 10px; }
+.field input { width: 84px; }
+
+/* ---------- Divine ---------- */
+.dvl-wrap { flex: 1; padding: 16px 24px; }
+.dv-item { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.dv-item img { width: 54px; height: 54px; filter: drop-shadow(0 0 12px rgba(233,180,76,.35)); flex: none; }
+.dv-item b { font: 400 19px "Marcellus SC", serif; color: var(--rare); display: block; }
+.dv-item small { color: var(--ash); }
+.dv-item .grow { flex: 1; }
+.dl { padding: 13px 0; border-top: 1px solid var(--line); }
+.dl .tx { color: var(--magic); font-size: 15px; }
+.dl .tx em { font-style: normal; color: var(--magic-hi); font-weight: 600; }
+.dn { display: grid; grid-template-columns: auto 1fr 38px 82px; gap: 12px; align-items: center; margin-top: 8px; }
+.dn .rng { min-width: 0; }
+.dn .rng small { color: var(--dim); display: flex; justify-content: space-between; font-size: 11.5px; }
+.rbox { position: relative; height: 20px; }
+.rbox .dbar { position: absolute; left: 8px; right: 8px; top: 8px; margin: 0; }
+.rbox input[type=range] { -webkit-appearance: none; appearance: none; position: absolute; inset: 0; width: 100%; height: 20px; margin: 0; background: transparent; cursor: pointer; }
+.rbox input[type=range]::-webkit-slider-runnable-track { height: 20px; background: transparent; }
+.rbox input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; background: var(--gold); border: 2px solid #fff3d0; box-shadow: 0 0 0 3px rgba(0,0,0,.35), 0 0 10px rgba(233,180,76,.45); }
+.dn.off .rbox input[type=range]::-webkit-slider-thumb { background: #59646b; border-color: #8f9a94; box-shadow: none; }
+.dbar { position: relative; height: 4px; border-radius: 2px; background: var(--ridge); }
+.dbar u { position: absolute; top: 0; bottom: 0; border-radius: 2px; background: linear-gradient(90deg, rgba(233,180,76,.45), var(--gold)); }
+.dbar i { position: absolute; top: -5px; width: 2px; height: 14px; border-radius: 1px; background: var(--ink); }
+.dn .op { height: 32px; border-radius: var(--r-s); background: var(--ridge); font-weight: 800; color: var(--ink); }
+.dn input[type=number] { width: 82px; text-align: center; font-weight: 600; }
+.dn.off .rng, .dn.off .op, .dn.off input[type=number] { opacity: .4; }
+.dn.onn input[type=number] { border-color: rgba(233,180,76,.5); color: var(--gold); }
+.dvempty { display: grid; place-items: center; text-align: center; padding: 60px 20px; gap: 14px; color: var(--ash); }
+.dvempty img { width: 92px; height: 92px; filter: drop-shadow(0 0 18px rgba(233,180,76,.35)); }
+.dvempty b { color: var(--ink); font: 400 20px "Marcellus SC", serif; }
+.qs { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ---------- Tracker ---------- */
+.trk { flex: 1; padding: 18px 24px; display: flex; flex-direction: column; gap: 18px; }
+.big4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; }
+.big4 div { background: var(--ledge); padding: 14px 16px; }
+.big4 b { display: block; font: 700 30px/1.05 "Barlow"; }
+.big4 div:first-child b { color: var(--gold); }
+.big4 span { color: var(--ash); font-size: 12.5px; }
+.chartw { position: relative; padding: 22px 14px 12px; }
+.chart { position: relative; display: flex; align-items: flex-end; gap: 3px; height: 110px; border-bottom: 1px solid var(--line2); }
+.chart .bar { position: relative; flex: 1; min-width: 8px; max-width: 40px; height: 100%; display: flex; align-items: flex-end; cursor: default; }
+.chart .bar i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: var(--gold); opacity: .78; transition: opacity .1s; }
+.chart .bar:hover i { opacity: 1; }
+.chart .bar b { position: absolute; left: 50%; transform: translateX(-50%); font: 600 11.5px "Barlow"; color: var(--ash); white-space: nowrap; }
+.chart .avg { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--ash); opacity: .55; pointer-events: none; }
+.chart .avg span { position: absolute; right: 0; top: -17px; font-size: 11.5px; color: var(--ash); background: var(--ledge); padding: 0 4px; }
+.tip { position: fixed; z-index: 5; pointer-events: none; background: #0d1012; border: 1px solid var(--line2); border-radius: var(--r-s); padding: 6px 9px; font-size: 12.5px; box-shadow: 0 8px 24px rgba(0,0,0,.45); display: none; }
+.tip b { color: var(--ink); display: block; } .tip span { color: var(--ash); }
+.hist { display: flex; flex-direction: column; }
+.hrow { display: grid; grid-template-columns: 130px 1fr auto; gap: 14px; padding: 9px 4px; border-top: 1px solid var(--line); }
+.hrow span:first-child { color: var(--ash); } .hrow span:nth-child(2) { color: var(--rare); }
+.hrow b { color: var(--gold); }
+
+/* ---------- Einstellungen ---------- */
+.set { flex: 1; padding: 18px 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-content: start; align-items: start; }
+.set select { max-width: 230px; }
+.set .panel { padding: 14px 16px 6px; }
+.set .wide { grid-column: 1 / -1; }
+.modes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.opt { display: flex; gap: 12px; padding: 11px 12px; border-radius: var(--r-s); border: 1px solid var(--line); cursor: pointer; }
+.opt:hover { border-color: var(--line2); }
+.opt .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #56616a; flex: none; margin-top: 2px; }
+.opt.on { border-color: rgba(233,180,76,.55); background: var(--gold-soft); } .opt.on .dot { border: 5px solid var(--gold); }
+.opt b { display: block; font-weight: 600; } .opt span { color: var(--ash); font-size: 12.5px; }
+.opt .tag, .tag { font-size: 11px; font-weight: 700; color: #1d1405; background: var(--gold); border-radius: 3px; padding: 1px 5px; margin-left: 6px; vertical-align: 1px; }
+.chiprow { display: flex; gap: 6px; flex-wrap: wrap; }
+.sysgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 4px 0 10px; }
+.sysi { display: flex; gap: 10px; padding: 9px 10px; border-radius: var(--r-s); background: var(--slate); border: 1px solid var(--line); }
+.sysi i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; flex: none; color: #12161a; }
+.sysi.ok i { background: var(--good); } .sysi.info i { background: var(--ash); } .sysi.bad i { background: var(--bad); color: #fff; }
+.sysi.bad { border-color: rgba(224,100,79,.55); }
+.sysi b { display: block; font-size: 13px; font-weight: 600; } .sysi small { color: var(--ash); font-size: 12px; line-height: 1.35; display: block; }
+.sysi .chip { margin-top: 6px; }
+textarea { width: 100%; height: 120px; resize: vertical; font: 13px Consolas, monospace; }
+details summary { cursor: pointer; color: var(--ash); padding: 10px 0; }
+details[open] summary { color: var(--ink); }
+
+/* ---------- Hilfe ---------- */
+.help { flex: 1; padding: 18px 24px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; align-content: start; }
+.help .panel { padding: 16px 18px; }
+.step { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.step:first-of-type { border-top: 0; }
+.step .n { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold); display: grid; place-items: center; font: 400 15px "Marcellus SC", serif; }
+.step b { display: block; } .step span { color: var(--ash); }
+ul.facts { padding-left: 18px; color: var(--ash); } ul.facts li { margin-bottom: 8px; }
+
+.toast { position: fixed; right: 20px; bottom: 18px; max-width: 420px; background: var(--ridge); color: var(--ink); border: 1px solid var(--line2); border-left: 3px solid var(--gold); padding: 9px 14px; border-radius: var(--r-s); font-weight: 500; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; pointer-events: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+.toast.show { opacity: 1; transform: none; }
+
+@media (max-width: 1120px) { .mod { grid-template-columns: 18px 1fr; row-gap: 6px; } .mod .tiers { grid-column: 2; justify-content: flex-start; max-width: none; } .filt input { width: 150px; } .slip { width: 240px; } .cats { width: 172px; } .rside { width: 270px; } .set { grid-template-columns: 1fr; } .big4 b { font-size: 26px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><img src="icon.png" alt=""><div><b>Chaos Ward</b><small id="ver">Path of Exile 2</small></div></div>
+    <nav class="nav" id="nav">
+      <button data-page="pMods" class="on"><img class="ni" src="img/mods.png" alt=""><span data-i18n="navMods"></span></button>
+      <button data-page="pMb"><img class="ni" src="img/nav_mb.svg" alt=""><span data-i18n="navMb"></span></button>
+      <button data-page="pDv"><img class="ni" src="img/divine.png" alt=""><span data-i18n="navDv"></span></button>
+      <button data-page="pStats"><svg viewBox="0 0 24 24"><path d="M3.5 20h17"/><rect x="5" y="12" width="3" height="5.5" rx=".8"/><rect x="10.5" y="7.5" width="3" height="10" rx=".8"/><rect x="16" y="10" width="3" height="7.5" rx=".8"/><path d="M5.5 8.5l5-3.5 4 2.5 4.5-3"/></svg><span data-i18n="navStats"></span></button>
+      <div class="sep"></div>
+      <button data-page="pSet"><svg viewBox="0 0 24 24"><path d="M19.20 8.30 L20.89 7.35 L21.70 9.32 L19.84 9.84 L19.84 14.16 L21.70 14.68 L20.89 16.65 L19.20 15.70 L15.70 19.20 L16.65 20.89 L14.68 21.70 L14.16 19.84 L9.84 19.84 L9.32 21.70 L7.35 20.89 L8.30 19.20 L4.80 15.70 L3.11 16.65 L2.30 14.68 L4.16 14.16 L4.16 9.84 L2.30 9.32 L3.11 7.35 L4.80 8.30 L8.30 4.80 L7.35 3.11 L9.32 2.30 L9.84 4.16 L14.16 4.16 L14.68 2.30 L16.65 3.11 L15.70 4.80Z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="navSet"></span></button>
+      <button data-page="pHelp"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.4a2.7 2.7 0 015.3.6c0 1.8-2.7 2.2-2.7 4.1"/><circle cx="12" cy="17.3" r=".9" fill="currentColor" stroke="none"/></svg><span data-i18n="navHelp"></span></button>
+    </nav>
+    <div class="guard" id="guard">
+      <div class="guard-top"><span class="lamp"></span><b id="gState"></b><kbd id="gKey">F6</kbd></div>
+      <div class="reel" id="gReel"></div>
+      <div class="guard-cap" data-i18n="gCap"></div>
+      <button class="guard-btn" id="toggle"></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- Mods wählen -->
+    <section class="page on" id="pMods">
+      <div class="head"><div><h1 data-i18n="navMods"></h1><p data-i18n="hMods"></p></div></div>
+      <div class="body">
+        <div class="cats scroll"><input id="catSearch"><div id="side"></div></div>
+        <div class="mods">
+          <div class="filt" id="chips">
+            <button class="chip on" data-f="all" data-i18n="fAll"></button>
+            <button class="chip" data-f="P" data-i18n="fP"></button>
+            <button class="chip" data-f="S" data-i18n="fS"></button>
+            <button class="chip" data-f="sel" data-i18n="fSel"></button>
+            <span class="count" id="modCount"></span>
+            <input id="search">
+          </div>
+          <div class="list scroll" id="list"></div>
+        </div>
+        <div class="slip scroll">
+          <div class="ticket" id="hunt"></div>
+          <div class="tiles" id="miniStats"></div>
+          <p class="hint" data-i18n="modsTip"></p>
+          <button class="link" id="clearBtn" data-i18n="clearAll" style="align-self:flex-start"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mageblood -->
+    <section class="page" id="pMb">
+      <div class="head"><div><h1>Mageblood</h1><p id="mbHintL" data-i18n="mbHint"></p></div></div>
+      <div class="body">
+        <div class="legs scroll">
+          <div class="seg" id="mbSeg"><button data-v="want" class="on" data-i18n="mbWant"></button><button data-v="ban" data-i18n="mbBanTab"></button></div>
+          <div class="leggrid" id="leggrid"></div>
+        </div>
+        <div class="rside scroll">
+          <div><h3 class="sec" data-i18n="mbSlots"></h3><div class="slots" id="slots"></div><p class="hint" id="slotHint" style="margin-top:6px"></p></div>
+          <div class="sw on" id="mbDupSw" style="border-top:0;padding:0"><span><b data-i18n="mbDupT"></b><small data-i18n="mbDupH"></small></span><div class="tg"></div></div>
+          <div><h3 class="sec" data-i18n="mbAnyT"></h3><div class="field"><span class="stepper"><button id="anyMinus">–</button><b id="anyVal">0</b><button id="anyPlus">+</button></span><span class="hint" data-i18n="mbAnyH"></span></div></div>
+          <div><h3 class="sec" data-i18n="mbEffT"></h3><div class="field"><input id="mbEff" type="number" min="25" max="50" step="1"><span class="hint" data-i18n="mbEffH"></span></div></div>
+          <div class="ticket" id="mbTicket"></div>
+          <button class="link" id="mbClear" data-i18n="mbClear" style="align-self:flex-start"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Divine -->
+    <section class="page" id="pDv">
+      <div class="head"><div><h1>Divine</h1><p data-i18n="hDv"></p></div></div>
+      <div class="body">
+        <div class="dvl-wrap scroll" id="dvMain"></div>
+        <div class="rside scroll">
+          <div><h3 class="sec" data-i18n="dvWhen"></h3><div class="seg" id="dvAnySeg"><button data-v="0" data-i18n="dvAllBtn"></button><button data-v="1" data-i18n="dvOneBtn"></button></div></div>
+          <div><h3 class="sec" data-i18n="dvQuick"></h3><div class="qs"><button class="chip" data-top="0.8" data-i18n="dvTop20"></button><button class="chip" data-top="0.9" data-i18n="dvTop10"></button><button class="chip" data-top="1">Max</button><button class="chip" data-top="off" data-i18n="dvAllOff"></button></div><p class="hint" style="margin-top:6px" data-i18n="dvQuickH"></p></div>
+          <div class="ticket" id="dvTicket"></div>
+          <p class="hint" data-i18n="dvHow"></p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn quiet" id="dvTestHit" data-i18n="dvTestHit"></button></div>
+          <button class="link" id="dvForget" data-i18n="dvForget" style="align-self:flex-start"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tracker -->
+    <section class="page" id="pStats">
+      <div class="head"><div><h1 data-i18n="navStats"></h1><p data-i18n="hStats"></p></div></div>
+      <div class="body"><div class="trk scroll">
+        <div class="big4">
+          <div><b id="stSince">0</b><span data-i18n="sSinceHint"></span></div>
+          <div><b id="stSession">0</b><span data-i18n="sSessionHint"></span></div>
+          <div><b id="stAvg">–</b><span data-i18n="sAvgHint"></span></div>
+          <div><b id="stTotal">0</b><span data-i18n="sTotalHint"></span></div>
+        </div>
+        <div class="panel"><div style="padding:12px 14px 0"><h3 class="sec" style="margin:0;display:inline" data-i18n="sChart"></h3><span class="hint" data-i18n="sChartH"></span></div><div class="chartw"><div class="chart" id="chart"></div></div></div>
+        <div><h3 class="sec" data-i18n="sHistory"></h3><div class="hist" id="hist"></div></div>
+        <div style="display:flex;gap:16px"><button class="link" id="resetSession" data-i18n="sResetSession"></button><button class="link" id="resetAll" data-i18n="sResetAll"></button></div>
+      </div></div>
+    </section>
+
+    <!-- Einstellungen -->
+    <section class="page" id="pSet">
+      <div class="head"><div><h1 data-i18n="navSet"></h1><p data-i18n="hSet"></p></div></div>
+      <div class="body"><div class="set scroll">
+        <div class="panel">
+          <h3 class="sec" data-i18n="secGuard"></h3>
+          <div class="modes">
+            <div class="opt" data-mode="3"><div class="dot"></div><div><b data-i18n="mode3"></b><span data-i18n="mode3d"></span></div></div>
+            <div class="opt" data-mode="2"><div class="dot"></div><div><b data-i18n="mode2"></b><span data-i18n="mode2d"></span></div></div>
+            <div class="opt" data-mode="1"><div class="dot"></div><div><b data-i18n="mode1"></b><span data-i18n="mode1d"></span></div></div>
+          </div>
+          <div class="sw" id="pauseRow"><span data-i18n="pauseTitle"></span><div class="chiprow" id="pauses"></div></div>
+          <div class="sw"><span data-i18n="oKey"></span><select id="keySel"></select></div>
+          <div class="sw" data-k="shiftOnly"><span data-i18n="oShift"></span><div class="tg"></div></div>
+          <div class="sw" data-k="unsureRelease"><span data-i18n="oUnsure"></span><div class="tg"></div></div>
+        </div>
+        <div class="panel">
+          <h3 class="sec" data-i18n="secHit"></h3>
+          <div class="sw" data-k="sound"><span data-i18n="oSound"></span><div class="tg"></div></div>
+          <div class="sw"><span><span data-i18n="oSnd"></span><small id="sndFile"></small></span><select id="sndSel"></select><button class="chip" id="sndTest" data-i18n="sndTest"></button></div>
+          <div class="sw"><span data-i18n="oVolume"></span><input type="range" id="vol" min="0" max="100" step="5" style="width:130px"><b id="volN" style="width:40px;text-align:right">80%</b></div>
+          <div class="sw"><span data-i18n="oHitAnim"></span><div class="seg" id="hitAnim" style="width:230px"><button data-v="slot" data-i18n="animSlot"></button><button data-v="instant" data-i18n="animInstant"></button></div></div>
+          <div class="sw"><span data-i18n="oHbSecs"></span><div class="chiprow" id="hbSecs"></div></div>
+          <div class="sw"><span data-i18n="oTestHits"></span><button class="chip" id="testHit" data-i18n="testHitChaos"></button><button class="chip" id="testHitDv2" data-i18n="testHitDv"></button></div>
+        </div>
+        <div class="panel">
+          <h3 class="sec" data-i18n="secOverlay"></h3>
+          <div class="sw" data-k="itemOverlay"><span data-i18n="oOverlay"></span><div class="tg"></div></div>
+          <div class="sw" data-k="streamVisible"><span data-i18n="oStream"></span><div class="tg"></div></div>
+          <div class="sw"><span data-i18n="oPlace"></span><button class="chip" id="placeStart" data-i18n="placeStart"></button><button class="chip" id="placeReset" data-i18n="placeReset"></button></div>
+        </div>
+        <div class="panel">
+          <h3 class="sec" data-i18n="secRead"></h3>
+          <div class="sw" data-k="autoDetect"><span data-i18n="oDetect"></span><div class="tg"></div></div>
+          <div class="sw" data-k="ignoreFractured"><span data-i18n="oFrac"></span><div class="tg"></div></div>
+          <div class="sw"><span><span data-i18n="oOcr"></span><small id="ocrInfo"></small><small id="ocrWarn" style="color:var(--bad)"></small></span><button class="chip" id="ocrReset" data-i18n="ocrReset"></button></div>
+          <div class="sw" data-k="diag"><span data-i18n="oDiag"></span><button class="chip" id="openDiag" data-i18n="openDiag"></button><div class="tg"></div></div>
+          <div class="sw"><span data-i18n="oDiagPack"></span><button class="chip on" id="diagPack" data-i18n="diagPack"></button></div>
+          <div class="sw"><span><span data-i18n="oLearned"></span> <b id="learnedN">0</b><small data-i18n="oLearnedHint"></small></span><button class="chip" id="resetLearn" data-i18n="resetLearn"></button></div>
+        </div>
+        <div class="panel wide">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><h3 class="sec" style="margin:0;flex:1" data-i18n="sysTitle"></h3><button class="chip" id="sysRe" data-i18n="sysRe"></button></div>
+          <p class="hint" data-i18n="sysHint"></p>
+          <div class="sysgrid" id="sysList"></div>
+        </div>
+        <div class="panel">
+          <h3 class="sec" data-i18n="langTitle"></h3>
+          <div class="seg" id="langSeg" style="max-width:280px"><button data-l="de">Deutsch</button><button data-l="en">English</button></div>
+          <p class="hint" style="margin:8px 0 10px" data-i18n="langHint"></p>
+        </div>
+        <div class="panel">
+          <details><summary data-i18n="rulesTitle"></summary><p class="hint" style="margin-bottom:8px" data-i18n="rulesHint"></p><textarea id="rules" spellcheck="false"></textarea><div style="height:10px"></div></details>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- Hilfe -->
+    <section class="page" id="pHelp">
+      <div class="head"><div><h1 data-i18n="navHelp"></h1><p data-i18n="hHelp"></p></div></div>
+      <div class="body"><div class="help scroll">
+        <div class="panel"><h3 class="sec" data-i18n="stepsTitle"></h3><div id="steps"></div></div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="panel"><h3 class="sec" data-i18n="factsTitle"></h3><ul class="facts" id="facts"></ul></div>
+          <div class="panel"><h3 class="sec" data-i18n="safeTitle"></h3><p class="hint" style="font-size:13.5px;line-height:1.55" data-i18n="safeText"></p></div>
+          <div class="panel"><h3 class="sec" data-i18n="kofiTitle"></h3><p class="hint" style="font-size:13.5px;line-height:1.55;margin-bottom:12px" data-i18n="kofiText"></p><button class="btn" id="kofi" data-i18n="kofiBtn"></button></div>
+          <button class="link" id="uninstall" data-i18n="uninstall" style="align-self:flex-start"></button>
+          <p class="hint" style="margin-top:auto">© 2026 moemor · Chaos Ward · <span data-i18n="licText"></span></p>
+        </div>
+      </div></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<div class="tip" id="tip"></div>
+
+<script>
+"use strict";
+const I18N = {
+  de: {
+    navMods:"Mods wählen", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Einstellungen", navHelp:"Hilfe",
+    hMods:"Hake an, was auf dem Item landen soll. Ich stoppe dich, sobald es drauf ist.",
+    hDv:"Werte neu würfeln, bis jede eingeschaltete Zahl deine Schwelle erreicht.",
+    hStats:"So viele Orbs hat dich das Glück gekostet.", hSet:"Einmal einstellen, dann läuft alles von selbst.", hHelp:"In fünf Schritten zum ersten Treffer.",
+    gOff:"Schutz aus", gOn:"Schutz an", gHit:"Treffer!", gCap:"Orbs seit dem letzten Treffer",
+    ctaOn:"Schutz einschalten", ctaOff:"Schutz ausschalten", ctaHit:"Fertig – Schutz aus",
+    catSearch:"Item-Art suchen", search:"Mod suchen …", fAll:"Alle", fP:"Präfixe", fS:"Suffixe", fSel:"Nur gewählte",
+    prefixes:"Präfixe", suffixes:"Suffixe", modsN:"{n} Mods", tierTitle:"{t} · ab Level {l}",
+    noMods:"Keine passenden Mods.", noCat:"Wähle links eine Item-Art.", loading:"Lade Mod-Daten …", loadErr:"Mods.tsv konnte nicht geladen werden.",
+    huntT:"Deine Jagd", huntNone:"Noch nichts gewählt. Hake einen Mod an oder klick auf ein Tier.", huntRules:"+ {n} eigene Text-Regeln",
+    stopOne:"Einer reicht", stopMany:"Mehrere", stopTxtOne:"Stopp, sobald <strong>einer</strong> davon drauf ist", stopTxtMany:"Stopp, wenn <strong>{n}</strong> davon gleichzeitig drauf sind",
+    tierAll:"alle", tierAny:"jedes Tier", valueMin:"Wert ≥ {v}",
+    mSession:"Orbs diese Sitzung", mHits:"Treffer", mAvg:"Ø Orbs je Treffer", mTotal:"Orbs gesamt",
+    modsTip:"Im Spiel: Maus aufs Item, <b>einmal Strg+C</b>, dann mit Shift spammen. Ein Klick auf ein Tier wählt den Mod mit diesem Mindest-Tier.",
+    clearAll:"Alle Häkchen bei dieser Item-Art entfernen", clearConfirm:"Alle Häkchen bei dieser Item-Art entfernen?",
+    mbHint:"Mageblood hat 4 Legacy-Plätze, Doppelte sind erlaubt. Stell ein, wie oft du jedes Legacy mindestens willst.",
+    mbBanHint:"Tippe ein Legacy an, um es zu verbieten. Ist eins davon drauf, gibt es nie einen Treffer.",
+    mbWant:"Gewollt", mbBanTab:"Nicht gewollt", mbSlots:"Deine 4 Plätze", mbFree:"frei", mbTooMany:"Mehr als 4 geht nicht – Mageblood hat nur 4 Plätze.",
+    mbAnyT:"Beliebiges Legacy mehrfach", mbAnyH:"× dasselbe, egal welches (0 = aus)", mbEffT:"Effekt pro Duplikat", mbEffH:"% mindestens (25–50, leer = egal)",
+    mbBanBtn:"verbieten", mbBanOn:"verboten", mbBanned:"verboten",
+    mbDupT:"Jedes Duplikat = Treffer", mbDupH:"Stoppt bei irgendeinem doppelten Legacy. Verbotene zählen nicht.",
+    mbAnyS:"beliebiges Legacy {n}×", mbDupS:"oder irgendein Duplikat", mbEffS:"Effekt pro Duplikat ≥ {n}%", mbNone:"Noch nichts eingestellt.", mbClear:"Alles zurücksetzen",
+    mbRuleAll:"Stopp, wenn <strong>alles</strong> davon passt", mbRuleOr:"Stopp bei den Wünschen <strong>oder</strong> einem Duplikat",
+    dvEmptyT:"Welches Item willst du verbessern?", dvEmptyH:"Maus aufs Item, <b>Strg+C</b> – dann siehst du hier seine Mods.<br>Strg+<b>Alt</b>+C zeigt mir auch die genauen Bereiche, z. B. bei Uniques.",
+    dvTake:"Letztes kopiertes Item übernehmen", dvPasteH:"Oder: im Spiel Strg+C, dann hier Strg+V.", dvItemH:"Neues Item? Einfach Strg+C darauf, solange dieser Reiter offen ist.",
+    dvMin:"mindestens", dvMax:"höchstens", dvNoRange:"Bereich unbekannt – Strg+Alt+C aufs Item zeigt ihn", dvFixed:"fester Wert", dvCur:"jetzt",
+    dvWhen:"Wann ist es ein Treffer?", dvAllBtn:"Alle Schwellen", dvOneBtn:"Eine reicht", dvQuick:"Schnell einstellen", dvTop20:"Obere 20 %", dvTop10:"Obere 10 %", dvAllOff:"Alle aus",
+    dvQuickH:"Gilt für die eingeschalteten Zahlen, oder für alle, wenn keine an ist.", dvNone:"Noch keine Schwelle an. Schalte bei einer Zahl den Regler ein.",
+    dvRuleAll:"Stopp, wenn <strong>alle</strong> passen", dvRuleOne:"Stopp, wenn <strong>eine</strong> passt",
+    dvHow:"Schwellen einstellen, Schutz an, Rechtsklick auf Divine Orb, Shift halten und spammen. Bin ich bei einer Zahl unsicher, bleibt der Klick gesperrt.",
+    dvForget:"Item und Schwellen vergessen", dvTestHit:"Divine-Treffer testen",
+    sSinceHint:"Orbs seit dem letzten Treffer", sSessionHint:"Orbs diese Sitzung", sAvgHint:"Ø Orbs je Treffer", sTotalHint:"Orbs gesamt",
+    sChart:"Orbs je Treffer", sChartH:" · die letzten 30 Treffer, alt → neu", sHistory:"Letzte Treffer", sNoHits:"Noch keine Treffer – viel Glück!", sResetSession:"Sitzung zurücksetzen", sResetAll:"Alles zurücksetzen",
+    sResetConfirm:"Wirklich alle Zähler und die Treffer-Liste löschen?", orbs:"Orbs",
+    secGuard:"Schutz", secHit:"Treffer", secOverlay:"Anzeigen im Spiel", secRead:"Erkennung",
+    mode1:"Einfach", mode1d:"Nach jedem Orb-Klick kurz Pause. Kein Strg+C nötig.",
+    mode3:"Automatisch <span class=\"tag\">empfohlen</span>", mode3d:"Einmal Strg+C, dann spammen. Ich lese nach jedem Klick mit und sperre beim Wunsch-Mod.",
+    mode2:"Schlau", mode2d:"Nach jedem Klick gesperrt, bis du Strg+C drückst. Dann prüfe ich das Item.",
+    pauseTitle:"Pause (Einfach)", oKey:"Taste im Spiel", oShift:"Nur bremsen, wenn ich Shift halte<small>Für Dauer-Craften mit gedrückter Shift-Taste</small>",
+    oUnsure:"Bei Unsicherheit freigeben<small>Bequemer, aber ein Treffer könnte durchrutschen. Bei Divine immer gesperrt.</small>",
+    oSound:"Ton bei einem Treffer", oSnd:"Treffer-Sound", sndTest:"Anhören", sndCustomNone:"(keine Datei gewählt)",
+    snd_slot:"Spielautomat", snd_hit:"Amboss", snd_chime:"Glocke", snd_coin:"Münzen", snd_ping:"Kurzer Ping", snd_windows:"Windows-Ton", snd_custom:"Eigene Datei …",
+    oVolume:"Lautstärke<small>Gilt nur für Chaos Ward</small>", oHitAnim:"Treffer-Animation<small>Spielautomat: Walze rastet nach ~1 s ein. Sofort: TREFFER! ist direkt da</small>", animSlot:"Spielautomat", animInstant:"Sofort", oHbSecs:"Treffer-Leiste zeigen<small>Der Klick bleibt immer gesperrt</small>", hbUntil:"bis {k}",
+    oTestHits:"Treffer-Leiste ausprobieren", testHitChaos:"Chaos", testHitDv:"Divine",
+    oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
+    oPlace:"Fenster im Spiel verschieben<small>Meldungen, Treffer-Leiste und Item-Anzeige</small>", placeStart:"Verschieben", placeReset:"Standard",
+    oDetect:"Item-Art automatisch erkennen<small>Beim Strg+C springe ich zur passenden Liste</small>", oFrac:"Fractured Mods nicht mitzählen",
+    oOcr:"Texterkennung", ocrReset:"Neu einstellen", ocrFilterMax:"Farbkanal {n}", ocrFilterLum:"Helligkeit {n}",
+    ocrLine:"Filter {f} · letztes Strg+C: {l} erkannt · Sprache {g}", ocrNever:"noch nicht", ocrNoEn:"Englisches Sprachpaket fehlt – Windows-Einstellungen → Zeit und Sprache → Sprache hinzufügen → Englisch (USA), dann neu starten",
+    oDiag:"Diagnose aufzeichnen<small>Speichert unsichere Lesungen (max. 20)</small>", openDiag:"Ordner", oDiagPack:"Diagnose-Paket für Hilfe<small>Packt Systemcheck, Monitore, Einstellungen und unsichere Lesungen in eine ZIP auf dem Desktop</small>", diagPack:"Erstellen", oLearned:"Gelernte Schreibweisen:", oLearnedHint:"Aus deinen Strg+C nach „unsicher“", resetLearn:"Löschen",
+    sysTitle:"Systemcheck", sysRe:"Erneut prüfen", sysHint:"Zeigt, ob auf diesem PC alles passt. Bei Problemen einen Screenshot davon schicken.", sysAdminBtn:"Als Administrator neu starten",
+    langTitle:"Sprache", langHint:"Mod-Texte bleiben englisch, so stehen sie in den Spieldaten.",
+    rulesTitle:"Eigene Wünsche als Text (für Fortgeschrittene)", rulesHint:"Gelten für alle Items. Eine Zeile = ein Wunsch, z. B. „Movement Speed >= 30“. Zeilen mit # sind aus.",
+    stepsTitle:"So geht's", factsTitle:"Gut zu wissen", safeTitle:"Sicherheit",
+    safeText:"Kein Makro: Ich lese nie den Spielspeicher, drücke nie Tasten und klicke nie für dich. Ich lese nur, was du mit Strg+C kopierst, und im Modus „Automatisch“ den Tooltip auf deinem Bildschirm. Ich halte höchstens deine Klicks zurück.",
+    uninstall:"Vom PC entfernen", kofiTitle:"Chaos Ward unterstützen", kofiText:"Chaos Ward ist kostenlos und bleibt es. Wenn es dir ein paar Divines gerettet hat, freue ich mich über einen Kaffee.", kofiBtn:"☕ Auf Ko-fi unterstützen", licText:"Kostenlos, nicht für den Verkauf (PolyForm Noncommercial 1.0.0). Fan-Projekt, nicht mit Grinding Gear Games verbunden.", saved:"Gespeichert", times:"×",
+    steps:[["Spiel vorbereiten","Spiel auf „Fenster-Vollbild“ stellen und auf Englisch, sonst sehe ich nichts."],
+      ["Wünsche anhaken","Item-Art wählen und Mods anhaken. Tipp: Kopier dein Item mit Strg+C, dann wähle ich die Item-Art selbst."],
+      ["Schutz einschalten","Im Spiel {key} drücken."],
+      ["Craften","Maus aufs Item, einmal Strg+C. Dann Rechtsklick auf den Orb, Shift halten und spammen."],
+      ["Treffer!","Sobald es passt, dreht die Walze, und der Klick ist gesperrt. Mit {key} bist du fertig."]],
+    facts:["Steht „Nicht sicher lesbar“ da, drück einmal Strg+C – das prüft und entsperrt.","Strg+Alt+C zeigt im Spiel zusätzlich Präfix, Suffix und genaue Bereiche.","Tiers (T1 = bestes) kommen aus den Spieldaten.","Läuft das Spiel als Administrator, sagt dir der Systemcheck, was zu tun ist.","Im Schlau-Modus Strg+C ohne Shift drücken.","Probleme? Einstellungen → Diagnose-Paket erstellen und die ZIP-Datei vom Desktop schicken."]
+  },
+  en: {
+    navMods:"Pick mods", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Settings", navHelp:"Help",
+    hMods:"Tick what should land on the item. I'll stop you as soon as it does.",
+    hDv:"Reroll values until every switched-on number reaches your threshold.",
+    hStats:"How many orbs luck has cost you.", hSet:"Set it once, then everything runs by itself.", hHelp:"Five steps to your first hit.",
+    gOff:"Guard off", gOn:"Guard on", gHit:"Hit!", gCap:"Orbs since your last hit",
+    ctaOn:"Turn guard on", ctaOff:"Turn guard off", ctaHit:"Done – guard off",
+    catSearch:"Search item type", search:"Search mods …", fAll:"All", fP:"Prefixes", fS:"Suffixes", fSel:"Picked only",
+    prefixes:"Prefixes", suffixes:"Suffixes", modsN:"{n} mods", tierTitle:"{t} · from level {l}",
+    noMods:"No matching mods.", noCat:"Pick an item type on the left.", loading:"Loading mod data …", loadErr:"Could not load Mods.tsv.",
+    huntT:"Your hunt", huntNone:"Nothing picked yet. Tick a mod or click a tier.", huntRules:"+ {n} custom text rules",
+    stopOne:"One is enough", stopMany:"Several", stopTxtOne:"Stop as soon as <strong>one</strong> of them lands", stopTxtMany:"Stop when <strong>{n}</strong> of them are on at once",
+    tierAll:"all", tierAny:"any tier", valueMin:"value ≥ {v}",
+    mSession:"Orbs this session", mHits:"Hits", mAvg:"Avg orbs per hit", mTotal:"Orbs total",
+    modsTip:"In game: hover the item, <b>Ctrl+C once</b>, then spam with Shift. Clicking a tier picks the mod with that minimum tier.",
+    clearAll:"Remove all picks for this item type", clearConfirm:"Remove all picks for this item type?",
+    mbHint:"Mageblood has 4 legacy slots, duplicates allowed. Set how often you want each legacy at least.",
+    mbBanHint:"Tap a legacy to ban it. If one of them rolls, it's never a hit.",
+    mbWant:"Wanted", mbBanTab:"Not wanted", mbSlots:"Your 4 slots", mbFree:"free", mbTooMany:"More than 4 isn't possible – Mageblood only has 4 slots.",
+    mbAnyT:"Any legacy several times", mbAnyH:"× the same one, any (0 = off)", mbEffT:"Effect per duplicate", mbEffH:"% at least (25–50, empty = any)",
+    mbBanBtn:"ban", mbBanOn:"banned", mbBanned:"banned",
+    mbDupT:"Any duplicate = hit", mbDupH:"Stops on any doubled legacy. Banned ones don't count.",
+    mbAnyS:"any legacy {n}×", mbDupS:"or any duplicate", mbEffS:"effect per duplicate ≥ {n}%", mbNone:"Nothing set yet.", mbClear:"Reset all",
+    mbRuleAll:"Stop when <strong>all</strong> of it fits", mbRuleOr:"Stop on your wishes <strong>or</strong> any duplicate",
+    dvEmptyT:"Which item do you want to improve?", dvEmptyH:"Hover the item, <b>Ctrl+C</b> – then you'll see its mods here.<br>Ctrl+<b>Alt</b>+C also gives me exact ranges, e.g. for uniques.",
+    dvTake:"Use last copied item", dvPasteH:"Or: Ctrl+C in game, then Ctrl+V here.", dvItemH:"New item? Just Ctrl+C on it while this tab is open.",
+    dvMin:"at least", dvMax:"at most", dvNoRange:"Range unknown – Ctrl+Alt+C on the item shows it", dvFixed:"fixed value", dvCur:"now",
+    dvWhen:"When is it a hit?", dvAllBtn:"All thresholds", dvOneBtn:"One is enough", dvQuick:"Quick set", dvTop20:"Top 20 %", dvTop10:"Top 10 %", dvAllOff:"All off",
+    dvQuickH:"Applies to the switched-on numbers, or to all if none is on.", dvNone:"No threshold yet. Switch on the toggle at a number.",
+    dvRuleAll:"Stop when <strong>all</strong> fit", dvRuleOne:"Stop when <strong>one</strong> fits",
+    dvHow:"Set thresholds, guard on, right-click Divine Orb, hold Shift and spam. If I'm unsure about a number, the click stays locked.",
+    dvForget:"Forget item and thresholds", dvTestHit:"Test divine hit",
+    sSinceHint:"Orbs since your last hit", sSessionHint:"Orbs this session", sAvgHint:"Avg orbs per hit", sTotalHint:"Orbs total",
+    sChart:"Orbs per hit", sChartH:" · last 30 hits, old → new", sHistory:"Recent hits", sNoHits:"No hits yet – good luck!", sResetSession:"Reset session", sResetAll:"Reset everything",
+    sResetConfirm:"Really clear all counters and the hit list?", orbs:"orbs",
+    secGuard:"Guard", secHit:"Hits", secOverlay:"In-game overlays", secRead:"Detection",
+    mode1:"Simple", mode1d:"Short pause after every orb click. No Ctrl+C needed.",
+    mode3:"Automatic <span class=\"tag\">recommended</span>", mode3d:"Ctrl+C once, then spam. I read along after every click and lock on a wished mod.",
+    mode2:"Smart", mode2d:"Locked after every click until you press Ctrl+C. Then I check the item.",
+    pauseTitle:"Pause (Simple)", oKey:"In-game key", oShift:"Only brake while I hold Shift<small>For spam-crafting with Shift held</small>",
+    oUnsure:"Release when unsure<small>Smoother, but a hit could slip through. Divine always stays locked.</small>",
+    oSound:"Sound on a hit", oSnd:"Hit sound", sndTest:"Listen", sndCustomNone:"(no file chosen)",
+    snd_slot:"Slot machine", snd_hit:"Anvil", snd_chime:"Bell", snd_coin:"Coins", snd_ping:"Short ping", snd_windows:"Windows sound", snd_custom:"Own file …",
+    oVolume:"Volume<small>Only affects Chaos Ward</small>", oHitAnim:"Hit animation<small>Slot machine: reel locks after ~1 s. Instant: HIT! shows right away</small>", animSlot:"Slot machine", animInstant:"Instant", oHbSecs:"Show hit bar<small>Clicking always stays locked</small>", hbUntil:"until {k}",
+    oTestHits:"Try the hit bar", testHitChaos:"Chaos", testHitDv:"Divine",
+    oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
+    oPlace:"Move in-game windows<small>Messages, hit bar and item display</small>", placeStart:"Move", placeReset:"Default",
+    oDetect:"Detect item type automatically<small>Ctrl+C jumps to the matching list</small>", oFrac:"Don't count fractured mods",
+    oOcr:"Text recognition", ocrReset:"Re-calibrate", ocrFilterMax:"colour channel {n}", ocrFilterLum:"brightness {n}",
+    ocrLine:"Filter {f} · last Ctrl+C: {l} read · language {g}", ocrNever:"not yet", ocrNoEn:"English language pack missing – Windows Settings → Time & language → Add a language → English (US), then restart",
+    oDiag:"Record diagnostics<small>Saves unsure readings (max. 20)</small>", openDiag:"Folder", oDiagPack:"Diagnostic package for support<small>Puts system check, monitors, settings and unsure readings into a ZIP on your desktop</small>", diagPack:"Create", oLearned:"Learned spellings:", oLearnedHint:"From your Ctrl+C after “unsure”", resetLearn:"Clear",
+    sysTitle:"System check", sysRe:"Check again", sysHint:"Shows whether everything fits on this PC. If something's wrong, send a screenshot of this.", sysAdminBtn:"Restart as administrator",
+    langTitle:"Language", langHint:"Mod texts stay English, that's how the game data has them.",
+    rulesTitle:"Extra wishes as text (advanced)", rulesHint:"Apply to every item. One line = one wish, e.g. “Movement Speed >= 30”. Lines starting with # are off.",
+    stepsTitle:"How it works", factsTitle:"Good to know", safeTitle:"Safety",
+    safeText:"No macro: I never read game memory, never press keys and never click for you. I only read what you copy with Ctrl+C and, in Automatic mode, the tooltip on your screen. At most I hold back your clicks.",
+    uninstall:"Uninstall from this PC", kofiTitle:"Support Chaos Ward", kofiText:"Chaos Ward is free and will stay free. If it saved you a few divines, a coffee is much appreciated.", kofiBtn:"☕ Support on Ko-fi", licText:"Free, not for resale (PolyForm Noncommercial 1.0.0). Fan project, not affiliated with Grinding Gear Games.", saved:"Saved", times:"×",
+    steps:[["Prepare the game","Set the game to “Windowed Fullscreen” and English, otherwise I can't see anything."],
+      ["Pick your wishes","Choose the item type and tick mods. Tip: copy your item with Ctrl+C and I pick the item type myself."],
+      ["Turn the guard on","Press {key} in game."],
+      ["Craft","Hover the item, Ctrl+C once. Then right-click the orb, hold Shift and spam."],
+      ["Hit!","As soon as it fits, the reel spins and your click is locked. Press {key} when you're done."]],
+    facts:["If it says “Couldn't read it reliably”, press Ctrl+C once – that checks and unlocks.","Ctrl+Alt+C additionally shows prefix, suffix and exact ranges in game.","Tiers (T1 = best) come from the game data.","If the game runs as administrator, the system check tells you what to do.","In Smart mode press Ctrl+C without Shift.","Problems? Settings → create diagnostic package and send the ZIP file from your desktop."]
+  }
+};
+const PAUSES = [300, 500, 800, 1000, 1500, 2000];
+const SOUNDS = ["slot", "hit", "chime", "coin", "ping", "windows", "custom"];
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const post = (...a) => { try { window.chrome.webview.postMessage(a.map(x => String(x).replace(/\x1f/g, " ")).join("\x1f")); } catch (e) {} };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const t = k => (I18N[ST.lang] || I18N.de)[k] ?? I18N.de[k] ?? k;
+const fmt = (k, o) => Object.entries(o).reduce((s, [a, b]) => s.replaceAll("{" + a + "}", b), t(k));
+
+let ST = { lang:"de", mode:3, pauseMs:800, shiftOnly:1, itemOverlay:1, autoDetect:1, sound:1, ignoreFractured:1, unsureRelease:0, streamVisible:1,
+           volume:80, diag:1, learned:0, key:"F6", keys:["F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"],
+           activeCat:"", on:0, hit:0, wishes:{}, need:{}, rules:"", ver:"", installed:0 };
+let DB = { groups:{}, cats:[], byId:{}, ver:"" };
+let STATS = { session:0, total:0, since:0, history:[] };
+let filter = "all", loaded = false, openGroup = "", SYS = [];
+const GEM = { Amethyst:"#9b5de5", Basalt:"#3d3f45", Bismuth:"linear-gradient(135deg,#f72585,#7209b7,#4cc9f0,#80ed99)", Diamond:"#e8f1ff", Gold:"#e6b422",
+  Granite:"#8d8a85", Jade:"#2a9d8f", Quicksilver:"#b8c6d1", Ruby:"#d62839", Sapphire:"#2f5bea", Silver:"#c0c4cc", Stibnite:"#5c677d", Sulphur:"#d4e157", Topaz:"#f4a261" };
+
+// ---------- Daten ----------
+async function loadDB() {
+  $("#list").innerHTML = `<div class="empty">${t("loading")}</div>`;
+  try {
+    const txt = await (await fetch("../Mods.tsv")).text();
+    for (const line of txt.split(/\r?\n/)) {
+      const f = line.split("\t");
+      if (f[0] === "V") DB.ver = f[1];
+      else if (f[0] === "G" && f.length >= 9)
+        DB.groups[f[1]] = { id:f[1], kind:f[2], text:f[3], n:+f[4], tiers:f[6].split(";;").map(x => x.split("~")) };
+      else if (f[0] === "C") {
+        const c = { id:f[1], main:f[2], sub:f[3], gids:f[4].split(",").filter(g => g in DB.groups) };
+        DB.cats.push(c); DB.byId[c.id] = c;
+      }
+    }
+    loaded = true;
+  } catch (e) { $("#list").innerHTML = `<div class="empty">${t("loadErr")}</div>`; }
+}
+const wishesOf = id => ST.wishes[id] || (ST.wishes[id] = {});
+const needOf = id => +(ST.need[id] || 1);
+const shortMod = s => String(s).replace(/\(\s*-?[\d.]+\s*[-–]\s*-?[\d.]+\s*\)%?/g, "").replace(/^[\s+%-]+/, "").replace(/\s+/g, " ").replace(/^(to|of) /, "").trim();
+const rangeHi = s => esc(s).replace(/(\+?\(\s*-?[\d.]+\s*[-–]\s*-?[\d.]+\s*\)%?)/g, "<i>$1</i>");
+
+// ---------- Kopf / Schutz ----------
+function renderGuard() {
+  const g = $("#guard");
+  g.className = "guard" + (ST.hit ? " hit" : ST.on ? " on" : "");
+  $("#gState").textContent = t(ST.hit ? "gHit" : ST.on ? "gOn" : "gOff");
+  $("#gKey").textContent = ST.key;
+  $("#toggle").textContent = t(ST.hit ? "ctaHit" : ST.on ? "ctaOff" : "ctaOn");
+  const d = String(Math.max(0, +STATS.since || 0)).padStart(4, "0");
+  $("#gReel").innerHTML = [...d].map(x => `<span>${x}</span>`).join("");
+  $("#ver").textContent = `Version ${ST.ver || "?"} · ${ST.lang === "de" ? "Spieldaten" : "game data"} ${DB.ver || "?"}`;
+}
+function applyI18n() {
+  document.documentElement.lang = ST.lang;
+  $$("[data-i18n]").forEach(el => el.innerHTML = t(el.dataset.i18n));
+  $("#search").placeholder = t("search"); $("#catSearch").placeholder = t("catSearch");
+  $("#steps").innerHTML = t("steps").map((s, i) => `<div class="step"><div class="n">${i + 1}</div><div><b>${s[0]}</b><span>${s[1].replaceAll("{key}", ST.key)}</span></div></div>`).join("");
+  $("#facts").innerHTML = t("facts").map(f => `<li>${f}</li>`).join("");
+}
+
+// ---------- Mods wählen ----------
+function renderSide() {
+  const q = $("#catSearch").value.trim().toLowerCase(), groups = {}, act = DB.byId[ST.activeCat];
+  DB.cats.forEach(c => { if (!q || (c.sub + " " + c.main).toLowerCase().includes(q)) (groups[c.main] = groups[c.main] || []).push(c); });
+  if (!openGroup && act) openGroup = act.main;
+  $("#side").innerHTML = Object.entries(groups).map(([main, cats]) => {
+    const open = q || main === openGroup;
+    return `<div class="grp${open ? " open" : ""}"><button data-g="${esc(main)}">${esc(main)}<span class="chev">›</span></button><div class="items">` +
+      cats.map(c => { const n = Object.keys(wishesOf(c.id)).length;
+        return `<button class="cat${c.id === ST.activeCat ? " on" : ""}" data-cat="${c.id}"><span>${esc(c.sub)}</span>${n ? `<span class="badge">${n}</span>` : ""}</button>`; }).join("") +
+      `</div></div>`;
+  }).join("") || `<div class="empty">${t("noMods")}</div>`;
+}
+function tierOf(cur) { cur = String(cur ?? ""); return cur === "" ? 99 : /^T\d+$/.test(cur) ? +cur.slice(1) : 0; }
+function tierChips(g, on, cur) {
+  const lim = on ? tierOf(cur) : 0, legacy = on && cur !== "" && !/^T\d+$/.test(String(cur));
+  const lvl = {}; g.tiers.forEach(x => lvl[x[0]] = x[1]);
+  let h = "";
+  for (let k = 1; k <= g.n; k++) {
+    const cls = on && !legacy ? (k === Math.min(lim, g.n) ? "sel" : k < lim ? "rng" : "") : "";
+    h += `<b class="${cls}" data-tier="${k}" title="${esc(fmt("tierTitle", { t:"T" + k, l: lvl["T" + k] ?? "?" }))}">T${k}</b>`;
+  }
+  if (legacy) h += `<span class="val">${esc(fmt("valueMin", { v: cur }))}</span>`;
+  return h;
+}
+function renderList() {
+  const cat = DB.byId[ST.activeCat];
+  if (!cat) { $("#list").innerHTML = `<div class="empty">${t(loaded ? "noCat" : "loading")}</div>`; $("#modCount").textContent = ""; return; }
+  const w = wishesOf(cat.id), q = $("#search").value.trim().toLowerCase();
+  let html = "", count = 0;
+  for (const kind of ["P", "S"]) {
+    if ((filter === "P" || filter === "S") && filter !== kind) continue;
+    const rows = cat.gids.map(g => DB.groups[g]).filter(g => g.kind === kind && (filter !== "sel" || g.id in w) && (!q || g.text.toLowerCase().includes(q)));
+    if (!rows.length) continue;
+    count += rows.length;
+    html += `<div class="secl">${t(kind === "P" ? "prefixes" : "suffixes")}</div>`;
+    for (const g of rows) {
+      const on = g.id in w;
+      html += `<div class="mod${on ? " on" : ""}" data-gid="${g.id}"><span class="chk" data-box></span><span class="tx">${rangeHi(g.text)}</span><span class="tiers">${tierChips(g, on, w[g.id])}</span></div>`;
+    }
+  }
+  $("#list").innerHTML = html || `<div class="empty">${t("noMods")}</div>`;
+  $("#modCount").textContent = fmt("modsN", { n: count });
+}
+function tierLabel(g, cur) {
+  cur = String(cur ?? "");
+  if (cur === "") return t("tierAll");
+  if (/^T\d+$/.test(cur)) return cur === "T1" ? "T1" : "T1–" + cur;
+  return fmt("valueMin", { v: cur });
+}
+function renderHunt() {
+  const cat = DB.byId[ST.activeCat], box = $("#hunt");
+  if (!cat) { box.innerHTML = ""; return; }
+  const w = wishesOf(cat.id), need = needOf(cat.id), ids = Object.keys(w).filter(g => DB.groups[g]);
+  const rulesN = String(ST.rules || "").split("\n").filter(l => l.trim() && !l.trim().startsWith("#")).length;
+  box.innerHTML = `<div class="band"><h3>${t("huntT")}</h3><div class="sub">${esc(cat.sub)}</div></div>` +
+    (ids.length ? `<ul>${ids.map(g => `<li>${esc(shortMod(DB.groups[g].text))}<b>${esc(tierLabel(DB.groups[g], w[g]))}</b></li>`).join("")}</ul>` : `<div class="none">${t("huntNone")}</div>`) +
+    (rulesN ? `<div class="none">${fmt("huntRules", { n: rulesN })}</div>` : "") +
+    `<div class="rule">${need > 1 ? fmt("stopTxtMany", { n: need }) : t("stopTxtOne")}
+      <div class="seg" id="stopSeg"><button data-v="1" class="${need <= 1 ? "on" : ""}">${t("stopOne")}</button><button data-v="n" class="${need > 1 ? "on" : ""}">${t("stopMany")}</button></div>
+      ${need > 1 ? `<div class="stepper"><button id="needMinus">–</button><b>${need}</b><button id="needPlus">+</button></div>` : ""}</div>`;
+}
+function renderMini() {
+  const h = STATS.history || [], avg = h.length ? Math.round(h.reduce((a, x) => a + (+x.orbs || 0), 0) / h.length) : "–";
+  const nf = v => typeof v === "number" ? v.toLocaleString(ST.lang) : v;
+  $("#miniStats").innerHTML = `<div><b>${nf(+STATS.session || 0)}</b><span>${t("mSession")}</span></div><div><b>${nf(h.length)}</b><span>${t("mHits")}</span></div>
+    <div><b>${nf(avg)}</b><span>${t("mAvg")}</span></div><div><b>${nf(+STATS.total || 0)}</b><span>${t("mTotal")}</span></div>`;
+}
+function selectCat(id, fromGame) {
+  if (!DB.byId[id]) return;
+  ST.activeCat = id; openGroup = DB.byId[id].main;
+  if (!fromGame) post("set", "ActiveCat", id);
+  renderSide(); renderList(); renderHunt();
+}
+function setWish(gid, v) { const w = wishesOf(ST.activeCat); w[gid] = v; post("wish", ST.activeCat, gid, v); renderSide(); renderList(); renderHunt(); }
+
+// ---------- Mageblood ----------
+let mbTab = "want";
+function mbState() { const m = ST.mb || (ST.mb = { rules:{}, any:0, eff:"", ban:[], dup:0 }); if (!Array.isArray(m.ban)) m.ban = []; return m; }
+const mbUsed = () => Object.values(mbState().rules).reduce((a, b) => a + (+b || 0), 0);
+function renderMb() {
+  const mb = mbState(), names = ST.legacies || Object.keys(GEM), used = mbUsed();
+  $$("#mbSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === mbTab));
+  $("#mbHintL").textContent = t(mbTab === "ban" ? "mbBanHint" : "mbHint");
+  $("#leggrid").innerHTML = names.map(n => { const c = +(mb.rules[n] || 0), bn = mb.ban.includes(n);
+    const gem = `<div class="gem" style="background:${GEM[n] || "#888"}"></div>`;
+    if (mbTab === "ban") return `<div class="leg${bn ? " ban" : ""}" data-leg="${n}" style="cursor:pointer">${gem}<div class="nm">${n}</div><span class="x">${bn ? t("mbBanOn") : t("mbBanBtn")}</span></div>`;
+    if (bn) return `<div class="leg ban off" data-leg="${n}">${gem}<div class="nm">${n}<small>${t("mbBanned")}</small></div></div>`;
+    return `<div class="leg${c ? " on" : ""}" data-leg="${n}">${gem}<div class="nm">${n}</div>
+      <div class="st"><button data-d="-1">–</button><b>${c ? c + t("times") : "–"}</b><button data-d="1">+</button></div></div>`; }).join("");
+  $("#mbDupSw").classList.toggle("on", !!+mb.dup);
+  const slots = []; for (const [n, c] of Object.entries(mb.rules)) for (let i = 0; i < c; i++) slots.push(n);
+  $("#slots").innerHTML = [0, 1, 2, 3].map(i => slots[i] ? `<div class="slot f" style="border-color:${(GEM[slots[i]] || "").startsWith("#") ? GEM[slots[i]] : "var(--gold)"}">${slots[i]}</div>` : `<div class="slot">${t("mbFree")}</div>`).join("");
+  $("#slotHint").textContent = used >= 4 ? t("mbTooMany") : "";
+  $("#anyVal").textContent = mb.any || 0;
+  if (document.activeElement !== $("#mbEff")) $("#mbEff").value = mb.eff ?? "";
+  const li = Object.entries(mb.rules).map(([n, c]) => `<li>Legacy of ${n}<b>${c}×</b></li>`);
+  if (+mb.any > 0) li.push(`<li>${fmt("mbAnyS", { n: mb.any })}</li>`);
+  if (+mb.dup) li.push(`<li>${t("mbDupS")}</li>`);
+  if (mb.eff !== "" && mb.eff != null) li.push(`<li>${fmt("mbEffS", { n: mb.eff })}</li>`);
+  mb.ban.forEach(n => li.push(`<li class="ban">Legacy of ${n}</li>`));
+  const wishes = Object.keys(mb.rules).length || +mb.any > 0;
+  $("#mbTicket").innerHTML = `<div class="band"><h3>Mageblood</h3><div class="sub">${t("huntT")}</div></div>` +
+    (li.length ? `<ul>${li.join("")}</ul>` : `<div class="none">${t("mbNone")}</div>`) +
+    `<div class="rule">${+mb.dup && wishes ? t("mbRuleOr") : t("mbRuleAll")}</div>`;
+}
+
+// ---------- Divine ----------
+function dvState() { const d = ST.dv || (ST.dv = { item:"", any:0, lines:[], rules:{} }); if (!d.rules || Array.isArray(d.rules)) d.rules = {}; return d; }
+const dvNum = x => x === "" || x == null ? null : +x;
+function dvStep(n) { const all = [n.v, n.lo, n.hi].filter(x => x !== "" && x != null).map(String); return all.some(x => x.includes(".")) ? (all.some(x => /\.\d\d/.test(x)) ? 0.01 : 0.1) : 1; }
+const dvFmt = v => (+v).toLocaleString(ST.lang, { maximumFractionDigits: 2 });
+function dvText(text, idx) { let i = 0; return esc(text).replace(/-?\d+(?:\.\d+)?/g, m => (++i === idx || idx === -1 ? `<em>${m}</em>` : m)); }
+function dvDefault(n) { const lo = dvNum(n.lo), hi = dvNum(n.hi), st = dvStep(n); if (lo == null || hi == null || lo === hi) return +n.v; return Math.round((lo + 0.8 * (hi - lo)) / st) * st; }
+function renderDv() {
+  const d = dvState(), box = $("#dvMain");
+  if (!d.item || !d.lines.length) {
+    box.innerHTML = `<div class="dvempty"><img src="img/divine.png" alt=""><b>${t("dvEmptyT")}</b><div>${t("dvEmptyH")}</div>
+      <button class="btn quiet" data-dvtake>${t("dvTake")}</button><div class="hint">${t("dvPasteH")}</div></div>`;
+  } else {
+    box.innerHTML = `<div class="dv-item"><img src="img/divine.png" alt=""><div class="grow"><b>${esc(d.item.split("  ·  ")[0])}</b><small>${esc(d.item.split("  ·  ").slice(1).join(" · "))}${d.item.includes("  ·  ") ? " · " : ""}${t("dvItemH")}</small></div><button class="chip" data-dvtake>${t("dvTake")}</button></div>` +
+      d.lines.map(L => { const rs = d.rules[L.key] || {};
+        const nums = L.nums.map((n, i0) => { const i = i0 + 1, r = rs[i], lo = dvNum(n.lo), hi = dvNum(n.hi), st = dvStep(n), has = lo != null && hi != null && lo !== hi;
+          const val = r ? +r.val : dvDefault(n), op = r ? r.op : ">=", pct = x => has ? Math.max(0, Math.min(100, (x - lo) / (hi - lo) * 100)) : 0;
+          const good = has ? (op === ">=" ? `left:${pct(val)}%;right:0` : `left:0;right:${100 - pct(val)}%`) : "";
+          return `<div class="dn${r ? " onn" : " off"}" data-k="${L.key}" data-i="${i}">
+            <div class="tg${r ? " on" : ""}" data-act="tog" title="${L.nums.length > 1 ? "#" + i : ""}"></div>
+            <div class="rng">${has ? `<div class="rbox"><div class="dbar">${r ? `<u style="${good}"></u>` : ""}<i style="left:calc(${pct(+n.v)}% - 1px)"></i></div><input type="range" min="${lo}" max="${hi}" step="${st}" value="${val}" data-act="rng"></div>
+              <small><span>${dvFmt(lo)}</span><span>${t("dvCur")} ${dvFmt(n.v)}${L.nums.length > 1 ? " · #" + i : ""}</span><span>${dvFmt(hi)}</span></small>`
+              : `<small>${lo != null && lo === hi ? t("dvFixed") : t("dvNoRange")} · ${t("dvCur")} ${dvFmt(n.v)}</small>`}</div>
+            <button class="op" data-act="op" title="${op === ">=" ? t("dvMin") : t("dvMax")}">${op === ">=" ? "≥" : "≤"}</button>
+            <input type="number" step="${st}" value="${val}" data-act="num"></div>`; }).join("");
+        return `<div class="dl"><div class="tx">${dvText(L.text, -1)}</div>${nums}</div>`; }).join("");
+  }
+  $$("#dvAnySeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === +(d.any || 0)));
+  const li = [];
+  for (const L of d.lines) for (const [i, r] of Object.entries(d.rules[L.key] || {}))
+    li.push(`<li>${esc(shortMod(L.text.replace(/-?\d+(?:\.\d+)?/g, m => "(" + m + "-" + m + ")")))}<b>${r.op === ">=" ? "≥" : "≤"} ${dvFmt(r.val)}</b></li>`);
+  $("#dvTicket").innerHTML = `<div class="band"><h3>${esc((d.item || "Divine").split("  ·  ")[0])}</h3><div class="sub">${t("huntT")}</div></div>` +
+    (li.length ? `<ul>${li.join("")}</ul>` : `<div class="none">${t("dvNone")}</div>`) + `<div class="rule">${t(+d.any ? "dvRuleOne" : "dvRuleAll")}</div>`;
+}
+function dvSet(key, i, op, val) { const d = dvState(); d.rules[key] = d.rules[key] || {};
+  if (val === null) { delete d.rules[key][i]; if (!Object.keys(d.rules[key]).length) delete d.rules[key]; post("dvRule", key, i, op, ""); }
+  else { val = Math.round(val * 100) / 100; d.rules[key][i] = { op, val }; post("dvRule", key, i, op, val); } }
+function dvFind(el) { const r = el.closest(".dn"); if (!r) return null; const d = dvState(), L = d.lines.find(x => x.key === r.dataset.k);
+  return L ? { L, i: +r.dataset.i, n: L.nums[+r.dataset.i - 1], r: (d.rules[L.key] || {})[+r.dataset.i] } : null; }
+
+// ---------- Tracker ----------
+function renderStats() {
+  const h = STATS.history || [], nf = v => (+v || 0).toLocaleString(ST.lang);
+  $("#stSince").textContent = nf(STATS.since); $("#stSession").textContent = nf(STATS.session); $("#stTotal").textContent = nf(STATS.total);
+  $("#stAvg").textContent = h.length ? nf(Math.round(h.reduce((a, x) => a + (+x.orbs || 0), 0) / h.length)) : "–";
+  const last = h.slice(0, 30).reverse(), vals = last.map(x => +x.orbs || 0), mx = Math.max(1, ...vals);
+  const iMax = vals.indexOf(Math.max(...vals)), avgV = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  $("#chart").innerHTML = last.length ? last.map((x, i) => { const hp = Math.max(2, vals[i] / mx * 100);
+      const lab = i === iMax || i === vals.length - 1 ? `<b style="bottom:calc(${hp}% + 3px)">${nf(vals[i])}</b>` : "";
+      return `<div class="bar" data-i="${i}"><i style="height:${hp}%"></i>${lab}</div>`; }).join("") +
+      (vals.length > 1 ? `<div class="avg" style="bottom:${avgV / mx * 100}%"><span>Ø ${nf(Math.round(avgV))}</span></div>` : "")
+    : `<div class="hint" style="align-self:center;margin:auto">${t("sNoHits")}</div>`;
+  $("#chart").onmousemove = e => { const b = e.target.closest(".bar"), tip = $("#tip"); if (!b) { tip.style.display = "none"; return; }
+    const x = last[+b.dataset.i]; tip.innerHTML = `<b>${nf(x.orbs)} ${t("orbs")}</b><span>${esc(x.name)}<br>${esc(x.t)}</span>`;
+    tip.style.display = "block"; tip.style.left = Math.min(innerWidth - tip.offsetWidth - 8, e.clientX + 12) + "px"; tip.style.top = (e.clientY - tip.offsetHeight - 10) + "px"; };
+  $("#chart").onmouseleave = () => $("#tip").style.display = "none";
+  $("#hist").innerHTML = h.length ? h.map(x => `<div class="hrow"><span>${esc(x.t)}</span><span>${esc(x.name)}</span><b>${esc(x.orbs)} ${t("orbs")}</b></div>`).join("") : `<div class="hint">${t("sNoHits")}</div>`;
+  renderMini(); renderGuard();
+}
+
+// ---------- Einstellungen ----------
+function renderSettings() {
+  $$(".opt").forEach(o => o.classList.toggle("on", +o.dataset.mode === +ST.mode));
+  $("#pauseRow").style.display = +ST.mode === 1 ? "" : "none";
+  $("#pauses").innerHTML = PAUSES.map(p => `<button class="chip${p === +ST.pauseMs ? " on" : ""}" data-p="${p}">${(p / 1000).toLocaleString(ST.lang)} s</button>`).join("");
+  $$(".sw[data-k]").forEach(s => s.classList.toggle("on", !!+ST[s.dataset.k]));
+  $("#keySel").innerHTML = ST.keys.map(k => `<option${k === ST.key ? " selected" : ""}>${k}</option>`).join("");
+  $$("#langSeg button").forEach(b => b.classList.toggle("on", b.dataset.l === ST.lang));
+  if (document.activeElement !== $("#rules")) $("#rules").value = ST.rules;
+  $("#uninstall").style.display = +ST.installed ? "" : "none";
+  $("#learnedN").textContent = ST.learned || 0;
+  if (document.activeElement !== $("#vol")) $("#vol").value = ST.volume ?? 80;
+  $("#volN").textContent = $("#vol").value + "%";
+  const cur = ST.soundName || "slot";
+  $("#sndSel").innerHTML = SOUNDS.map(k => `<option value="${k}"${k === cur ? " selected" : ""}>${t("snd_" + k)}</option>`).join("");
+  $("#sndFile").textContent = cur === "custom" ? (ST.soundCustom || t("sndCustomNone")) : "";
+  $$("#hitAnim button").forEach(b => b.classList.toggle("on", b.dataset.v === (ST.hitAnim || "slot")));
+  $("#hbSecs").innerHTML = [0, 3, 5, 10].map(n => `<button class="chip${n === +(ST.hitBarSecs || 0) ? " on" : ""}" data-s="${n}">${n ? n + " s" : fmt("hbUntil", { k: ST.key })}</button>`).join("");
+  renderOcr(); renderSys();
+}
+function renderOcr() {
+  const o = ST.ocr || {}, b = +o.best || 1215, f = b >= 1000 ? fmt("ocrFilterMax", { n: b - 1000 }) : fmt("ocrFilterLum", { n: b });
+  $("#ocrInfo").textContent = fmt("ocrLine", { f, l: o.last || t("ocrNever"), g: o.lang && o.lang !== "FirstFromAvailableLanguages" ? o.lang : "–" });
+  $("#ocrWarn").textContent = o.en === 0 || o.en === "0" ? "⚠ " + t("ocrNoEn") : "";
+}
+function renderSys() {
+  $("#sysList").innerHTML = SYS.length ? SYS.map(([st, ti, de, act]) => { const c = +st === 1 ? "ok" : +st === 0 ? "info" : "bad";
+    return `<div class="sysi ${c}"><i>${c === "ok" ? "✓" : c === "info" ? "i" : "!"}</i><div><b>${ti}</b><small>${de}</small>${act === "admin" ? `<button class="chip" data-act="admin">${t("sysAdminBtn")}</button>` : ""}</div></div>`; }).join("") : `<div class="hint">…</div>`;
+}
+
+function renderAll() {
+  applyI18n(); renderGuard(); renderSettings(); renderStats(); renderMb(); renderDv();
+  if (loaded) { renderSide(); renderList(); renderHunt(); }
+}
+let toastT;
+function toast(msg, long) { const el = $("#toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), long ? 6000 : 1800); }
+function showPage(id) {
+  $$("#nav button").forEach(x => x.classList.toggle("on", x.dataset.page === id));
+  $$(".page").forEach(p => p.classList.toggle("on", p.id === id));
+}
+
+// ---------- Ereignisse ----------
+// Klick des Spielers = gewählter Reiter (nur dann gilt "Divine-Reiter offen"); Sprung durch die App zählt nicht
+$$("#nav button").forEach(b => b.onclick = () => { showPage(b.dataset.page); post("tab", b.dataset.page); if (b.dataset.page === "pSet") post("sysCheck"); });
+$("#toggle").onclick = () => post("toggle");
+$("#catSearch").oninput = () => renderSide();
+$("#side").onclick = e => {
+  const g = e.target.closest("[data-g]"); if (g) { openGroup = openGroup === g.dataset.g ? "" : g.dataset.g; renderSide(); return; }
+  const c = e.target.closest("[data-cat]"); if (c) selectCat(c.dataset.cat);
+};
+$("#search").oninput = () => renderList();
+$("#chips").onclick = e => { const c = e.target.closest(".chip"); if (!c) return; filter = c.dataset.f; $$("#chips .chip").forEach(x => x.classList.toggle("on", x === c)); renderList(); };
+$("#list").onclick = e => {
+  const row = e.target.closest(".mod"); if (!row) return;
+  const gid = row.dataset.gid, cat = ST.activeCat, w = wishesOf(cat), g = DB.groups[gid];
+  const tier = e.target.closest("[data-tier]");
+  if (tier) { const k = +tier.dataset.tier; setWish(gid, k >= g.n ? "" : "T" + k); return; }
+  if (gid in w) { delete w[gid]; post("unwish", cat, gid); } else { w[gid] = ""; post("wish", cat, gid, ""); }
+  renderSide(); renderList(); renderHunt();
+};
+$("#hunt").onclick = e => {
+  const b = e.target.closest("#stopSeg button"), cat = ST.activeCat;
+  if (b) { const n = b.dataset.v === "1" ? 1 : Math.max(2, needOf(cat)); ST.need[cat] = n; post("need", cat, n); renderHunt(); return; }
+  if (e.target.closest("#needMinus")) { const n = Math.max(2, needOf(cat) - 1); ST.need[cat] = n; post("need", cat, n); renderHunt(); }
+  if (e.target.closest("#needPlus")) { const n = Math.min(6, needOf(cat) + 1); ST.need[cat] = n; post("need", cat, n); renderHunt(); }
+};
+$("#clearBtn").onclick = () => { const cat = ST.activeCat; if (!Object.keys(wishesOf(cat)).length || !confirm(t("clearConfirm"))) return;
+  ST.wishes[cat] = {}; post("clear", cat); renderSide(); renderList(); renderHunt(); };
+
+$("#mbSeg").onclick = e => { const b = e.target.closest("button"); if (!b) return; mbTab = b.dataset.v; renderMb(); };
+$("#mbDupSw").onclick = () => { const mb = mbState(); mb.dup = +mb.dup ? 0 : 1; post("mbDup", mb.dup); renderMb(); };
+$("#leggrid").onclick = e => {
+  if (mbTab === "ban") { const L = e.target.closest("[data-leg]"); if (!L) return; const n = L.dataset.leg, mb = mbState(), on = !mb.ban.includes(n);
+    mb.ban = on ? [...mb.ban, n] : mb.ban.filter(x => x !== n); if (on) delete mb.rules[n]; post("mbBan", n, on ? 1 : 0); renderMb(); return; }
+  const b = e.target.closest("button[data-d]"); if (!b) return;
+  const n = b.closest("[data-leg]").dataset.leg, mb = mbState(), cur = +(mb.rules[n] || 0), d = +b.dataset.d;
+  const nv = Math.max(0, Math.min(4, cur + d)); if (d > 0 && mbUsed() >= 4) { renderMb(); return; }
+  if (nv) mb.rules[n] = nv; else delete mb.rules[n]; post("mbRule", n, nv); renderMb(); };
+$("#anyMinus").onclick = () => { const mb = mbState(); let v = Math.max(0, (+mb.any || 0) - 1); if (v === 1) v = 0; mb.any = v; post("mbAny", v); renderMb(); };
+$("#anyPlus").onclick = () => { const mb = mbState(); mb.any = Math.min(4, (+mb.any || 0) + 1); if (mb.any === 1) mb.any = 2; post("mbAny", mb.any); renderMb(); };
+$("#mbEff").addEventListener("change", e => { const v = e.target.value.trim(); mbState().eff = v === "" ? "" : Math.max(25, Math.min(50, +v)); post("mbEff", mbState().eff); renderMb(); });
+$("#mbClear").onclick = () => { ST.mb = { rules:{}, any:0, eff:"", ban:[], dup:0 }; post("mbClear"); renderMb(); };
+
+$("#dvMain").addEventListener("click", e => {
+  if (e.target.closest("[data-dvtake]")) { post("dvTake"); return; }
+  const a = e.target.closest("[data-act]"); if (!a) return; const f = dvFind(a); if (!f) return;
+  const op = f.r ? f.r.op : ">=";
+  if (a.dataset.act === "tog") { dvSet(f.L.key, f.i, op, f.r ? null : dvDefault(f.n)); renderDv(); }
+  else if (a.dataset.act === "op") { dvSet(f.L.key, f.i, op === ">=" ? "<=" : ">=", f.r ? +f.r.val : dvDefault(f.n)); renderDv(); }
+});
+$("#dvMain").addEventListener("input", e => { const a = e.target; if (a.dataset.act !== "rng") return; const row = a.closest(".dn"); row.querySelector("[data-act=num]").value = a.value;
+  const u = row.querySelector(".dbar u"), f = dvFind(a); if (!u || !f) return; const p = (+a.value - +a.min) / ((+a.max - +a.min) || 1) * 100;
+  if ((f.r ? f.r.op : ">=") === ">=") { u.style.left = p + "%"; u.style.right = "0"; } else { u.style.left = "0"; u.style.right = (100 - p) + "%"; } });
+$("#dvMain").addEventListener("change", e => { const a = e.target; if (a.dataset.act !== "rng" && a.dataset.act !== "num") return; const f = dvFind(a); if (!f || a.value === "") return;
+  dvSet(f.L.key, f.i, f.r ? f.r.op : ">=", +a.value); renderDv(); });
+// Strg+V im Divine-Reiter: Item-Text direkt einfügen
+document.addEventListener("paste", e => { if (!$("#pDv").classList.contains("on")) return; const tg = e.target;
+  if (tg && (tg.tagName === "TEXTAREA" || (tg.tagName === "INPUT" && tg.type !== "range"))) return;
+  const txt = (e.clipboardData || window.clipboardData).getData("text"); if (!txt) return; e.preventDefault(); post("dvPaste", txt.replace(/\r/g, "")); });
+$("#dvAnySeg").onclick = e => { const b = e.target.closest("button"); if (!b) return; dvState().any = +b.dataset.v; post("dvAny", b.dataset.v); renderDv(); };
+$$("[data-top]").forEach(b => b.onclick = () => { const d = dvState(), v = b.dataset.top, anyOn = Object.keys(d.rules).length > 0;
+  for (const L of d.lines) L.nums.forEach((n, i0) => { const i = i0 + 1, r = (d.rules[L.key] || {})[i];
+    if (v === "off") { if (r) dvSet(L.key, i, r.op, null); return; }
+    if (anyOn && !r) return; const lo = dvNum(n.lo), hi = dvNum(n.hi); if (lo == null || hi == null || lo === hi) return;
+    const st = dvStep(n), op = r ? r.op : ">=", q = +v, x = op === ">=" ? lo + q * (hi - lo) : hi - q * (hi - lo);
+    dvSet(L.key, i, op, Math.round(x / st) * st); });
+  renderDv(); });
+$("#dvTestHit").onclick = () => post("testHitDv");
+$("#dvForget").onclick = () => { ST.dv = { item:"", any:0, lines:[], rules:{} }; post("dvForget"); renderDv(); };
+
+$("#resetSession").onclick = () => post("resetSession");
+$("#resetAll").onclick = () => { if (confirm(t("sResetConfirm"))) post("resetAll"); };
+
+$$(".opt").forEach(o => o.onclick = () => { ST.mode = +o.dataset.mode; post("set", "Mode", ST.mode); renderSettings(); });
+$("#pauses").onclick = e => { const b = e.target.closest("[data-p]"); if (!b) return; ST.pauseMs = +b.dataset.p; post("set", "PauseMs", ST.pauseMs); renderSettings(); };
+$$(".sw[data-k]").forEach(s => s.onclick = e => { if (e.target.closest("button")) return; const k = s.dataset.k; ST[k] = +ST[k] ? 0 : 1;
+  post("set", k[0].toUpperCase() + k.slice(1), ST[k]); renderSettings(); });
+$("#keySel").onchange = e => { ST.key = e.target.value; post("set", "Key", ST.key); renderGuard(); applyI18n(); renderSettings(); };
+$("#sndSel").addEventListener("change", e => { const v = e.target.value; ST.soundName = v;
+  if (v === "custom") post("soundPick"); else { post("set", "SoundName", v); post("soundTest"); } renderSettings(); });
+$("#sndTest").onclick = () => post("soundTest");
+$("#vol").addEventListener("input", e => { $("#volN").textContent = e.target.value + "%"; });
+$("#vol").addEventListener("change", e => { ST.volume = +e.target.value; post("set", "Volume", ST.volume); });
+$("#hitAnim").onclick = e => { const b = e.target.closest("button[data-v]"); if (!b) return; ST.hitAnim = b.dataset.v; post("set", "HitAnim", ST.hitAnim); renderSettings(); };
+$("#hbSecs").onclick = e => { const b = e.target.closest("button[data-s]"); if (!b) return; ST.hitBarSecs = +b.dataset.s; post("set", "HitBarSecs", ST.hitBarSecs); renderSettings(); };
+$("#testHit").onclick = () => post("testHit");
+$("#testHitDv2").onclick = () => post("testHitDv");
+$("#placeStart").onclick = () => post("placeStart");
+$("#placeReset").onclick = () => post("placeReset");
+$("#ocrReset").onclick = () => post("ocrReset");
+$("#openDiag").onclick = () => post("openDiag");
+$("#diagPack").onclick = () => { toast("…"); post("diagPack"); };
+$("#resetLearn").onclick = () => post("resetLearn");
+$("#sysRe").onclick = () => post("sysCheck");
+$("#sysList").onclick = e => { if (e.target.closest("[data-act=admin]")) post("restartAdmin"); };
+$("#langSeg").onclick = e => { const b = e.target.closest("button"); if (!b) return; ST.lang = b.dataset.l; post("set", "Lang", ST.lang); renderAll(); if (SYS.length) post("sysCheck"); };
+let rulesT; $("#rules").oninput = () => { clearTimeout(rulesT); rulesT = setTimeout(() => { ST.rules = $("#rules").value; post("rules", ST.rules.replace(/\r/g, "")); renderHunt(); }, 500); };
+$("#uninstall").onclick = () => post("uninstall");
+$("#kofi").onclick = () => post("kofi");
+
+// Nachrichten von AutoHotkey
+try {
+  window.chrome.webview.addEventListener("message", e => {
+    const m = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+    if (m.type === "state") { Object.assign(ST, m); if (!DB.byId[ST.activeCat] && DB.cats[0]) ST.activeCat = DB.cats[0].id; renderAll(); }
+    else if (m.type === "status") { ST.on = m.on; ST.hit = m.hit; renderGuard(); }
+    else if (m.type === "cat") selectCat(m.id, true);
+    else if (m.type === "saved") toast(t("saved"));
+    else if (m.type === "stats") { STATS = m; renderStats(); }
+    else if (m.type === "ocr") { ST.ocr = m.ocr; renderOcr(); }
+    else if (m.type === "sys") { SYS = m.items || []; renderSys(); }
+    else if (m.type === "page") showPage(m.id);
+    else if (m.type === "dv") { ST.dv = m.dv; renderDv(); }
+    else if (m.type === "toast") toast(m.text, +m.long);
+  });
+} catch (e) {}
+
+(async () => {
+  renderAll();
+  await loadDB();
+  if (!DB.byId[ST.activeCat] && DB.cats[0]) ST.activeCat = DB.cats[0].id;
+  renderAll();
+  post("ready");
+})();
+</script>
+</body>
+</html>
