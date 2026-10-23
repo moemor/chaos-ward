@@ -1819,8 +1819,6 @@ HandleWeb(msg) {
             PlaceStart()
         case "placeReset":
             PlaceReset(false)
-        case "kofi":                             ; Unterstützen-Knopf: Ko-fi im normalen Browser öffnen
-            try Run("https://ko-fi.com/chaosward")
         case "diagPack":
             zip := ""
             try zip := DiagPack()

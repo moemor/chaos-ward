@@ -474,7 +474,6 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
         <div style="display:flex;flex-direction:column;gap:16px">
           <div class="panel"><h3 class="sec" data-i18n="factsTitle"></h3><ul class="facts" id="facts"></ul></div>
           <div class="panel"><h3 class="sec" data-i18n="safeTitle"></h3><p class="hint" style="font-size:13.5px;line-height:1.55" data-i18n="safeText"></p></div>
-          <div class="panel"><h3 class="sec" data-i18n="kofiTitle"></h3><p class="hint" style="font-size:13.5px;line-height:1.55;margin-bottom:12px" data-i18n="kofiText"></p><button class="btn" id="kofi" data-i18n="kofiBtn"></button></div>
           <button class="link" id="uninstall" data-i18n="uninstall" style="align-self:flex-start"></button>
           <p class="hint" style="margin-top:auto">© 2026 moemor · Chaos Ward · <span data-i18n="licText"></span></p>
         </div>
@@ -544,7 +543,7 @@ const I18N = {
     rulesTitle:"Eigene Wünsche als Text (für Fortgeschrittene)", rulesHint:"Gelten für alle Items. Eine Zeile = ein Wunsch, z. B. „Movement Speed >= 30“. Zeilen mit # sind aus.",
     stepsTitle:"So geht's", factsTitle:"Gut zu wissen", safeTitle:"Sicherheit",
     safeText:"Kein Makro: Ich lese nie den Spielspeicher, drücke nie Tasten und klicke nie für dich. Ich lese nur, was du mit Strg+C kopierst, und im Modus „Automatisch“ den Tooltip auf deinem Bildschirm. Ich halte höchstens deine Klicks zurück.",
-    uninstall:"Vom PC entfernen", kofiTitle:"Chaos Ward unterstützen", kofiText:"Chaos Ward ist kostenlos und bleibt es. Wenn es dir ein paar Divines gerettet hat, freue ich mich über einen Kaffee.", kofiBtn:"☕ Auf Ko-fi unterstützen", licText:"Kostenlos, nicht für den Verkauf (PolyForm Noncommercial 1.0.0). Fan-Projekt, nicht mit Grinding Gear Games verbunden.", saved:"Gespeichert", times:"×",
+    uninstall:"Vom PC entfernen", licText:"Kostenlos, nicht für den Verkauf (PolyForm Noncommercial 1.0.0). Fan-Projekt, nicht mit Grinding Gear Games verbunden.", saved:"Gespeichert", times:"×",
     steps:[["Spiel vorbereiten","Spiel auf „Fenster-Vollbild“ stellen und auf Englisch, sonst sehe ich nichts."],
       ["Wünsche anhaken","Item-Art wählen und Mods anhaken. Tipp: Kopier dein Item mit Strg+C, dann wähle ich die Item-Art selbst."],
       ["Schutz einschalten","Im Spiel {key} drücken."],
@@ -608,7 +607,7 @@ const I18N = {
     rulesTitle:"Extra wishes as text (advanced)", rulesHint:"Apply to every item. One line = one wish, e.g. “Movement Speed >= 30”. Lines starting with # are off.",
     stepsTitle:"How it works", factsTitle:"Good to know", safeTitle:"Safety",
     safeText:"No macro: I never read game memory, never press keys and never click for you. I only read what you copy with Ctrl+C and, in Automatic mode, the tooltip on your screen. At most I hold back your clicks.",
-    uninstall:"Uninstall from this PC", kofiTitle:"Support Chaos Ward", kofiText:"Chaos Ward is free and will stay free. If it saved you a few divines, a coffee is much appreciated.", kofiBtn:"☕ Support on Ko-fi", licText:"Free, not for resale (PolyForm Noncommercial 1.0.0). Fan project, not affiliated with Grinding Gear Games.", saved:"Saved", times:"×",
+    uninstall:"Uninstall from this PC", licText:"Free, not for resale (PolyForm Noncommercial 1.0.0). Fan project, not affiliated with Grinding Gear Games.", saved:"Saved", times:"×",
     steps:[["Prepare the game","Set the game to “Windowed Fullscreen” and English, otherwise I can't see anything."],
       ["Pick your wishes","Choose the item type and tick mods. Tip: copy your item with Ctrl+C and I pick the item type myself."],
       ["Turn the guard on","Press {key} in game."],
@@ -982,7 +981,6 @@ $("#sysList").onclick = e => { if (e.target.closest("[data-act=admin]")) post("r
 $("#langSeg").onclick = e => { const b = e.target.closest("button"); if (!b) return; ST.lang = b.dataset.l; post("set", "Lang", ST.lang); renderAll(); if (SYS.length) post("sysCheck"); };
 let rulesT; $("#rules").oninput = () => { clearTimeout(rulesT); rulesT = setTimeout(() => { ST.rules = $("#rules").value; post("rules", ST.rules.replace(/\r/g, "")); renderHunt(); }, 500); };
 $("#uninstall").onclick = () => post("uninstall");
-$("#kofi").onclick = () => post("kofi");
 
 // Nachrichten von AutoHotkey
 try {

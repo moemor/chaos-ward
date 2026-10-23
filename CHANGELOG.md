@@ -9,6 +9,7 @@ All notable changes to Chaos Ward. Versions follow `major.minor.patch`.
 * 🔊 New sound "Seal", timed to the lock. Old "Slot machine" settings switch to it automatically.
 * 🔍 The in-game item display and messages use the same style.
 * ⚡ The hit bar stops drawing once it stands still, so it costs nothing while it stays on screen.
+* 🧹 Removed the Ko-fi support button and links.
 
 ## 7.4.2 (October 2026)
 * 🏷️ Author name is now moemor everywhere (app, license, setup).
