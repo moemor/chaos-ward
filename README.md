@@ -1,6 +1,5 @@
 # 🛡️ Chaos Ward
 
-[![Support on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Chaos%20Ward-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/chaosward)
 
 **A crafting guard for Path of Exile 2.** Chaos Ward holds back your clicks the moment the mod you want lands on your item, so you never spam one orb too many and roll away a great craft.
 
@@ -67,7 +66,6 @@ Chaos Ward was designed, directed and tested by moemor and developed with the he
 * Chaos Ward sends **nothing** to the internet. No account, no tracking, no analytics.
 * Everything stays on your PC in `%LOCALAPPDATA%\ChaosWard` (settings, wishes, tracker).
 * Screen reading happens locally with the OCR built into Windows, only around the item tooltip.
-* The only things that open a web page are the Ko-fi button and links you click yourself.
 * The diagnostic package is created only when you press the button, and you decide whether to send it.
 
 ## ❓ FAQ
@@ -89,7 +87,7 @@ Yes, the mod data is rebuilt from the game files for every league.
 
 ## ☕ Support
 
-Chaos Ward is free and will stay free. If it saved you a few divines, you can buy me a coffee on [Ko-fi](https://ko-fi.com/chaosward). Thank you!
+Chaos Ward is free and will stay free. If it saved you a few divines.
 
 ## 🩹 Known issues and troubleshooting
 
