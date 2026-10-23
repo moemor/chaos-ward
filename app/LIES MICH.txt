@@ -1,5 +1,5 @@
-﻿CHAOS WARD v8.0.0  (früher "Craft-Schutz")  -  in 3 Schritten startklar
-   (Am einfachsten: "ChaosWard-Setup-8.0.0.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
+﻿CHAOS WARD v8.0.1  (früher "Craft-Schutz")  -  in 3 Schritten startklar
+   (Am einfachsten: "ChaosWard-Setup-8.0.1.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
     Deinstallieren: Windows-Einstellungen -> Apps -> Chaos Ward.)
 ==============================================
 

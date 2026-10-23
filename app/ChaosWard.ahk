@@ -31,7 +31,7 @@ CoordMode "Pixel", "Screen"
 try DllCall("SetThreadDpiAwarenessContext", "Ptr", -4, "Ptr")
 
 global APP         := "Chaos Ward"
-global APP_VER     := "8.0.0"
+global APP_VER     := "8.0.1"
 global APP_FILE    := "ChaosWard"
 global INSTALL_DIR := EnvGet("LOCALAPPDATA") "\ChaosWard"
 global OLD_DIR     := EnvGet("LOCALAPPDATA") "\PoE2-CraftSchutz"      ; alte Version (Craft-Schutz)
@@ -2493,8 +2493,11 @@ AutoCheck(attempt) {
         return
     }
     ; Einstellungen abwechseln: beste Schwelle zuerst, dann Alternativen; später auch ohne Ausschnitt
+    ; (den ganzen Bildschirm nur, wenn der Tooltip im Ausschnitt gar nicht gefunden wurde: das ist langsam)
+    if attempt = 1 || !Track.HasOwnProp("Chk")
+        Track.Chk := {Sig: "", Same: 0, Ok: false}
     thr := Track.Alts[Mod(attempt - 1, 3) + 1]
-    useRect := attempt <= 5
+    useRect := attempt <= 5 || Track.Chk.Ok
     OcrBusy := true
     try segs := OcrRead(thr, useRect)
     catch {
@@ -2532,8 +2535,14 @@ AutoCheck(attempt) {
         Unlock()
         return
     }
-    if attempt < 9 {
-        SetTimer(AutoCheck.Bind(attempt + 1), -90)
+    ; dreimal gleich gelesen und trotzdem unsicher -> weiteres Lesen bringt nichts, gleich entscheiden
+    if r.Status = "ok" {
+        Track.Chk.Ok := true
+        Track.Chk.Same := r.Sig = Track.Chk.Sig ? Track.Chk.Same + 1 : 1
+        Track.Chk.Sig := r.Sig
+    }
+    if attempt < 9 && !(r.Status = "ok" && Track.Chk.Same >= 3) {
+        SetTimer(AutoCheck.Bind(attempt + 1), -60)
         return
     }
     if r.Status = "ok" && !r.Unsure && !changed
@@ -2775,7 +2784,7 @@ AutoEval(segs) {
             full[gid] := {Idx: idx}
             sortStr .= Format("{:02}{:04}", 10 - gk.Length, 1000 - Round(worst * 1000)) "`t" gid "`n"
         } else if worst >= 0.65 && w.Has(gid) {
-            partial[gid] := 1
+            partial[gid] := idx                    ; Wunsch nur ungefähr gelesen? (Zeilen merken, s. unten)
         }
     }
     owner := Map(), groups := []
@@ -2824,9 +2833,18 @@ AutoEval(segs) {
         if hits > h0
             hitG[gid] := tierN
     }
-    for gid in partial
-        if !vals.Has(gid)
+    ; ungefähr gelesener Wunsch macht nur unsicher, wenn seine Zeile keinem anderen Mod sicher gehört
+    ; (sonst wäre z.B. "increased Cold Damage" bei Wunsch "increased Spell Damage" IMMER unsicher)
+    for gid, pIdx in partial {
+        if vals.Has(gid)
+            continue
+        taken := true
+        for i in pIdx
+            if !i || !owner.Has(i)
+                taken := false
+        if !taken
             unsure := true
+    }
     if groups.Length < Track.Expected
         unsure := true
     ; eigene Text-Wünsche

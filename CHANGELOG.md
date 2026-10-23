@@ -2,6 +2,10 @@
 
 All notable changes to Chaos Ward. Versions follow `major.minor.patch`.
 
+## 8.0.1 (October 2026)
+* 🐛 A wished mod that looks similar to another mod on the item (for example "increased Spell Damage" when the item has "increased Cold Damage") no longer makes every read "not read reliably".
+* ⚡ Faster decisions: when three reads in a row agree, Chaos Ward stops reading again. The whole screen is only read when the tooltip was not found at all.
+
 ## 8.0.0 (October 2026)
 * 🎨 New look "Seal": one font family (IBM Plex), calm charcoal and stone, square shapes and one set of line icons.
 * 🎯 Colours now mean something: teal = picked or guard on, gold only for a hit, red = banned or error.
