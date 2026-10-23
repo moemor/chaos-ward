@@ -78,8 +78,8 @@ const FileExist = () => "A";
 // ---------------- GDI+ ----------------
 const IMAGES = {};        // Dateiname -> Image (vom Testgerüst vorgeladen)
 let TITLES = null;        // (alt) vorberechnete Titel-Umrisse
-const FAMS = { Body: { name: "Plex", w: 400, asc: 1120, desc: 275, upm: 1000 }, Semi: { name: "Plex", w: 600, asc: 1120, desc: 275, upm: 1000 },
-  Cond: { name: "Plex Cond", w: 600, asc: 1025, desc: 275, upm: 1000 }, Mono: { name: "Plex Mono", w: 600, asc: 1025, desc: 275, upm: 1000 } };
+const FAMS = { Body: { name: "Overpass", w: 400, asc: 1950, desc: 600, upm: 2000 }, Semi: { name: "Overpass", w: 600, asc: 1950, desc: 600, upm: 2000 },
+  Cond: { name: "Overpass", w: 600, asc: 1950, desc: 600, upm: 2000 }, Mono: { name: "Overpass", w: 600, asc: 1950, desc: 600, upm: 2000 } };
 function rgba(argb) { argb = argb >>> 0; const a = (argb >>> 24) / 255, r = (argb >> 16) & 255, g = (argb >> 8) & 255, b = argb & 255; return `rgba(${r},${g},${b},${a})`; }
 class GPath { constructor() { this.ops = []; } }
 function path2d(p) {

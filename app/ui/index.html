@@ -6,17 +6,13 @@
 <title>Chaos Ward</title>
 <style>
 /* Chaos Ward: Stil "Siegel"
-   Regeln: eine Schriftfamilie (IBM Plex), kantige Formen (2 px), dünne Linien.
+   Regeln: eine Schriftfamilie (Overpass), kantige Formen (2 px), dünne Linien.
    Farben tragen Bedeutung: Grünblau = gewählt / Schutz an. Gold = nur ein Treffer. Rot = verboten / Fehler.
    Blau = Zahlen aus dem Spiel. Sonst nur Kohle und Stein. */
-@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-Regular.ttf); font-weight: 400; }
-@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-Medium.ttf); font-weight: 500; }
-@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-SemiBold.ttf); font-weight: 600; }
-@font-face { font-family: "Plex"; src: url(fonts/IBMPlexSans-Bold.ttf); font-weight: 700; }
-@font-face { font-family: "Plex Cond"; src: url(fonts/IBMPlexSansCondensed-Medium.ttf); font-weight: 500; }
-@font-face { font-family: "Plex Cond"; src: url(fonts/IBMPlexSansCondensed-SemiBold.ttf); font-weight: 600; }
-@font-face { font-family: "Plex Mono"; src: url(fonts/IBMPlexMono-Medium.ttf); font-weight: 500; }
-@font-face { font-family: "Plex Mono"; src: url(fonts/IBMPlexMono-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: "Overpass"; src: url(fonts/Overpass-Regular.ttf); font-weight: 400; }
+@font-face { font-family: "Overpass"; src: url(fonts/Overpass-Medium.ttf); font-weight: 500; }
+@font-face { font-family: "Overpass"; src: url(fonts/Overpass-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: "Overpass"; src: url(fonts/Overpass-Bold.ttf); font-weight: 700; }
 
 :root {
   --bg: #121314;      /* Grund */
@@ -41,13 +37,13 @@
   --bad: #D4604E;
   --bad-a: rgba(212,96,78,.10);
   --r: 2px;
-  --sans: "Plex", "Segoe UI", system-ui, sans-serif;
-  --cond: "Plex Cond", "Plex", "Segoe UI", sans-serif;
-  --mono: "Plex Mono", Consolas, monospace;
+  --sans: "Overpass", "Segoe UI", system-ui, sans-serif;
+  --cond: var(--sans);
+  --mono: var(--sans);
 }
 * { box-sizing: border-box; margin: 0; }
 html, body { height: 100%; }
-body { background: var(--bg); color: var(--ink); font: 400 14px/1.45 var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+body { background: var(--bg); color: var(--ink); font: 400 14px/1.45 var(--sans); font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; overflow: hidden; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 input, select, textarea { font: inherit; color: var(--ink); background: var(--s1); border: 1px solid var(--line2); border-radius: var(--r); padding: 6px 9px; outline: none; }
 input:focus, select:focus, textarea:focus { border-color: var(--ward); }
@@ -58,7 +54,7 @@ input[type=range] { padding: 0; border: 0; background: transparent; accent-color
 .muted { color: var(--ash); } small { font-size: 12px; }
 b, strong { font-weight: 600; }
 kbd { font: 500 11px var(--mono); color: var(--ash); border: 1px solid var(--line2); border-bottom-width: 2px; border-radius: var(--r); padding: 0 5px; }
-.lbl, h3.sec { font: 600 11.5px/1.2 var(--cond); letter-spacing: .09em; text-transform: uppercase; color: var(--ash); }
+.lbl, h3.sec { font: 600 14px/1.25 var(--sans); color: var(--ink); }
 
 .app { display: grid; grid-template-columns: 212px 1fr; height: 100vh; }
 
@@ -66,7 +62,7 @@ kbd { font: 500 11px var(--mono); color: var(--ash); border: 1px solid var(--lin
 .side { background: var(--side); border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 18px 0 12px; min-height: 0; }
 .brand { display: flex; align-items: center; gap: 11px; padding: 0 16px 22px; }
 .brand img { width: 36px; height: 36px; }
-.brand b { font: 600 18px/1 var(--cond); letter-spacing: .02em; display: block; }
+.brand b { font: 700 17px/1 var(--sans); display: block; }
 .brand small { color: var(--dim); font-size: 11px; line-height: 1.3; display: block; margin-top: 4px; }
 .nav { display: flex; flex-direction: column; }
 .nav button { display: flex; align-items: center; gap: 12px; padding: 9px 16px; color: var(--ash); font-weight: 500; font-size: 14.5px; text-align: left; border-left: 2px solid transparent; }
@@ -76,23 +72,22 @@ kbd { font: 500 11px var(--mono); color: var(--ash); border: 1px solid var(--lin
 .nav button.on svg { color: var(--ward-hi); }
 .nav .sep { height: 1px; background: var(--line); margin: 10px 16px; }
 
-/* Schutz-Feld mit Zählwerk */
-.guard { margin: auto 12px 0; padding: 12px; background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); }
-.guard.on { border-color: var(--ward-lo); box-shadow: inset 0 2px 0 var(--ward); }
-.guard.hit { border-color: #5a4720; box-shadow: inset 0 2px 0 var(--hit); }
-.guard-top { display: flex; align-items: center; gap: 9px; }
-.lamp { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--dim); flex: none; }
-.guard.on .lamp { border-color: var(--ward); background: var(--ward); }
-.guard.hit .lamp { border-color: var(--hit); background: var(--hit); animation: pulse 1.2s ease-in-out infinite; }
+/* Schutz-Feld: Zustand, Zahl, Knopf */
+.guard { margin: auto 12px 0; padding: 12px 12px 12px; background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); }
+.guard-top { display: flex; align-items: center; gap: 8px; }
+.lamp { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); flex: none; }
+.guard.on .lamp { background: var(--ward); box-shadow: 0 0 0 3px var(--ward-a); }
+.guard.hit .lamp { background: var(--hit); box-shadow: 0 0 0 3px var(--hit-a); animation: pulse 1.2s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .35; } }
-.guard-top b { font: 600 13px var(--cond); letter-spacing: .08em; text-transform: uppercase; }
+.guard-top b { font-weight: 600; font-size: 13.5px; color: var(--ash); }
+.guard.on .guard-top b { color: var(--ward-hi); } .guard.hit .guard-top b { color: var(--hit-hi); }
 .guard-top kbd { margin-left: auto; }
-.reel { display: flex; gap: 2px; margin: 12px 0 6px; justify-content: center; }
-.reel span { width: 27px; height: 36px; display: grid; place-items: center; font: 600 22px/1 var(--mono); color: var(--ash); background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); }
-.guard.on .reel span { color: var(--ink); }
-.guard.hit .reel span { color: var(--hit-hi); border-color: #4a3b1d; }
-.guard-cap { text-align: center; color: var(--dim); font-size: 11.5px; }
-.guard-btn { width: 100%; margin-top: 11px; padding: 8px; border-radius: var(--r); font-weight: 600; background: var(--ward); color: var(--ward-ink); }
+.reel { display: flex; align-items: baseline; gap: 7px; margin: 12px 0 0; }
+.reel b { font: 700 30px/1 var(--sans); color: var(--ink); }
+.reel span { color: var(--ash); font-size: 12.5px; line-height: 1.25; }
+.guard.hit .reel b { color: var(--hit-hi); }
+.guard-cap { display: none; }
+.guard-btn { width: 100%; margin-top: 12px; padding: 8px; border-radius: var(--r); font-weight: 600; background: var(--ward); color: var(--ward-ink); }
 .guard-btn:hover { background: var(--ward-hi); }
 .guard.on .guard-btn, .guard.hit .guard-btn { background: var(--s3); color: var(--ink); }
 .guard.on .guard-btn:hover, .guard.hit .guard-btn:hover { background: var(--line2); }
@@ -101,7 +96,7 @@ kbd { font: 500 11px var(--mono); color: var(--ash); border: 1px solid var(--lin
 .main { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .page { display: none; flex: 1; min-height: 0; flex-direction: column; } .page.on { display: flex; }
 .head { display: flex; align-items: flex-end; gap: 16px; padding: 20px 24px 15px; border-bottom: 1px solid var(--line); flex: none; }
-.head h1 { font: 600 23px/1.1 var(--cond); letter-spacing: .01em; }
+.head h1 { font: 700 22px/1.15 var(--sans); }
 .head p { color: var(--ash); margin-top: 4px; max-width: 72ch; }
 .head .grow { flex: 1; }
 .body { flex: 1; min-height: 0; display: flex; }
@@ -153,7 +148,7 @@ h3.sec { margin: 0 0 10px; }
 .filt input { width: 180px; padding: 4px 9px; margin-left: auto; }
 .filt .count { color: var(--dim); font: 500 12px var(--mono); margin-left: 4px; }
 .list { padding: 0 18px 18px; }
-.secl { color: var(--ash); font: 600 11.5px var(--cond); letter-spacing: .09em; text-transform: uppercase; padding: 14px 12px 6px; }
+.secl { color: var(--ash); font: 600 13px var(--sans); padding: 14px 12px 6px; }
 .mod { display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 12px; padding: 8px 12px; border-radius: var(--r); border-left: 2px solid transparent; cursor: pointer; }
 .mod + .mod { margin-top: 1px; }
 .mod:hover { background: var(--s1); }
@@ -178,7 +173,7 @@ h3.sec { margin: 0 0 10px; }
 .slip { width: 276px; flex: none; border-left: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 .ticket { background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); }
 .ticket .band { padding: 11px 14px 10px; border-bottom: 1px solid var(--line); display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.ticket h3 { font: 600 11.5px var(--cond); letter-spacing: .09em; text-transform: uppercase; color: var(--ash); }
+.ticket h3 { font: 600 13px var(--sans); color: var(--ash); }
 .ticket .sub { font-size: 13px; color: var(--ink); font-weight: 500; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ticket ul { list-style: none; padding: 6px 0; display: flex; flex-direction: column; }
 .ticket li { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 5px 14px; font-size: 13.5px; line-height: 1.3; color: var(--ink); }
@@ -283,7 +278,7 @@ h3.sec { margin: 0 0 10px; }
 .opt .dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line2); flex: none; margin-top: 3px; }
 .opt.on { border-color: var(--ward-lo); border-left-color: var(--ward); background: var(--ward-a); } .opt.on .dot { border: 4px solid var(--ward); }
 .opt b { display: block; } .opt span { color: var(--ash); font-size: 12.5px; }
-.opt .tag, .tag { font: 600 10.5px var(--cond); letter-spacing: .08em; text-transform: uppercase; color: var(--ward-hi); border: 1px solid var(--ward-lo); border-radius: var(--r); padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
+.opt .tag, .tag { font: 600 11px var(--sans); color: var(--ward-hi); border: 1px solid var(--ward-lo); border-radius: var(--r); padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
 .chiprow { display: flex; gap: 6px; flex-wrap: wrap; }
 .sysgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 10px; }
 .sysi { display: flex; gap: 10px; padding: 9px 10px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); }
@@ -292,7 +287,7 @@ h3.sec { margin: 0 0 10px; }
 .sysi.bad { border-color: rgba(212,96,78,.5); background: var(--bad-a); }
 .sysi b { display: block; font-size: 13px; } .sysi small { color: var(--ash); font-size: 12px; line-height: 1.35; display: block; }
 .sysi .chip { margin-top: 6px; }
-textarea { width: 100%; height: 120px; resize: vertical; font: 13px var(--mono); }
+textarea { width: 100%; height: 120px; resize: vertical; font: 13px Consolas, monospace; }
 details summary { cursor: pointer; color: var(--ash); padding: 10px 0; }
 details[open] summary { color: var(--ink); }
 
@@ -354,6 +349,7 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           <div class="ticket" id="hunt"></div>
           <div class="tiles" id="miniStats"></div>
           <p class="hint" data-i18n="modsTip"></p>
+          <div><button class="btn quiet" id="modsTestHit" data-i18n="modsTestHit"></button></div>
           <button class="link" id="clearBtn" data-i18n="clearAll" style="align-self:flex-start"></button>
         </div>
       </div>
@@ -373,6 +369,7 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           <div><h3 class="sec" data-i18n="mbAnyT"></h3><div class="field"><span class="stepper"><button id="anyMinus">−</button><b id="anyVal">0</b><button id="anyPlus">+</button></span><span class="hint" data-i18n="mbAnyH"></span></div></div>
           <div><h3 class="sec" data-i18n="mbEffT"></h3><div class="field"><input id="mbEff" type="number" min="25" max="50" step="1"><span class="hint" data-i18n="mbEffH"></span></div></div>
           <div class="ticket" id="mbTicket"></div>
+          <div><button class="btn quiet" id="mbTestHit" data-i18n="mbTestHit"></button></div>
           <button class="link" id="mbClear" data-i18n="mbClear" style="align-self:flex-start"></button>
         </div>
       </div>
@@ -398,6 +395,7 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
     <section class="page" id="pStats">
       <div class="head"><div><h1 data-i18n="navStats"></h1><p data-i18n="hStats"></p></div></div>
       <div class="body"><div class="trk scroll">
+        <div class="seg" id="trkSeg" style="max-width:320px"><button data-k="c">Chaos Orbs</button><button data-k="d">Divine Orbs</button></div>
         <div class="big4">
           <div><b id="stSince">0</b><span data-i18n="sSinceHint"></span></div>
           <div><b id="stSession">0</b><span data-i18n="sSessionHint"></span></div>
@@ -433,11 +431,12 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           <div class="sw"><span data-i18n="oVolume"></span><input type="range" id="vol" min="0" max="100" step="5" style="width:130px"><b id="volN" style="width:40px;text-align:right">80%</b></div>
           <div class="sw"><span data-i18n="oHitAnim"></span><div class="seg" id="hitAnim" style="width:230px"><button data-v="slot" data-i18n="animSlot"></button><button data-v="instant" data-i18n="animInstant"></button></div></div>
           <div class="sw"><span data-i18n="oHbSecs"></span><div class="chiprow" id="hbSecs"></div></div>
-          <div class="sw"><span data-i18n="oTestHits"></span><button class="chip" id="testHit" data-i18n="testHitChaos"></button><button class="chip" id="testHitDv2" data-i18n="testHitDv"></button></div>
+          <div class="sw"><span data-i18n="oTestHits"></span><button class="chip" id="testHit" data-i18n="testHitChaos"></button><button class="chip" id="testHitMb2">Mageblood</button><button class="chip" id="testHitDv2" data-i18n="testHitDv"></button></div>
         </div>
         <div class="panel">
           <h3 class="sec" data-i18n="secOverlay"></h3>
           <div class="sw" data-k="itemOverlay"><span data-i18n="oOverlay"></span><div class="tg"></div></div>
+          <div class="sw" data-k="island"><span data-i18n="oIsland"></span><div class="tg"></div></div>
           <div class="sw" data-k="streamVisible"><span data-i18n="oStream"></span><div class="tg"></div></div>
           <div class="sw"><span data-i18n="oPlace"></span><button class="chip" id="placeStart" data-i18n="placeStart"></button><button class="chip" id="placeReset" data-i18n="placeReset"></button></div>
         </div>
@@ -492,7 +491,7 @@ const I18N = {
     hMods:"Hake an, was auf dem Item landen soll. Ich stoppe dich, sobald es drauf ist.",
     hDv:"Werte neu würfeln, bis jede eingeschaltete Zahl deine Schwelle erreicht.",
     hStats:"So viele Orbs hat dich das Glück gekostet.", hSet:"Einmal einstellen, dann läuft alles von selbst.", hHelp:"In fünf Schritten zum ersten Treffer.",
-    gOff:"Schutz aus", gOn:"Schutz an", gHit:"Treffer!", gCap:"Orbs seit dem letzten Treffer",
+    gOff:"Schutz aus", gOn:"Schutz an", gHit:"Treffer!", gCap:"Chaos Orbs seit dem letzten Treffer", gCapDv:"Divine Orbs seit dem letzten Treffer",
     ctaOn:"Schutz einschalten", ctaOff:"Schutz ausschalten", ctaHit:"Fertig, Schutz aus",
     catSearch:"Item-Art suchen", search:"Mod suchen …", fAll:"Alle", fP:"Präfixe", fS:"Suffixe", fSel:"Nur gewählte",
     prefixes:"Präfixe", suffixes:"Suffixe", modsN:"{n} Mods", tierTitle:"{t} · ab Level {l}",
@@ -518,7 +517,7 @@ const I18N = {
     dvQuickH:"Gilt für die eingeschalteten Zahlen, oder für alle, wenn keine an ist.", dvNone:"Noch keine Schwelle an. Schalte bei einer Zahl den Regler ein.",
     dvRuleAll:"Stopp, wenn <strong>alle</strong> passen", dvRuleOne:"Stopp, wenn <strong>eine</strong> passt",
     dvHow:"Schwellen einstellen, Schutz an, Rechtsklick auf Divine Orb, Shift halten und spammen. Bin ich bei einer Zahl unsicher, bleibt der Klick gesperrt.",
-    dvForget:"Item und Schwellen vergessen", dvTestHit:"Divine-Treffer testen",
+    dvForget:"Item und Schwellen vergessen", dvTestHit:"Divine-Treffer testen", modsTestHit:"Treffer testen", mbTestHit:"Mageblood-Treffer testen",
     sSinceHint:"Orbs seit dem letzten Treffer", sSessionHint:"Orbs diese Sitzung", sAvgHint:"Ø Orbs je Treffer", sTotalHint:"Orbs gesamt",
     sChart:"Orbs je Treffer", sChartH:" · die letzten 30 Treffer, alt → neu", sHistory:"Letzte Treffer", sNoHits:"Noch keine Treffer. Viel Glück!", sResetSession:"Sitzung zurücksetzen", sResetAll:"Alles zurücksetzen",
     sResetConfirm:"Wirklich alle Zähler und die Treffer-Liste löschen?", orbs:"Orbs",
@@ -532,8 +531,8 @@ const I18N = {
     snd_seal:"Siegel", snd_hit:"Amboss", snd_chime:"Glocke", snd_coin:"Münzen", snd_ping:"Kurzer Ping", snd_windows:"Windows-Ton", snd_custom:"Eigene Datei …",
     oVolume:"Lautstärke<small>Gilt nur für Chaos Ward</small>", oHitAnim:"Treffer-Animation<small>Siegel: das Schloss rastet in einer halben Sekunde ein. Sofort: ohne Bewegung</small>", animSlot:"Siegel", animInstant:"Sofort", oHbSecs:"Treffer-Leiste zeigen<small>Der Klick bleibt immer gesperrt</small>", hbUntil:"bis {k}",
     oTestHits:"Treffer-Leiste ausprobieren", testHitChaos:"Chaos", testHitDv:"Divine",
-    oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
-    oPlace:"Fenster im Spiel verschieben<small>Meldungen, Treffer-Leiste und Item-Anzeige</small>", placeStart:"Verschieben", placeReset:"Standard",
+    oIsland:"Island oben im Spiel<small>Kleines Siegel als Schnellzugriff. Maus drüber: Chaos Ward öffnen oder Schutz an/aus</small>", oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
+    oPlace:"Fenster im Spiel verschieben<small>Meldungen, Treffer-Leiste, Item-Anzeige und Island</small>", placeStart:"Verschieben", placeReset:"Standard",
     oDetect:"Item-Art automatisch erkennen<small>Beim Strg+C springe ich zur passenden Liste</small>", oFrac:"Fractured Mods nicht mitzählen",
     oOcr:"Texterkennung", ocrReset:"Neu einstellen", ocrFilterMax:"Farbkanal {n}", ocrFilterLum:"Helligkeit {n}",
     ocrLine:"Filter {f} · letztes Strg+C: {l} erkannt · Sprache {g}", ocrNever:"noch nicht", ocrNoEn:"Englisches Sprachpaket fehlt. Windows-Einstellungen → Zeit und Sprache → Sprache hinzufügen → Englisch (USA), dann neu starten",
@@ -556,7 +555,7 @@ const I18N = {
     hMods:"Tick what should land on the item. I'll stop you as soon as it does.",
     hDv:"Reroll values until every switched-on number reaches your threshold.",
     hStats:"How many orbs luck has cost you.", hSet:"Set it once, then everything runs by itself.", hHelp:"Five steps to your first hit.",
-    gOff:"Guard off", gOn:"Guard on", gHit:"Hit!", gCap:"Orbs since your last hit",
+    gOff:"Guard off", gOn:"Guard on", gHit:"Hit!", gCap:"Chaos Orbs since the last hit", gCapDv:"Divine Orbs since the last hit",
     ctaOn:"Turn guard on", ctaOff:"Turn guard off", ctaHit:"Done, guard off",
     catSearch:"Search item type", search:"Search mods …", fAll:"All", fP:"Prefixes", fS:"Suffixes", fSel:"Picked only",
     prefixes:"Prefixes", suffixes:"Suffixes", modsN:"{n} mods", tierTitle:"{t} · from level {l}",
@@ -582,7 +581,7 @@ const I18N = {
     dvQuickH:"Applies to the switched-on numbers, or to all if none is on.", dvNone:"No threshold yet. Switch on the toggle at a number.",
     dvRuleAll:"Stop when <strong>all</strong> fit", dvRuleOne:"Stop when <strong>one</strong> fits",
     dvHow:"Set thresholds, guard on, right-click Divine Orb, hold Shift and spam. If I'm unsure about a number, the click stays locked.",
-    dvForget:"Forget item and thresholds", dvTestHit:"Test divine hit",
+    dvForget:"Forget item and thresholds", dvTestHit:"Test divine hit", modsTestHit:"Test a hit", mbTestHit:"Test Mageblood hit",
     sSinceHint:"Orbs since your last hit", sSessionHint:"Orbs this session", sAvgHint:"Avg orbs per hit", sTotalHint:"Orbs total",
     sChart:"Orbs per hit", sChartH:" · last 30 hits, old → new", sHistory:"Recent hits", sNoHits:"No hits yet. Good luck!", sResetSession:"Reset session", sResetAll:"Reset everything",
     sResetConfirm:"Really clear all counters and the hit list?", orbs:"orbs",
@@ -596,8 +595,8 @@ const I18N = {
     snd_seal:"Seal", snd_hit:"Anvil", snd_chime:"Bell", snd_coin:"Coins", snd_ping:"Short ping", snd_windows:"Windows sound", snd_custom:"Own file …",
     oVolume:"Volume<small>Only affects Chaos Ward</small>", oHitAnim:"Hit animation<small>Seal: the lock clicks shut in half a second. Instant: no motion</small>", animSlot:"Seal", animInstant:"Instant", oHbSecs:"Show hit bar<small>Clicking always stays locked</small>", hbUntil:"until {k}",
     oTestHits:"Try the hit bar", testHitChaos:"Chaos", testHitDv:"Divine",
-    oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
-    oPlace:"Move in-game windows<small>Messages, hit bar and item display</small>", placeStart:"Move", placeReset:"Default",
+    oIsland:"Island at the top of the game<small>Small seal for quick access. Hover it to open Chaos Ward or toggle the guard</small>", oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
+    oPlace:"Move in-game windows<small>Messages, hit bar, item display and island</small>", placeStart:"Move", placeReset:"Default",
     oDetect:"Detect item type automatically<small>Ctrl+C jumps to the matching list</small>", oFrac:"Don't count fractured mods",
     oOcr:"Text recognition", ocrReset:"Re-calibrate", ocrFilterMax:"colour channel {n}", ocrFilterLum:"brightness {n}",
     ocrLine:"Filter {f} · last Ctrl+C: {l} read · language {g}", ocrNever:"not yet", ocrNoEn:"English language pack missing. Windows Settings → Time & language → Add a language → English (US), then restart",
@@ -628,7 +627,8 @@ let ST = { lang:"de", mode:3, pauseMs:800, shiftOnly:1, itemOverlay:1, autoDetec
            volume:80, diag:1, learned:0, key:"F6", keys:["F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"],
            activeCat:"", on:0, hit:0, wishes:{}, need:{}, rules:"", ver:"", installed:0 };
 let DB = { groups:{}, cats:[], byId:{}, ver:"" };
-let STATS = { session:0, total:0, since:0, history:[] };
+let STATS = { session:0, total:0, since:0, dvSession:0, dvTotal:0, dvSince:0, cur:"c", history:[] };
+const fmtN = v => (+v || 0).toLocaleString(ST.lang);
 let filter = "all", loaded = false, openGroup = "", SYS = [];
 const DVICON = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M7 9h10M7 15h10"/><rect x="12.2" y="7.5" width="2.6" height="3" rx=".4" fill="var(--bg)"/><rect x="8.6" y="13.5" width="2.6" height="3" rx=".4" fill="var(--bg)"/></svg>`;
 const GEM = { Amethyst:"#9b5de5", Basalt:"#3d3f45", Bismuth:"linear-gradient(135deg,#f72585,#7209b7,#4cc9f0,#80ed99)", Diamond:"#e8f1ff", Gold:"#e6b422",
@@ -664,8 +664,8 @@ function renderGuard() {
   $("#gState").textContent = t(ST.hit ? "gHit" : ST.on ? "gOn" : "gOff");
   $("#gKey").textContent = ST.key;
   $("#toggle").textContent = t(ST.hit ? "ctaHit" : ST.on ? "ctaOff" : "ctaOn");
-  const d = String(Math.max(0, +STATS.since || 0)).padStart(4, "0");
-  $("#gReel").innerHTML = [...d].map(x => `<span>${x}</span>`).join("");
+  const dv = STATS.cur === "d", n = Math.max(0, +(dv ? STATS.dvSince : STATS.since) || 0);
+  $("#gReel").innerHTML = `<b>${fmtN(n)}</b><span>${t(dv ? "gCapDv" : "gCap")}</span>`;
   $("#ver").textContent = `Version ${ST.ver || "?"} · ${ST.lang === "de" ? "Spieldaten" : "game data"} ${DB.ver || "?"}`;
 }
 function applyI18n() {
@@ -739,7 +739,7 @@ function renderHunt() {
       ${need > 1 ? `<div class="stepper"><button id="needMinus">−</button><b>${need}</b><button id="needPlus">+</button></div>` : ""}</div>`;
 }
 function renderMini() {
-  const h = STATS.history || [], avg = h.length ? Math.round(h.reduce((a, x) => a + (+x.orbs || 0), 0) / h.length) : "–";
+  const h = (STATS.history || []).filter(x => (x.kind || "c") === "c"), avg = h.length ? Math.round(h.reduce((a, x) => a + (+x.orbs || 0), 0) / h.length) : "–";
   const nf = v => typeof v === "number" ? v.toLocaleString(ST.lang) : v;
   $("#miniStats").innerHTML = `<div><b>${nf(+STATS.session || 0)}</b><span>${t("mSession")}</span></div><div><b>${nf(h.length)}</b><span>${t("mHits")}</span></div>
     <div><b>${nf(avg)}</b><span>${t("mAvg")}</span></div><div><b>${nf(+STATS.total || 0)}</b><span>${t("mTotal")}</span></div>`;
@@ -824,9 +824,13 @@ function dvFind(el) { const r = el.closest(".dn"); if (!r) return null; const d 
   return L ? { L, i: +r.dataset.i, n: L.nums[+r.dataset.i - 1], r: (d.rules[L.key] || {})[+r.dataset.i] } : null; }
 
 // ---------- Tracker ----------
+let trkKind = null;   // Tracker: "c" = Chaos Orbs, "d" = Divine Orbs
 function renderStats() {
-  const h = STATS.history || [], nf = v => (+v || 0).toLocaleString(ST.lang);
-  $("#stSince").textContent = nf(STATS.since); $("#stSession").textContent = nf(STATS.session); $("#stTotal").textContent = nf(STATS.total);
+  if (!trkKind) trkKind = STATS.cur === "d" ? "d" : "c";
+  const dv = trkKind === "d", nf = v => (+v || 0).toLocaleString(ST.lang);
+  const h = (STATS.history || []).filter(x => (x.kind || "c") === trkKind);
+  $$("#trkSeg button").forEach(b => b.classList.toggle("on", b.dataset.k === trkKind));
+  $("#stSince").textContent = nf(dv ? STATS.dvSince : STATS.since); $("#stSession").textContent = nf(dv ? STATS.dvSession : STATS.session); $("#stTotal").textContent = nf(dv ? STATS.dvTotal : STATS.total);
   $("#stAvg").textContent = h.length ? nf(Math.round(h.reduce((a, x) => a + (+x.orbs || 0), 0) / h.length)) : "–";
   const last = h.slice(0, 30).reverse(), vals = last.map(x => +x.orbs || 0), mx = Math.max(1, ...vals);
   const iMax = vals.indexOf(Math.max(...vals)), avgV = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
@@ -951,6 +955,8 @@ $$("[data-top]").forEach(b => b.onclick = () => { const d = dvState(), v = b.dat
     dvSet(L.key, i, op, Math.round(x / st) * st); });
   renderDv(); });
 $("#dvTestHit").onclick = () => post("testHitDv");
+$("#modsTestHit").onclick = () => post("testHit");
+$("#mbTestHit").onclick = () => post("testHitMb");
 $("#dvForget").onclick = () => { ST.dv = { item:"", any:0, lines:[], rules:{} }; post("dvForget"); renderDv(); };
 
 $("#resetSession").onclick = () => post("resetSession");
@@ -966,10 +972,12 @@ $("#sndSel").addEventListener("change", e => { const v = e.target.value; ST.soun
 $("#sndTest").onclick = () => post("soundTest");
 $("#vol").addEventListener("input", e => { $("#volN").textContent = e.target.value + "%"; });
 $("#vol").addEventListener("change", e => { ST.volume = +e.target.value; post("set", "Volume", ST.volume); });
+$("#trkSeg").onclick = e => { const b = e.target.closest("button[data-k]"); if (!b) return; trkKind = b.dataset.k; renderStats(); };
 $("#hitAnim").onclick = e => { const b = e.target.closest("button[data-v]"); if (!b) return; ST.hitAnim = b.dataset.v; post("set", "HitAnim", ST.hitAnim); renderSettings(); };
 $("#hbSecs").onclick = e => { const b = e.target.closest("button[data-s]"); if (!b) return; ST.hitBarSecs = +b.dataset.s; post("set", "HitBarSecs", ST.hitBarSecs); renderSettings(); };
 $("#testHit").onclick = () => post("testHit");
 $("#testHitDv2").onclick = () => post("testHitDv");
+$("#testHitMb2").onclick = () => post("testHitMb");
 $("#placeStart").onclick = () => post("placeStart");
 $("#placeReset").onclick = () => post("placeReset");
 $("#ocrReset").onclick = () => post("ocrReset");

@@ -1,5 +1,5 @@
-﻿CHAOS WARD v8.0.1  (früher "Craft-Schutz")  -  in 3 Schritten startklar
-   (Am einfachsten: "ChaosWard-Setup-8.0.1.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
+﻿CHAOS WARD v8.1.0  (früher "Craft-Schutz")  -  in 3 Schritten startklar
+   (Am einfachsten: "ChaosWard-Setup-8.1.0.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
     Deinstallieren: Windows-Einstellungen -> Apps -> Chaos Ward.)
 ==============================================
 
@@ -42,7 +42,11 @@
      dann Divine Orbs spammen - die App sperrt, sobald alle (oder eine) Schwelle passen.
      Klappt Strg+C im Spiel nicht: im Divine-Reiter Strg+V drücken oder
      "Letztes kopiertes Item übernehmen" klicken.
-   - Reiter "Tracker": Orbs seit letztem Treffer, Sitzung, gesamt, Ø pro Treffer, letzte Treffer.
+   - Reiter "Tracker": Chaos Orbs und Divine Orbs getrennt: seit letztem Treffer, Sitzung,
+     gesamt, Ø pro Treffer, letzte Treffer.
+   - Island: kleines Siegel oben im Spiel. Maus drüber: "Öffnen" oder Schutz an/aus.
+     Abschaltbar und verschiebbar unter Einstellungen.
+   - Jede Seite (Mods, Mageblood, Divine) hat einen Knopf "Treffer testen".
 
 Läuft es nicht richtig?
    Einstellungen -> "Systemcheck": zeigt rot, was auf diesem PC nicht passt

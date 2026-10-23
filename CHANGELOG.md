@@ -2,6 +2,14 @@
 
 All notable changes to Chaos Ward. Versions follow `major.minor.patch`.
 
+## 8.1.0 (October 2026)
+* 🔤 New font Overpass. Small labels are no longer written in capitals and numbers no longer use a typewriter font.
+* 🔢 Simpler orb counter in the sidebar: one big number instead of digit boxes.
+* 📊 Tracker counts Chaos Orbs and Divine Orbs separately (switch at the top of the Tracker page).
+* 🏝️ New **Island**: a small see-through seal at the top of the game. Hover it for quick access (open Chaos Ward, guard on/off). Can be moved and turned off.
+* 🔕 With the Island on, the "Chaos Ward ON/OFF" message is gone: the seal shows the state (coloured ring, dimmed when off) and pulses when you switch.
+* 🧪 Test button on the Mods and Mageblood pages (Divine already had one), plus a Mageblood test in the settings.
+
 ## 8.0.1 (October 2026)
 * 🐛 A wished mod that looks similar to another mod on the item (for example "increased Spell Damage" when the item has "increased Cold Damage") no longer makes every read "not read reliably".
 * ⚡ Faster decisions: when three reads in a row agree, Chaos Ward stops reading again. The whole screen is only read when the tooltip was not found at all.

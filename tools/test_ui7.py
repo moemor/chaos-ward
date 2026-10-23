@@ -22,17 +22,17 @@ DV = {"item": "Vortex Weaver  ·  Chiming Staff", "any": 0, "lines": [
   {"key": "increasedlightradius", "text": "5% increased Light Radius", "nums": [{"v": 5, "lo": 5, "hi": 5}]},
   {"key": "addscolddamage", "text": "Adds 18 to 31 Cold Damage", "nums": [{"v": 18, "lo": 15, "hi": 22}, {"v": 31, "lo": 26, "hi": 36}]}],
   "rules": {"increasedspelldamage": {"1": {"op": ">=", "val": 172}}, "tomaximummana": {"1": {"op": ">=", "val": 315}}}}
-STATE = {"type": "state", "lang": "de", "theme": "obsidian", "mode": 3, "pauseMs": 800, "shiftOnly": 1, "itemOverlay": 1,
+STATE = {"type": "state", "lang": "de", "theme": "obsidian", "mode": 3, "pauseMs": 800, "shiftOnly": 1, "itemOverlay": 1, "island": 1,
          "autoDetect": 1, "sound": 1, "ignoreFractured": 1, "unsureRelease": 0, "streamVisible": 1, "volume": 70, "diag": 1, "learned": 3,
          "key": "F6", "keys": ["F2","F3","F4","F5","F6","F7"], "activeCat": "boots_dex_armour", "on": 1, "hit": 0,
-         "wishes": {}, "need": {}, "rules": "# test\nMovement Speed >= 30", "ver": "8.0.0", "installed": 1,
+         "wishes": {}, "need": {}, "rules": "# test\nMovement Speed >= 30", "ver": "8.1.0", "installed": 1,
          "mb": {"rules": {"Ruby": 2, "Sapphire": 1}, "any": 0, "eff": 40, "ban": ["Basalt","Granite"], "dup": 1}, "legacies": L,
          "soundName": "seal", "soundCustom": "", "hitBarSecs": 5, "ocr": {"best": 1215, "last": "6 Zeilen", "lang": "en-US", "en": 1}, "dv": DV}
-STATS = {"type": "stats", "session": 137, "total": 4821, "since": 23, "history": [
+STATS = {"type": "stats", "session": 137, "total": 4821, "since": 23, "dvSession": 31, "dvTotal": 212, "dvSince": 9, "cur": "c", "history": [
   {"t": "21.10. 15:40", "name": "Eagle Branch  ·  Dueling Wand", "orbs": 58},
   {"t": "21.10. 15:02", "name": "Doom Stride  ·  Velour Shoes", "orbs": 121},
   {"t": "20.10. 22:11", "name": "Mageblood  ·  Heavy Belt", "orbs": 340},
-  {"t": "20.10. 21:37", "name": "Vortex Weaver  ·  Chiming Staff", "orbs": 12}]}
+  {"t": "20.10. 21:37", "name": "Vortex Weaver  ·  Chiming Staff", "orbs": 12, "kind": "d"}]}
 SYS = {"type": "sys", "items": [[1,"Windows","Windows 11 (10.0.22631)"],[1,"Oberfläche","WebView2 ✓"],[1,"Texterkennung","bereit · Englisch installiert"],
   [1,"Bildschirm","2560×1440 auf Monitor 2 von 2 · Anzeigen ×1.33"],[1,"Spiel","gefunden (PathOfExileSteam.exe)"],
   [-1,"Rechte","Spiel läuft als Administrator, Chaos Ward nicht → Klick-Sperre wirkt NICHT.","admin"],[1,"Anzeigemodus","Fenster-Vollbild ✓"],[0,"Spielsprache","noch kein Item kopiert"]]}
@@ -82,8 +82,8 @@ async def main():
                 await pg.screenshot(path=str(OUT / '2_mods_interaction.png'))
                 hunt_n = await pg.evaluate("document.querySelectorAll('#hunt li').length")
                 check(hunt_n == 5, f'hunt list 5 entries (got {hunt_n})')
-                reel = await pg.evaluate("[...document.querySelectorAll('#gReel span')].map(s=>s.textContent).join('')")
-                check(reel == '0023', f'odometer 0023 (got {reel})')
+                reel = await pg.evaluate("document.querySelector('#gReel b').textContent")
+                check(reel == '23', f'guard counter 23 (got {reel})')
                 await pg.fill('#search', 'life'); await pg.wait_for_timeout(100)
                 n_life = len(await pg.query_selector_all('.mod'))
                 await pg.fill('#search', '')
@@ -130,7 +130,14 @@ async def main():
                 await pg.click('nav button[data-page="pStats"]'); await pg.wait_for_timeout(150)
                 await pg.screenshot(path=str(OUT / '10_tracker.png'))
                 bars = await pg.evaluate("document.querySelectorAll('#chart i').length")
-                check(bars == 4, f'chart bars 4 (got {bars})')
+                check(bars == 3, f'chaos chart bars 3 (got {bars})')
+                await pg.click('#trkSeg button[data-k="d"]'); await pg.wait_for_timeout(150)
+                await pg.screenshot(path=str(OUT / '10b_tracker_dv.png'))
+                bars = await pg.evaluate("document.querySelectorAll('#chart i').length")
+                check(bars == 1, f'divine chart bars 1 (got {bars})')
+                tot = await pg.evaluate("document.querySelector('#stTotal').textContent")
+                check(tot == '212', f'divine total 212 (got {tot})')
+                await pg.click('#trkSeg button[data-k="c"]')
 
                 # --- Einstellungen ---
                 await pg.click('nav button[data-page="pSet"]')

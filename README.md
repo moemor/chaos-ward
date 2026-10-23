@@ -30,7 +30,9 @@ Chaos Ward was designed, directed and tested by moemor and developed with the he
   - ⏸️ *Simple*: a short pause after every orb click.
 - 🔒 **Hit display**: a seal locks in half a second and shows the mod that hit (Divine: the values you reached), with a matching sound. Then it stays still. An *Instant* option skips the motion.
 - 🔍 **In-game item display**: shows your item with tier marks and your hits in gold.
-- 📊 **Tracker**: orbs since the last hit, this session, total, average per hit and a history.
+- 📊 **Tracker**: Chaos Orbs and Divine Orbs counted separately: since the last hit, this session, total, average per hit and a history.
+- 🏝️ **Island**: a small see-through seal at the top of the game. Hover it for quick access: open Chaos Ward or toggle the guard. Never takes focus from the game.
+- 🧪 **Test buttons** on the Mods, Mageblood and Divine pages show exactly what a hit will look like.
 - 🖥️ **Works on many setups**: multiple monitors, 1080p to 4K, ultrawide, Windows scaling, HDR and SDR. A built-in system check explains anything that doesn't fit.
 - 🌍 German and English interface.
 
@@ -145,5 +147,5 @@ See [`CHANGELOG.md`](CHANGELOG.md).
 
 - **AutoHotkey v2** (`app/ChaosWard.exe`, renamed `AutoHotkey64.exe`): GPL, see `app/LIZENZ-AutoHotkey.txt`
 - **WebView2.ahk** by thqby and **OCR.ahk** by Descolada: MIT
-- **IBM Plex** fonts (Sans, Sans Condensed, Mono): SIL Open Font License (`app/ui/fonts/`)
+- **Overpass** font: SIL Open Font License (`app/ui/fonts/`)
 - Mod data derived from the Path of Exile 2 game files (via RePoE). Path of Exile is a trademark of Grinding Gear Games.

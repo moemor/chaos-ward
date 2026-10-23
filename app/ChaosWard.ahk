@@ -31,7 +31,7 @@ CoordMode "Pixel", "Screen"
 try DllCall("SetThreadDpiAwarenessContext", "Ptr", -4, "Ptr")
 
 global APP         := "Chaos Ward"
-global APP_VER     := "8.0.1"
+global APP_VER     := "8.1.0"
 global APP_FILE    := "ChaosWard"
 global INSTALL_DIR := EnvGet("LOCALAPPDATA") "\ChaosWard"
 global OLD_DIR     := EnvGet("LOCALAPPDATA") "\PoE2-CraftSchutz"      ; alte Version (Craft-Schutz)
@@ -78,13 +78,14 @@ global Mb := {Rules: Map(), Any: 0, Eff: "", Ban: Map(), Dup: 0}, MbMode := fals
 global OCR_SETS := [1215, 1190, 1160, 200, 175, 225, 150, 130]
 global OcrMaxMCode := 0, OcrLumMCode := 0
 global ClickX := 0, ClickY := 0, OcrBusy := false
-global Stats := {Session: 0, Total: 0, SinceHit: 0, History: []}
+global Stats := {Session: 0, Total: 0, SinceHit: 0, History: [], DvSession: 0, DvTotal: 0, DvSince: 0, Cur: "c"}   ; ohne Dv = Chaos
 global TargetG := 0, TargetCtl := {}, LastItemName := "", PlaceGuis := Map()
+global IslandG := 0, IslandLast := "", IslandPos := 0, IslandOpen := false, IslandLeaveTick := 0, IslandState := "", IslandPulseT0 := 0
 global HitHits := 0, HitBarErr := "", HITBAR_SECS := [0, 3, 5, 10], OcrCalib := ""
 global WatchSt := {N: 0, Hit: 0, TO: 0, Ms: 0}     ; Statistik der Änderungs-Erkennung (für das Diagnose-Paket)
 global HitSurf := 0, HitBmps := Map()          ; HitBmps: zwischengespeicherte Teilbilder der Treffer-Leiste
 global SOUNDS := ["seal", "hit", "chime", "coin", "ping", "windows", "custom"]
-global FontsOk := false                         ; IBM Plex aus ui\fonts geladen?
+global FontsOk := false                         ; Overpass aus ui\fonts geladen?
 global Dv := {Item: "", Lines: [], Rules: Map(), Any: 0}, CurPage := "", LastItemText := ""
 global GameLang := ""                           ; Spielsprache laut letztem Strg+C: "", "en", "other"
 global HitBarG := 0, HitBarT0 := 0, HitBarInfo := {Hits: 0, Orbs: 0}, HitBarPos := {X: 0, Y: 0, W: 0, H: 0}
@@ -110,6 +111,9 @@ BuildUI()
 RegisterKey(Cfg.Key)
 SetupTray()
 OnClipboardChange(ClipChanged)
+OnMessage(0x202, IslandMsg)                  ; Klick auf die Island öffnet Chaos Ward
+OnMessage(0x205, IslandMsg)                  ; Rechtsklick schaltet den Schutz
+SetTimer(IslandTick, 150)
 return
 
 ; ============================================================================
@@ -123,8 +127,8 @@ return
 ~*^c::OnCopyPressed()
 #HotIf
 
-GuardReady()  => St.On && !St.Locked && IsPoE()
-GuardLocked() => St.On && St.Locked && IsPoE()
+GuardReady()  => St.On && !St.Locked && IsPoE() && !OverIsland()
+GuardLocked() => St.On && St.Locked && IsPoE() && !OverIsland()
 PoEHotIf(*)   => IsPoE()
 
 IsPoE() {
@@ -181,16 +185,29 @@ ToggleGuard(*) {
         ShowOnBanner()
         SetTimer(CheckSetupOnStart, -300)       ; Admin / echtes Vollbild prüfen (einmal je Sitzung)
     } else {
-        ShowBanner(T("bOff"), "", Clr.Dim)
-        SetTimer(HideBanner, -1500)
+        if IslandShows() {
+            HideBanner()
+            IslandRefresh()
+        } else {
+            ShowBanner(T("bOff"), "", Clr.Dim)
+            SetTimer(HideBanner, -1500)
+        }
         HideItem()
     }
     RefreshTarget()
     UpdateHeader()
 }
 
+; mit sichtbarer Island zeigt das Siegel den Zustand (Ring + Puls), dann keine Meldung
+IslandShows() => Cfg.Island && IsPoE() && !PlaceGuis.Count
+
 ShowOnBanner() {
     SetTimer(HideBanner, 0)
+    if IslandShows() {
+        HideBanner()
+        IslandRefresh()
+        return
+    }
     how := Cfg.ShiftOnly ? T("bShift") : T("bClick")
     ShowBanner(T("bOn"), how "   ·   " T("bOffKey"), Clr.Ward)
 }
@@ -203,7 +220,7 @@ TriggerHit(hits, style := "", sub := "", reel := 0) {
     St.Hit := true
     St.Locked := true                            ; Klick ist SOFORT gesperrt, die Show kommt danach
     HitHits := hits
-    RecordHit()
+    RecordHit(style)
     UpdateHeader()
     HideBanner()
     orbs := Stats.History.Length ? Stats.History[1].Orbs : 0
@@ -528,25 +545,24 @@ NewOverlay(bg := "") {
 LoadFonts() {
     global FontsOk
     n := 0
-    for f in ["IBMPlexSans-Regular", "IBMPlexSans-Medium", "IBMPlexSans-SemiBold", "IBMPlexSans-Bold"
-            , "IBMPlexSansCondensed-Medium", "IBMPlexSansCondensed-SemiBold", "IBMPlexMono-Medium", "IBMPlexMono-SemiBold"] {
+    for f in ["Overpass-Regular", "Overpass-Medium", "Overpass-SemiBold", "Overpass-Bold"] {
         p := A_ScriptDir "\ui\fonts\" f ".ttf"
         if FileExist(p)
             try n += DllCall("gdi32\AddFontResourceEx", "Str", p, "UInt", 0x10, "Ptr", 0) > 0
     }
-    FontsOk := n >= 6
+    FontsOk := n >= 3
 }
 
-; Schrift für die Anzeigen: IBM Plex (eine Familie), sonst Segoe UI.
-;  face: "" = Plex Sans (Stärke aus opts: w400/w500/w600/w700), "cond" = Plex Sans Condensed, "mono" = Plex Mono.
-;  Windows kennt die Zwischenstärken nur unter eigenem Namen ("IBM Plex Sans SemiBold"), daher die Umsetzung hier.
-;  Text mit Zeichen, die Plex nicht hat (✔ 🔒 ...), bleibt in Segoe UI (Windows ergänzt dort fehlende Zeichen)
+; Schrift für die Anzeigen: Overpass (eine Familie), sonst Segoe UI.
+;  Stärke aus opts: w400/w500/w600/w700. face "cond"/"mono" (alt) = Overpass halbfett.
+;  Windows kennt die Zwischenstärken nur unter eigenem Namen ("Overpass SemiBold"), daher die Umsetzung hier.
+;  Text mit Zeichen, die Overpass nicht hat (✔ 🔒 ...), bleibt in Segoe UI (Windows ergänzt dort fehlende Zeichen)
 OvFont(g, opts, face := "", text := "") {
     g.SetFont(opts, "Segoe UI")
     if !FontsOk || RegExMatch(text, "[^\x{20}-\x{17F}\x{2013}-\x{2026}\x{2039}\x{203A}\x{20AC}\x{201E}\x{2212}\x{2265}\x{2264}\x{00D7}\n\r\t]")
         return
     w := RegExMatch(opts, "\bw(\d+)", &m) ? Integer(m[1]) : 400
-    fam := face = "cond" ? "IBM Plex Sans Condensed" : face = "mono" ? "IBM Plex Mono" : "IBM Plex Sans"
+    fam := "Overpass"
     if face = "cond" || face = "mono"
         fam .= w >= 600 ? " SemiBold" : " Medium", w := 400
     else if w = 500 || w = 600
@@ -660,7 +676,7 @@ ShowItem(item, cat, hits, need) {
     for mod in item.Mods {
         col := mod.Hit ? Clr.Gold2 : mod.Fractured ? Clr.Muted : Clr.Text
         mk := 0
-        if mod.Hit {                              ; Haken aus Segoe UI Symbol (hat Plex nicht)
+        if mod.Hit {                              ; Haken aus Segoe UI Symbol (hat Overpass nicht)
             g.SetFont(FS(10) " w700 c" Clr.Gold, "Segoe UI Symbol")
             mk := g.AddText("x0 y0 +0x80", "✔")
         }
@@ -1348,6 +1364,7 @@ SaveAll() {
         IniWrite(Cfg.PauseMs, INI, "Einstellungen", "PauseMs")
         IniWrite(Cfg.ShiftOnly, INI, "Einstellungen", "NurMitShift")
         IniWrite(Cfg.ItemOverlay, INI, "Einstellungen", "ItemAnzeige")
+        IniWrite(Cfg.Island, INI, "Einstellungen", "Island")
         IniWrite(Cfg.AutoDetect, INI, "Einstellungen", "AutoErkennen")
         IniWrite(Cfg.Sound, INI, "Einstellungen", "Ton")
         IniWrite(Cfg.Key, INI, "Einstellungen", "Taste")
@@ -1438,6 +1455,8 @@ LoadConfig() {
     Cfg.PauseMs     := Integer(IniRead(INI, "Einstellungen", "PauseMs", "800"))
     Cfg.ShiftOnly   := Integer(IniRead(INI, "Einstellungen", "NurMitShift", "1"))
     Cfg.ItemOverlay := Integer(IniRead(INI, "Einstellungen", "ItemAnzeige", "1"))
+    Cfg.Island := Integer(IniRead(INI, "Einstellungen", "Island", "1"))
+    Cfg.PosIsland := IniRead(INI, "Positionen", "Island", "")
     Cfg.AutoDetect  := Integer(IniRead(INI, "Einstellungen", "AutoErkennen", "1"))
     Cfg.Sound       := Integer(IniRead(INI, "Einstellungen", "Ton", "1"))
     Cfg.Key         := IniRead(INI, "Einstellungen", "Taste", "F6")
@@ -1942,7 +1961,7 @@ HandleWeb(msg) {
             SendState()
         case "testHitDv":
             if !St.Hit {
-                if ShowHitBar(1, Max(Stats.SinceHit, 12), "dv", "", ReelDvTest()) {
+                if ShowHitBar(1, Max(Stats.DvSince, 12), "dv", "", ReelDvTest()) {
                     SetTimer(HideHitBar, -6000)
                 } else {
                     ShowBanner("Treffer-Leiste: Fehler (v" APP_VER ")", HitBarErr, Clr.Red)
@@ -1950,6 +1969,16 @@ HandleWeb(msg) {
                 }
             }
             HitSoundSynced("dv", true)
+        case "testHitMb":
+            if !St.Hit {
+                if ShowHitBar(1, Max(Stats.SinceHit, 52), "mb", "", ReelMbTest()) {
+                    SetTimer(HideHitBar, -5500)
+                } else {
+                    ShowBanner("Treffer-Leiste: Fehler (v" APP_VER ")", HitBarErr, Clr.Red)
+                    SetTimer(HideBanner, -8000)
+                }
+            }
+            HitSoundSynced("", true)
         case "testHit":
             if !St.Hit {
                 if ShowHitBar(1, Max(Stats.SinceHit, 37), "", "", ReelDemo()) {
@@ -1961,10 +1990,11 @@ HandleWeb(msg) {
             }
             HitSoundSynced("", true)
         case "resetSession":
-            Stats.Session := 0, Stats.SinceHit := 0
+            Stats.Session := 0, Stats.SinceHit := 0, Stats.DvSession := 0, Stats.DvSince := 0
             StatsChanged()
         case "resetAll":
             Stats.Session := 0, Stats.SinceHit := 0, Stats.Total := 0, Stats.History := []
+            Stats.DvSession := 0, Stats.DvSince := 0, Stats.DvTotal := 0
             StatsChanged()
         case "uninstall":
             Uninstall()
@@ -2012,7 +2042,7 @@ SetOpt(key, val) {
         case "ActiveCat":
             if DB.CatById.Has(val)
                 Cfg.ActiveCat := val
-        case "ShiftOnly", "ItemOverlay", "AutoDetect", "Sound", "IgnoreFractured", "UnsureRelease", "StreamVisible", "Diag":
+        case "ShiftOnly", "ItemOverlay", "AutoDetect", "Sound", "IgnoreFractured", "UnsureRelease", "StreamVisible", "Diag", "Island":
             Cfg.%key% := (val = "1") ? 1 : 0
         default:
             return
@@ -2026,7 +2056,7 @@ SendState() {
     rulesTxt := ""
     try rulesTxt := FileRead(WISH, "UTF-8")
     WebPost(Map("type", "state", "lang", Cfg.Lang, "theme", Cfg.Theme, "mode", Cfg.Mode, "pauseMs", Cfg.PauseMs
-        , "shiftOnly", Cfg.ShiftOnly, "itemOverlay", Cfg.ItemOverlay, "autoDetect", Cfg.AutoDetect, "sound", Cfg.Sound
+        , "shiftOnly", Cfg.ShiftOnly, "itemOverlay", Cfg.ItemOverlay, "island", Cfg.Island, "autoDetect", Cfg.AutoDetect, "sound", Cfg.Sound
         , "ignoreFractured", Cfg.IgnoreFractured, "unsureRelease", Cfg.UnsureRelease, "streamVisible", Cfg.StreamVisible, "targetPanel", Cfg.TargetPanel, "volume", Cfg.Volume, "diag", Cfg.Diag, "learned", Aliases.Count + NumFixes.Count, "key", Cfg.Key, "keys", KEYS, "activeCat", Cfg.ActiveCat
         , "on", St.On ? 1 : 0, "hit", St.Hit ? 1 : 0, "wishes", Wishes, "need", NeedMap, "rules", rulesTxt
         , "ver", APP_VER, "installed", (A_ScriptDir = INSTALL_DIR) ? 1 : 0
@@ -2129,7 +2159,7 @@ T(key) {
         "bOcrFail", "Texterkennung nicht verfügbar",
         "bReleased", "Nicht sicher gelesen - freigegeben",
         "bLearned", "Gemerkt: {n} neue Schreibweise(n) gelernt",
-        "hTitle", "TREFFER", "hTitleDv", "TREFFER", "hSubDv", "Alle {n} Schwellen erreicht", "hSubDvOne", "Schwelle erreicht", "hDivines", "DIVINES",
+        "hTitle", "Treffer", "hTitleDv", "Treffer", "hSubDv", "Alle {n} Schwellen erreicht", "hSubDvOne", "Schwelle erreicht", "hDivines", "Divine Orbs",
         "hSpin", "Walze dreht …", "hSpinDv", "Werte rollen …",
         "mbAny", "Beliebiges Legacy mindestens {n}×",
         "mbEff", "Effekt pro Duplikat mindestens {n}%",
@@ -2147,7 +2177,8 @@ T(key) {
         "dvLoaded", "Divine: Item übernommen", "dvLoadedSub", "{n} Zahlen – jetzt Schwellen einstellen",
         "dvErr", "Fehler beim Einlesen", "dvNoItem", "Noch kein Item kopiert – im Spiel Maus aufs Item und Strg+C",
         "dvNotItem", "Das ist kein Item-Text aus PoE2 (im Spiel Strg+C auf das Item, dann hier Strg+V)",
-        "plBanner", "Meldungen", "plHit", "Treffer-Leiste", "plItem", "Item-Anzeige",
+        "plBanner", "Meldungen", "plHit", "Treffer-Leiste", "plItem", "Item-Anzeige", "plIsland", "Island",
+        "isOff", "Schutz aus", "isOn", "Schutz an", "isHit", "Treffer", "isOpen", "Öffnen",
         "plDrag", "Mit der Maus an die gewünschte Stelle ziehen",
         "plDone", "Fertig", "plReset", "Standard", "plSaved", "Positionen gespeichert",
         "mbOr", "Stopp bei Wunsch-Legacies ODER irgendeinem Duplikat",
@@ -2155,12 +2186,13 @@ T(key) {
         "mbBan", "Nicht gewollt",
         "hSub", "{n} Wunsch-Mods gefunden", "hLocked", "Klick gesperrt",
         "hHint", "{k} drücken, wenn du fertig bist",
-        "hOrbs", "ORBS",
+        "hOrbs", "Chaos Orbs",
         "pTitle", "DU SUCHST",
         "pNone", "Noch nichts angehakt - wähle Mods in Chaos Ward",
         "pStopOne", "Stopp, sobald 1 Wunsch-Mod drauf ist",
         "pStopMany", "Stopp, wenn {n} Wunsch-Mods gleichzeitig drauf sind",
-        "pCount", "Orbs:  {s} seit Treffer   ·   {n} Sitzung   ·   {t} gesamt",
+        "pCount", "Chaos:  {s} seit Treffer   ·   {n} Sitzung   ·   {t} gesamt",
+        "pCountDv", "Divine:  {s} seit Treffer   ·   {n} Sitzung   ·   {t} gesamt",
         "tAny", "jedes Tier",
         "tUpTo", "T1–T{n}",
         "bReleasedSub", "Schau selbst kurz drauf (Option: bei Unsicherheit freigeben)",
@@ -2210,7 +2242,7 @@ T(key) {
         "bOcrFail", "Text recognition not available",
         "bReleased", "Not read reliably - released",
         "bLearned", "Learned {n} new spelling(s)",
-        "hTitle", "HIT", "hTitleDv", "HIT", "hSubDv", "All {n} thresholds reached", "hSubDvOne", "Threshold reached", "hDivines", "DIVINES",
+        "hTitle", "Hit", "hTitleDv", "Hit", "hSubDv", "All {n} thresholds reached", "hSubDvOne", "Threshold reached", "hDivines", "Divine Orbs",
         "hSpin", "Reel spinning …", "hSpinDv", "Rolling values …",
         "mbAny", "Any Legacy at least {n}×",
         "mbEff", "Effect per duplicate at least {n}%",
@@ -2228,7 +2260,8 @@ T(key) {
         "dvLoaded", "Divine: item loaded", "dvLoadedSub", "{n} numbers – now set thresholds",
         "dvErr", "error while reading", "dvNoItem", "No item copied yet – in game hover the item and press Ctrl+C",
         "dvNotItem", "That's not PoE2 item text (in game Ctrl+C on the item, then Ctrl+V here)",
-        "plBanner", "Messages", "plHit", "Hit bar", "plItem", "Item display",
+        "plBanner", "Messages", "plHit", "Hit bar", "plItem", "Item display", "plIsland", "Island",
+        "isOff", "Guard off", "isOn", "Guard on", "isHit", "Hit", "isOpen", "Open",
         "plDrag", "Drag to where you want it with the mouse",
         "plDone", "Done", "plReset", "Default", "plSaved", "Positions saved",
         "mbOr", "Stop on wished legacies OR any duplicate",
@@ -2236,12 +2269,13 @@ T(key) {
         "mbBan", "Not wanted",
         "hSub", "{n} wished mods found", "hLocked", "Click locked",
         "hHint", "Press {k} when you're done",
-        "hOrbs", "ORBS",
+        "hOrbs", "Chaos Orbs",
         "pTitle", "YOU'RE LOOKING FOR",
         "pNone", "Nothing picked yet - choose mods in Chaos Ward",
         "pStopOne", "Stop as soon as 1 wished mod lands",
         "pStopMany", "Stop when {n} wished mods are on at once",
-        "pCount", "Orbs:  {s} since hit   ·   {n} session   ·   {t} total",
+        "pCount", "Chaos:  {s} since hit   ·   {n} session   ·   {t} total",
+        "pCountDv", "Divine:  {s} since hit   ·   {n} session   ·   {t} total",
         "tAny", "any tier",
         "tUpTo", "T1–T{n}",
         "bReleasedSub", "Take a quick look yourself (option: release when unsure)",
@@ -2953,21 +2987,36 @@ Lev(a, b) {
 ; ============================================================================
 ;  Orb-Zähler und Ziel-Fenster im Spiel
 ; ============================================================================
+; welche Orbs gerade verbraucht werden: Divine (Divine-Reiter / Divine-Lesen), sonst Chaos (Mods, Mageblood)
+OrbIsDv() => Track.Kind = "dv" || CurPage = "pDv"
+
 CountOrb(d) {
-    Stats.Session := Max(0, Stats.Session + d)
-    Stats.Total := Max(0, Stats.Total + d)
-    Stats.SinceHit := Max(0, Stats.SinceHit + d)
+    if OrbIsDv() {
+        Stats.Cur := "d"
+        Stats.DvSession := Max(0, Stats.DvSession + d)
+        Stats.DvTotal := Max(0, Stats.DvTotal + d)
+        Stats.DvSince := Max(0, Stats.DvSince + d)
+    } else {
+        Stats.Cur := "c"
+        Stats.Session := Max(0, Stats.Session + d)
+        Stats.Total := Max(0, Stats.Total + d)
+        Stats.SinceHit := Max(0, Stats.SinceHit + d)
+    }
     UpdateCounts()
     SetTimer(PushStats, -300)
     SetTimer(SaveStats, -3000)
 }
 
-RecordHit() {
+RecordHit(style := "") {
     name := LastItemName != "" ? LastItemName : Cfg.ActiveCat
-    Stats.History.InsertAt(1, {T: FormatTime(, "dd.MM. HH:mm"), Name: name, Orbs: Stats.SinceHit})
-    while Stats.History.Length > 30
+    isDvHit := style = "dv"
+    Stats.History.InsertAt(1, {T: FormatTime(, "dd.MM. HH:mm"), Name: name, Orbs: isDvHit ? Stats.DvSince : Stats.SinceHit, Kind: isDvHit ? "d" : "c"})
+    while Stats.History.Length > 60
         Stats.History.Pop()
-    Stats.SinceHit := 0
+    if isDvHit
+        Stats.DvSince := 0
+    else
+        Stats.SinceHit := 0
     StatsChanged()
 }
 
@@ -2980,35 +3029,40 @@ StatsChanged() {
 PushStats() {
     hist := []
     for h in Stats.History
-        hist.Push(Map("t", h.T, "name", h.Name, "orbs", h.Orbs))
-    WebPost(Map("type", "stats", "session", Stats.Session, "total", Stats.Total, "since", Stats.SinceHit, "history", hist))
+        hist.Push(Map("t", h.T, "name", h.Name, "orbs", h.Orbs, "kind", h.Kind))
+    WebPost(Map("type", "stats", "session", Stats.Session, "total", Stats.Total, "since", Stats.SinceHit, "history", hist
+        , "dvSession", Stats.DvSession, "dvTotal", Stats.DvTotal, "dvSince", Stats.DvSince, "cur", Stats.Cur))
 }
 
 LoadStats() {
     v := IniRead(INI, "Statistik", "Gesamt", "0")
     Stats.Total := IsInteger(v) ? Integer(v) : 0
+    v := IniRead(INI, "Statistik", "GesamtDivine", "0")
+    Stats.DvTotal := IsInteger(v) ? Integer(v) : 0
     txt := ""
     try txt := FileRead(HITS_FILE, "UTF-8")
     for line in StrSplit(txt, "`n", "`r") {
         p := StrSplit(line, "`t")
         if p.Length >= 3 && IsInteger(p[3])
-            Stats.History.Push({T: p[1], Name: p[2], Orbs: Integer(p[3])})
+            Stats.History.Push({T: p[1], Name: p[2], Orbs: Integer(p[3]), Kind: p.Length >= 4 && p[4] = "d" ? "d" : "c"})
     }
 }
 
 SaveStats() {
     try {
         IniWrite(Stats.Total, INI, "Statistik", "Gesamt")
+        IniWrite(Stats.DvTotal, INI, "Statistik", "GesamtDivine")
         out := ""
         for h in Stats.History
-            out .= h.T "`t" StrReplace(h.Name, "`t", " ") "`t" h.Orbs "`n"
+            out .= h.T "`t" StrReplace(h.Name, "`t", " ") "`t" h.Orbs "`t" h.Kind "`n"
         f := FileOpen(HITS_FILE, "w", "UTF-8")
         f.Write(out)
         f.Close()
     }
 }
 
-CountText() => StrReplace(StrReplace(StrReplace(T("pCount"), "{s}", Stats.SinceHit), "{n}", Stats.Session), "{t}", Stats.Total)
+CountText() => OrbIsDv() ? StrReplace(StrReplace(StrReplace(T("pCountDv"), "{s}", Stats.DvSince), "{n}", Stats.DvSession), "{t}", Stats.DvTotal)
+    : StrReplace(StrReplace(StrReplace(T("pCount"), "{s}", Stats.SinceHit), "{n}", Stats.Session), "{t}", Stats.Total)
 
 UpdateCounts() {
     if IsObject(TargetG) && TargetCtl.HasOwnProp("Count")
@@ -3021,6 +3075,213 @@ TierLabel(mn) {
     if RegExMatch(mn, "^T(\d+)$", &m)
         return m[1] = "1" ? "T1" : StrReplace(T("tUpTo"), "{n}", m[1])
     return ">= " mn
+}
+
+; ============================================================================
+;  Island: kleiner, halb durchsichtiger Kreis mit dem Chaos-Ward-Siegel oben im Spiel.
+;  Maus drüber -> klappt zu einem Schnellzugriff auf: "Öffnen" und "Schutz an/aus".
+;  Ein eigenes Fenster mit Alpha je Pixel: durchsichtige Stellen lassen Klicks ans Spiel durch.
+;  Nimmt dem Spiel nie den Fokus, ist nur sichtbar, solange das Spiel vorne ist,
+;  und ein Klick auf die Island zählt nie als Orb (siehe GuardReady/GuardLocked).
+; ============================================================================
+IslandTick() {
+    show := Cfg.Island && IsPoE() && !PlaceGuis.Count
+    if !show {
+        IslandHide()
+        return
+    }
+    if !IsObject(IslandG)
+        IslandBuild()
+    IslandHoverCheck()
+}
+
+; Maße in Grundeinheiten (mal OvScale): Kreis 44, aufgeklappt 250 breit, rundum 12 Rand für den Puls-Ring
+IslandDim() {
+    s := OvScale()
+    return {S: s, M: 12, D: 44, PW: 250, W: Round(274 * s), H: Round(68 * s)}
+}
+
+IslandBuild() {
+    global IslandG, IslandLast, IslandPos, IslandState
+    g := Gui("+AlwaysOnTop -Caption +ToolWindow +E0x80000 +E0x08000000 -DPIScale")   ; 0x80000 = Alpha je Pixel, 0x08000000 = nie aktivieren
+    if !Cfg.StreamVisible
+        try DllCall("SetWindowDisplayAffinity", "Ptr", g.Hwnd, "UInt", 0x11)
+    g.Show("NA x0 y0 w1 h1")
+    d := IslandDim(), m := GameMon(), pt := PosAnchor("Island")
+    cx := pt ? pt.X : m.L + m.W // 2, cy := pt ? pt.Y : m.T + Round(8 * d.S)    ; Anker = Oberkante Mitte des Kreises
+    x := cx - Round((d.M + d.D / 2) * d.S), y := cy - Round(d.M * d.S)
+    x := Max(m.L - Round(d.M * d.S), Min(m.L + m.W - d.W, x)), y := Max(m.T - Round(d.M * d.S), Min(m.T + m.H - d.H, y))
+    IslandPos := {X: x, Y: y, W: d.W, H: d.H, S: d.S, M: d.M, D: d.D, PW: d.PW}
+    IslandG := g, IslandLast := "", IslandState := St.On "|" St.Hit
+    IslandDraw(false, "", 0)
+}
+
+; Zustand prüfen: Maus über dem Kreis / dem Schnellzugriff? Schutz umgeschaltet -> Puls. Neu zeichnen nur bei Änderung.
+IslandHoverCheck() {
+    global IslandOpen, IslandLeaveTick, IslandState, IslandPulseT0
+    if !IsObject(IslandG)
+        return
+    CoordMode("Mouse", "Screen")
+    MouseGetPos(&mx, &my)
+    p := IslandPos, lx := (mx - p.X) / p.S - p.M, ly := (my - p.Y) / p.S - p.M
+    inCircle := (lx - p.D / 2) ** 2 + (ly - p.D / 2) ** 2 <= (p.D / 2) ** 2
+    inPill := lx >= 0 && lx < p.PW && ly >= 0 && ly < p.D
+    over := IslandOpen ? inPill : inCircle
+    if over
+        IslandLeaveTick := 0
+    else if IslandOpen && !IslandLeaveTick
+        IslandLeaveTick := A_TickCount
+    open := over || (IslandOpen && IslandLeaveTick && A_TickCount - IslandLeaveTick < 350)
+    btn := open && inPill ? IslandButtonAt(lx) : ""
+    IslandOpen := open
+    stNow := St.On "|" St.Hit
+    if stNow != IslandState                             ; Schutz an/aus oder Treffer: Siegel pulsiert (statt einer Meldung)
+        IslandState := stNow, IslandPulseT0 := A_TickCount
+    pu := IslandPulseT0 ? (A_TickCount - IslandPulseT0) / 650 : 1
+    if pu >= 1
+        pu := 0, IslandPulseT0 := 0
+    IslandDraw(open, btn, pu)
+    SetTimer(IslandHoverCheck, open || pu ? -30 : 0)   ; aufgeklappt oder Puls: öfter prüfen
+}
+
+; welcher Knopf liegt unter lx (Grundeinheiten ab Kapsel-Anfang)? "logo" | "open" | "guard"
+IslandButtonAt(lx) => lx < 50 ? "logo" : lx < 136 ? "open" : "guard"
+
+IslandDraw(open, btn, pu) {
+    global IslandLast
+    key := open "|" btn "|" St.On "|" St.Hit "|" Round(pu * 40)
+    if key = IslandLast
+        return
+    IslandLast := key
+    p := IslandPos, s := p.S, W := p.W, H := p.H
+    if !GdipStartup()
+        return
+    hdcScr := DllCall("GetDC", "Ptr", 0, "Ptr")
+    hdc := DllCall("CreateCompatibleDC", "Ptr", hdcScr, "Ptr")
+    DllCall("ReleaseDC", "Ptr", 0, "Ptr", hdcScr)
+    bi := Buffer(40, 0)
+    NumPut("UInt", 40, "Int", W, "Int", -H, "UShort", 1, "UShort", 32, bi)
+    bits := 0
+    hbm := DllCall("CreateDIBSection", "Ptr", hdc, "Ptr", bi, "UInt", 0, "Ptr*", &bits, "Ptr", 0, "UInt", 0, "Ptr")
+    old := DllCall("SelectObject", "Ptr", hdc, "Ptr", hbm, "Ptr")
+    g := 0
+    DllCall("gdiplus\GdipCreateFromHDC", "Ptr", hdc, "Ptr*", &g)
+    try {
+        DllCall("gdiplus\GdipSetSmoothingMode", "Ptr", g, "Int", 4)
+        DllCall("gdiplus\GdipSetTextRenderingHint", "Ptr", g, "Int", 4)
+        DllCall("gdiplus\GdipSetInterpolationMode", "Ptr", g, "Int", 7)
+        DllCall("gdiplus\GdipGraphicsClear", "Ptr", g, "UInt", 0)
+        DllCall("gdiplus\GdipScaleWorldTransform", "Ptr", g, "Float", s, "Float", s, "Int", 0)
+        DllCall("gdiplus\GdipTranslateWorldTransform", "Ptr", g, "Float", p.M, "Float", p.M, "Int", 0)
+        IslandPaint(g, open, btn, pu)
+    }
+    DllCall("gdiplus\GdipDeleteGraphics", "Ptr", g)
+    try ShowLayeredDC(IslandG.Hwnd, hdc, p.X, p.Y, W, H, open || pu ? 255 : 165)   ; zu: halb durchsichtig
+    DllCall("SelectObject", "Ptr", hdc, "Ptr", old, "Ptr")
+    DllCall("DeleteObject", "Ptr", hbm)
+    DllCall("DeleteDC", "Ptr", hdc)
+}
+
+; Zeichnen in Grundeinheiten ab der Kreis-Ecke (Kreis 44x44, aufgeklappt 250x44); pu = 0..1 Puls, 0 = keiner
+IslandPaint(g, open, btn, pu := 0) {
+    static logo := 0, tried := false
+    if !tried {
+        tried := true
+        if FileExist(A_ScriptDir "\ui\icon.png")
+            DllCall("gdiplus\GdipLoadImageFromFile", "WStr", A_ScriptDir "\ui\icon.png", "Ptr*", &logo)
+    }
+    col := St.Hit ? 0xD6A640 : St.On ? 0x4FAE9B : 0x66635D
+    if open {                                           ; Kapsel mit Rand
+        path := RoundPath(0.5, 0.5, 249, 43, 21.5)
+        br := Brush(0xF2121314)
+        DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", path)
+        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+        pen := PenOf(0xFF3A3D42, 1)
+        DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", path)
+        DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
+        DllCall("gdiplus\GdipDeletePath", "Ptr", path)
+        for b in [["open", 52, 80], ["guard", 140, 104]] {
+            if btn = b[1] {                             ; Knopf unter der Maus hervorheben
+                path := RoundPath(b[2], 7, b[3], 30, 4)
+                br := Brush(0xFF27292C)
+                DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", path)
+                DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+                DllCall("gdiplus\GdipDeletePath", "Ptr", path)
+            }
+        }
+        DrawText(g, T("isOpen"), 52, 7, 80, 30, 14, 1, 0xFFE7E3DB, 1)
+        br := Brush(0xFF000000 | col)                   ; Zustands-Lampe
+        DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", 150, "Float", 18, "Float", 8, "Float", 8)
+        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+        DrawText(g, T(St.Hit ? "isHit" : St.On ? "isOn" : "isOff"), 160, 7, 84, 30, 14, 1
+            , St.Hit ? 0xFFF0CF7A : St.On ? 0xFF8AD4C3 : 0xFF9A968E, 0)
+        pen := PenOf(0xFF2A2C30, 1)
+        DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", 136, "Float", 12, "Float", 136, "Float", 32)
+        DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
+    } else {                                            ; zugeklappt: nur der runde Knopf
+        br := Brush(0xE6121314)
+        DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", 0.5, "Float", 0.5, "Float", 43, "Float", 43)
+        DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+    }
+    if pu > 0 {                                         ; Puls: ein Ring läuft nach außen
+        e := HitEase(pu), rr := 22 + 11 * e
+        pen := PenOf((Round(220 * (1 - e)) << 24) | col, 2.5)
+        DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", 22 - rr, "Float", 22 - rr, "Float", rr * 2, "Float", rr * 2)
+        DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
+    }
+    pen := PenOf(0xFF000000 | col, 2)                   ; Ring in der Zustandsfarbe = An/Aus auf einen Blick
+    DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", 2, "Float", 2, "Float", 40, "Float", 40)
+    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
+    if logo {
+        z := 34 * (1 + 0.12 * Sin(Min(1, pu * 2) * 3.14159))   ; Siegel federt kurz beim Umschalten
+        DllCall("gdiplus\GdipDrawImageRect", "Ptr", g, "Ptr", logo, "Float", 22 - z / 2, "Float", 22 - z / 2, "Float", z, "Float", z)
+        if !St.On && !St.Hit {                          ; Schutz aus: Siegel abgedunkelt
+            br := Brush(0xA0121314)
+            DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", 22 - z / 2, "Float", 22 - z / 2, "Float", z, "Float", z)
+            DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+        }
+    }
+}
+
+IslandHide() {
+    global IslandG, IslandOpen
+    SetTimer(IslandHoverCheck, 0)
+    if IsObject(IslandG)
+        try IslandG.Destroy()
+    IslandG := 0, IslandOpen := false
+}
+
+; Zustand hat sich geändert (Schutz an/aus, Treffer): Island neu zeichnen
+IslandRefresh() {
+    global IslandLast
+    IslandLast := ""
+    if IsObject(IslandG)
+        IslandHoverCheck()
+}
+
+OverIsland() {
+    if !IsObject(IslandG)
+        return false
+    MouseGetPos(, , &win)
+    return win = IslandG.Hwnd
+}
+
+IslandMsg(wParam, lParam, msg, hwnd) {
+    if !IsObject(IslandG) || hwnd != IslandG.Hwnd
+        return
+    lx := (lParam & 0xFFFF) / IslandPos.S - IslandPos.M
+    b := IslandOpen ? IslandButtonAt(lx) : "logo"
+    if b = "guard" || msg = 0x205 {                     ; Schutz-Knopf oder Rechtsklick
+        ToggleGuard()
+        IslandRefresh()
+        return 0
+    }
+    IslandHide()                                        ; Öffnen (Knopf oder Siegel)
+    try {
+        MainGui.Show()
+        WinActivate("ahk_id " MainGui.Hwnd)
+    }
+    return 0
 }
 
 ; ============================================================================
@@ -3040,7 +3301,8 @@ PlaceDefaults() {
     m := GameMon()
     return Map("Banner", {X: m.L + m.W // 2, Y: m.T + OvPx(30), W: OvPx(460), H: OvPx(66)}
         , "Hit", {X: m.L + m.W // 2, Y: m.T + HitBarDefaultTop(m), W: OvPx(720), H: OvPx(168)}
-        , "Item", {X: m.L + m.W - OvPx(40), Y: m.T + OvPx(120), W: OvPx(440), H: OvPx(260)})
+        , "Item", {X: m.L + m.W - OvPx(40), Y: m.T + OvPx(120), W: OvPx(440), H: OvPx(260)}
+        , "Island", {X: m.L + m.W // 2, Y: m.T + OvPx(8), W: OvPx(260), H: OvPx(70)})
 }
 
 ; Oberkante der sichtbaren Treffer-Leiste (Standard), relativ zum Monitor
@@ -3105,7 +3367,7 @@ PlaceStart() {
     SetTimer(HideBanner, 0)
     HideBanner(), HideItemNow(), HideHitBar()
     PlaceGuis := Map()
-    names := Map("Banner", T("plBanner"), "Hit", T("plHit"), "Item", T("plItem"))
+    names := Map("Banner", T("plBanner"), "Hit", T("plHit"), "Item", T("plItem"), "Island", T("plIsland"))
     for key, d in PlaceDefaults() {
         pt := PosAnchor(key)
         ax := pt ? pt.X : d.X, ay := pt ? pt.Y : d.Y
@@ -3156,7 +3418,7 @@ PlaceSave() {
         m := GameMon()
         v := Format("{:.4f},{:.4f}", Max(0, Min(1, (ax - m.L) / m.W)), Max(0, Min(1, (y - m.T) / m.H)))
         Cfg.%"Pos" key% := v
-        try IniWrite(v, INI, "Positionen", key = "Banner" ? "Meldung" : key = "Item" ? "ItemAnzeige" : "TrefferLeiste")
+        try IniWrite(v, INI, "Positionen", PosIniKey(key))
     }
     PlaceStop()
     ShowBanner(T("plSaved"), "", Clr.Green)
@@ -3164,13 +3426,15 @@ PlaceSave() {
 }
 
 PlaceReset(reopen) {
-    for key in ["Banner", "Item", "Hit"] {
+    for key in ["Banner", "Item", "Hit", "Island"] {
         Cfg.%"Pos" key% := ""
-        try IniWrite("", INI, "Positionen", key = "Banner" ? "Meldung" : key = "Item" ? "ItemAnzeige" : "TrefferLeiste")
+        try IniWrite("", INI, "Positionen", PosIniKey(key))
     }
     if reopen
         PlaceStart()
 }
+
+PosIniKey(key) => key = "Banner" ? "Meldung" : key = "Item" ? "ItemAnzeige" : key = "Island" ? "Island" : "TrefferLeiste"
 
 PlaceStop() {
     global PlaceGuis
@@ -3184,7 +3448,7 @@ PlaceStop() {
 ; Bildschirm-Rechtecke der eigenen Anzeigen (deren Text liest die Erkennung nicht mit)
 OwnOverlayRects() {
     out := []
-    for g in [Banner, ItemG, HitBarG] {
+    for g in [Banner, ItemG, HitBarG, IslandG] {
         if !IsObject(g)
             continue
         try {
@@ -3919,7 +4183,7 @@ DrawHitScene(g, secs, info) {
     DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
     shown := Round(info.Orbs * HitEase((secs - 0.08) / (lock + 0.04)))
     DrawText(g, String(Max(0, shown)), ox, py + 34, px + pw - ox, 46, shown >= 10000 ? 28 : 34, 1, kl >= 1 ? 0xFFE7E3DB : 0xFF9A968E, 1, "mono")
-    DrawText(g, T(isDv ? "hDivines" : "hOrbs"), ox, py + 84, px + pw - ox, 20, 11.5, 1, 0xFF9A968E, 1, "cond")
+    DrawText(g, T(isDv ? "hDivines" : "hOrbs"), ox, py + 84, px + pw - ox, 20, 12.5, 0, 0xFF9A968E, 1)
     DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gs)
 }
 
@@ -4038,8 +4302,8 @@ HitPanelDraw(g, px, py, pw, ph) {
     DllCall("gdiplus\GdipDrawImageRect", "Ptr", g, "Ptr", bmp, "Float", x0, "Float", y0, "Float", lw, "Float", lh)
 }
 
-; Schriften für die Treffer-Leiste: IBM Plex aus ui\fonts (eigene Sammlung), sonst Segoe UI
-;  Body = Plex Sans (normal/fett), Semi = Plex Sans SemiBold, Cond = Plex Sans Condensed SemiBold, Mono = Plex Mono SemiBold
+; Schriften für die Treffer-Leiste: Overpass aus ui\fonts (eigene Sammlung), sonst Segoe UI
+;  Body = Overpass (normal/fett), Semi = Overpass SemiBold; Cond und Mono sind ebenfalls Overpass SemiBold
 HitFonts() {
     static res := 0
     if IsObject(res)
@@ -4048,10 +4312,10 @@ HitFonts() {
     try {
         DllCall("gdiplus\GdipNewPrivateFontCollection", "Ptr*", &coll)
         if coll {
-            for f in ["IBMPlexSans-Regular", "IBMPlexSans-Bold", "IBMPlexSans-SemiBold", "IBMPlexSansCondensed-SemiBold", "IBMPlexMono-SemiBold"]
+            for f in ["Overpass-Regular", "Overpass-Bold", "Overpass-SemiBold"]
                 if FileExist(A_ScriptDir "\ui\fonts\" f ".ttf")
                     DllCall("gdiplus\GdipPrivateAddFontFile", "Ptr", coll, "WStr", A_ScriptDir "\ui\fonts\" f ".ttf")
-            for k, nm in Map("Body", "IBM Plex Sans", "Semi", "IBM Plex Sans SemiBold", "Cond", "IBM Plex Sans Condensed SemiBold", "Mono", "IBM Plex Mono SemiBold") {
+            for k, nm in Map("Body", "Overpass", "Semi", "Overpass SemiBold", "Cond", "Overpass SemiBold", "Mono", "Overpass SemiBold") {
                 ff := 0
                 DllCall("gdiplus\GdipCreateFontFamilyFromName", "WStr", nm, "Ptr", coll, "Ptr*", &ff)
                 if ff
@@ -4242,6 +4506,22 @@ ReelDvTest() {
         return r
     return {Values: [{Label: "Physical Damage", Digits: "87", Unit: "%", Need: "≥ 80"}, {Label: "Lightning Damage", Digits: "162", Unit: "", Need: "≥ 150"}
         , {Label: "Crit Damage Bonus", Digits: "24", Unit: "%", Need: "≥ 20"}]}
+}
+
+; Test-Knopf Mageblood: die eingestellten Wunsch-Legacies, sonst ein Beispiel
+ReelMbTest() {
+    lines := [], legs := Map()
+    for name, n in Mb.Rules
+        if n > 0 {
+            legs[name] := n
+            loop n
+                lines.Push("Legacy of " name)
+        }
+    if !legs.Count
+        legs := Map("Ruby", 2, "Sapphire", 1), lines := ["Legacy of Ruby", "Legacy of Ruby", "Legacy of Sapphire"]
+    while lines.Length < 4
+        lines.Push("Legacy of Topaz")
+    return ReelMake(lines, 1, MbHitSub(legs))
 }
 
 ; Test-Knopf Chaos: zuletzt kopiertes Item, sonst ein Beispiel
