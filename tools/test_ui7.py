@@ -22,7 +22,7 @@ DV = {"item": "Vortex Weaver  ·  Chiming Staff", "any": 0, "lines": [
   {"key": "increasedlightradius", "text": "5% increased Light Radius", "nums": [{"v": 5, "lo": 5, "hi": 5}]},
   {"key": "addscolddamage", "text": "Adds 18 to 31 Cold Damage", "nums": [{"v": 18, "lo": 15, "hi": 22}, {"v": 31, "lo": 26, "hi": 36}]}],
   "rules": {"increasedspelldamage": {"1": {"op": ">=", "val": 172}}, "tomaximummana": {"1": {"op": ">=", "val": 315}}}}
-STATE = {"type": "state", "lang": "de", "theme": "obsidian", "mode": 3, "pauseMs": 800, "shiftOnly": 1, "itemOverlay": 1, "island": 1,
+STATE = {"type": "state", "lang": "de", "theme": "obsidian", "mode": 3, "pauseMs": 800, "shiftOnly": 1, "itemOverlay": 1, "island": 1, "market": 1,
          "autoDetect": 1, "sound": 1, "ignoreFractured": 1, "unsureRelease": 0, "streamVisible": 1, "volume": 70, "diag": 1, "learned": 3,
          "key": "F6", "keys": ["F2","F3","F4","F5","F6","F7"], "activeCat": "boots_dex_armour", "on": 1, "hit": 0,
          "wishes": {}, "need": {}, "rules": "# test\nMovement Speed >= 30", "ver": "8.1.0", "installed": 1,
@@ -127,6 +127,22 @@ async def main():
                 await pg.click('[data-dvtake]')
 
                 # --- Tracker ---
+                # Item-Schutz-Liste
+                await pg.evaluate("""window.__host(JSON.stringify({type:'prot', items:[{name:'Doom Stride', base:'Velour Shoes'}]}))""")
+                await pg.click('nav button[data-page="pSet"]'); await pg.wait_for_timeout(100)
+                await pg.click('[data-prot="Doom Stride"]'); await pg.wait_for_timeout(50)
+                sent = await pg.evaluate("JSON.stringify(window.__sent.slice(-1))")
+                check('protRemove' in sent, f'prot remove sent (got {sent})')
+                await pg.evaluate("document.querySelector('#protList').scrollIntoView()"); await pg.wait_for_timeout(50)
+                await pg.screenshot(path=str(OUT / '16_prot.png'))
+                # eigene Taste aufnehmen
+                await pg.click('nav button[data-page="pSet"]'); await pg.wait_for_timeout(100)
+                await pg.select_option('#keySel', '__rec'); await pg.keyboard.press('Control+g'); await pg.wait_for_timeout(100)
+                sent = await pg.evaluate("JSON.stringify(window.__sent.slice(-3))")
+                check('^g' in sent, f'custom key ^g sent (got {sent})')
+                await pg.select_option('#keySel', '__rec'); await pg.keyboard.press('g'); await pg.keyboard.press('Escape'); await pg.wait_for_timeout(100)
+                sent = await pg.evaluate("JSON.stringify(window.__sent.slice(-2))")
+                check('"g"' not in sent, f'plain letter refused (got {sent})')
                 await pg.click('nav button[data-page="pStats"]'); await pg.wait_for_timeout(150)
                 await pg.screenshot(path=str(OUT / '10_tracker.png'))
                 bars = await pg.evaluate("document.querySelectorAll('#chart i').length")

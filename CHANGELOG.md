@@ -2,6 +2,15 @@
 
 All notable changes to Chaos Ward. Versions follow `major.minor.patch`.
 
+## 8.2.0 (October 2026)
+* 🔐 New **Item protection** (prototype): Ctrl+C on a finished item, then Ctrl+Shift+P. Clicks on it are blocked (no stray orb, no accidental selling). Hold Alt to click anyway. List and on/off switch under Settings.
+* 🖼️ The program, taskbar and desktop icon is now the seal.
+* 🎯 Ctrl+C on an item always jumps to its item type on the Pick mods page, even when you already had another type open.
+* 🧹 The "Smart" guard mode is gone. There are now two modes: Simple and Automatic (old "Smart" settings switch to Automatic).
+* ⌨️ Record your own guard key: any key with Ctrl/Alt/Shift, the numpad, or mouse buttons 3, 4 and 5.
+* 🔊 Four new hit sounds: Gong, Crystal, Harp, Drum.
+* 💱 New **Market reader** (prototype): hover the rate list in the Currency Exchange. Chaos Ward reads both lists ("Available" and "Competing"), shows the spread, the absolute gap per unit, which ratio to set, the last gold fee for that pair (read from above "Place Order") and how the pair changed since you last looked. It only speaks up loudly when a pair is really worth it.
+
 ## 8.1.0 (October 2026)
 * 🔤 New font Overpass. Small labels are no longer written in capitals and numbers no longer use a typewriter font.
 * 🔢 Simpler orb counter in the sidebar: one big number instead of digit boxes.

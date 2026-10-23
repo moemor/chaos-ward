@@ -280,6 +280,9 @@ h3.sec { margin: 0 0 10px; }
 .opt b { display: block; } .opt span { color: var(--ash); font-size: 12.5px; }
 .opt .tag, .tag { font: 600 11px var(--sans); color: var(--ward-hi); border: 1px solid var(--ward-lo); border-radius: var(--r); padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
 .chiprow { display: flex; gap: 6px; flex-wrap: wrap; }
+.plist { display: flex; flex-direction: column; gap: 4px; }
+.pitem { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); border-left: 2px solid var(--ward); }
+.pitem span { flex: 1; min-width: 0; } .pitem b { display: block; } .pitem small { color: var(--ash); }
 .sysgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 10px; }
 .sysi { display: flex; gap: 10px; padding: 9px 10px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); }
 .sysi i { font: 700 11px/18px var(--sans); font-style: normal; width: 18px; height: 18px; border-radius: var(--r); text-align: center; flex: none; border: 1px solid; }
@@ -416,7 +419,6 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           <h3 class="sec" data-i18n="secGuard"></h3>
           <div class="modes">
             <div class="opt" data-mode="3"><div class="dot"></div><div><b data-i18n="mode3"></b><span data-i18n="mode3d"></span></div></div>
-            <div class="opt" data-mode="2"><div class="dot"></div><div><b data-i18n="mode2"></b><span data-i18n="mode2d"></span></div></div>
             <div class="opt" data-mode="1"><div class="dot"></div><div><b data-i18n="mode1"></b><span data-i18n="mode1d"></span></div></div>
           </div>
           <div class="sw" id="pauseRow"><span data-i18n="pauseTitle"></span><div class="chiprow" id="pauses"></div></div>
@@ -437,8 +439,15 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           <h3 class="sec" data-i18n="secOverlay"></h3>
           <div class="sw" data-k="itemOverlay"><span data-i18n="oOverlay"></span><div class="tg"></div></div>
           <div class="sw" data-k="island"><span data-i18n="oIsland"></span><div class="tg"></div></div>
+          <div class="sw" data-k="market"><span data-i18n="oMarket"></span><div class="tg"></div></div>
           <div class="sw" data-k="streamVisible"><span data-i18n="oStream"></span><div class="tg"></div></div>
           <div class="sw"><span data-i18n="oPlace"></span><button class="chip" id="placeStart" data-i18n="placeStart"></button><button class="chip" id="placeReset" data-i18n="placeReset"></button></div>
+        </div>
+        <div class="panel">
+          <h3 class="sec" data-i18n="secProt"></h3>
+          <div class="sw" data-k="itemProt"><span data-i18n="oProt"></span><div class="tg"></div></div>
+          <div id="protList" class="plist"></div>
+          <div style="height:8px"></div>
         </div>
         <div class="panel">
           <h3 class="sec" data-i18n="secRead"></h3>
@@ -525,13 +534,13 @@ const I18N = {
     mode1:"Einfach", mode1d:"Nach jedem Orb-Klick kurz Pause. Kein Strg+C nötig.",
     mode3:"Automatisch <span class=\"tag\">empfohlen</span>", mode3d:"Einmal Strg+C, dann spammen. Ich lese nach jedem Klick mit und sperre beim Wunsch-Mod.",
     mode2:"Schlau", mode2d:"Nach jedem Klick gesperrt, bis du Strg+C drückst. Dann prüfe ich das Item.",
-    pauseTitle:"Pause (Einfach)", oKey:"Taste im Spiel", oShift:"Nur bremsen, wenn ich Shift halte<small>Für Dauer-Craften mit gedrückter Shift-Taste</small>",
+    pauseTitle:"Pause (Einfach)", oKey:"Taste im Spiel", keyRec:"Eigene Taste …", keyRecHint:"Drück jetzt die Taste, z. B. Strg+G oder Maustaste 4. Esc = abbrechen", keyRecCancel:"Abgebrochen", keyRecBad:"Diese Taste geht nicht, bitte eine andere", keyNeedMod:"Buchstaben und Zahlen bitte mit Strg, Alt oder Shift", oShift:"Nur bremsen, wenn ich Shift halte<small>Für Dauer-Craften mit gedrückter Shift-Taste</small>",
     oUnsure:"Bei Unsicherheit freigeben<small>Bequemer, aber ein Treffer könnte durchrutschen. Bei Divine immer gesperrt.</small>",
     oSound:"Ton bei einem Treffer", oSnd:"Treffer-Sound", sndTest:"Anhören", sndCustomNone:"(keine Datei gewählt)",
-    snd_seal:"Siegel", snd_hit:"Amboss", snd_chime:"Glocke", snd_coin:"Münzen", snd_ping:"Kurzer Ping", snd_windows:"Windows-Ton", snd_custom:"Eigene Datei …",
+    snd_seal:"Siegel", snd_gong:"Gong", snd_crystal:"Kristall", snd_harp:"Harfe", snd_drum:"Trommel", snd_hit:"Amboss", snd_chime:"Glocke", snd_coin:"Münzen", snd_ping:"Kurzer Ping", snd_windows:"Windows-Ton", snd_custom:"Eigene Datei …",
     oVolume:"Lautstärke<small>Gilt nur für Chaos Ward</small>", oHitAnim:"Treffer-Animation<small>Siegel: das Schloss rastet in einer halben Sekunde ein. Sofort: ohne Bewegung</small>", animSlot:"Siegel", animInstant:"Sofort", oHbSecs:"Treffer-Leiste zeigen<small>Der Klick bleibt immer gesperrt</small>", hbUntil:"bis {k}",
     oTestHits:"Treffer-Leiste ausprobieren", testHitChaos:"Chaos", testHitDv:"Divine",
-    oIsland:"Island oben im Spiel<small>Kleines Siegel als Schnellzugriff. Maus drüber: Chaos Ward öffnen oder Schutz an/aus</small>", oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
+    secProt:"Item-Schutz", oProt:"Geschützte Items nicht anklicken<small>Im Spiel: Maus aufs Item, Strg+C, dann Strg+Shift+P. Klicks darauf sind dann gesperrt, kein Orb und kein Verkaufen aus Versehen. Mit gedrückter Alt-Taste geht es trotzdem.</small>", protRemove:"Freigeben", protNone:"Noch keine Items geschützt.", oMarket:"Markt-Leser im Currency Exchange<small>Maus auf die Kursliste: Spanne, wie schnell es geht und welches Verhältnis du setzen solltest</small>", oIsland:"Island oben im Spiel<small>Kleines Siegel als Schnellzugriff. Maus drüber: Chaos Ward öffnen oder Schutz an/aus</small>", oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
     oPlace:"Fenster im Spiel verschieben<small>Meldungen, Treffer-Leiste, Item-Anzeige und Island</small>", placeStart:"Verschieben", placeReset:"Standard",
     oDetect:"Item-Art automatisch erkennen<small>Beim Strg+C springe ich zur passenden Liste</small>", oFrac:"Fractured Mods nicht mitzählen",
     oOcr:"Texterkennung", ocrReset:"Neu einstellen", ocrFilterMax:"Farbkanal {n}", ocrFilterLum:"Helligkeit {n}",
@@ -548,7 +557,7 @@ const I18N = {
       ["Schutz einschalten","Im Spiel {key} drücken."],
       ["Craften","Maus aufs Item, einmal Strg+C. Dann Rechtsklick auf den Orb, Shift halten und spammen."],
       ["Treffer!","Sobald es passt, rastet das Siegel ein und der Klick ist gesperrt. Mit {key} bist du fertig."]],
-    facts:["Steht „Nicht sicher lesbar“ da, drück einmal Strg+C, das prüft und entsperrt.","Strg+Alt+C zeigt im Spiel zusätzlich Präfix, Suffix und genaue Bereiche.","Tiers (T1 = bestes) kommen aus den Spieldaten.","Läuft das Spiel als Administrator, sagt dir der Systemcheck, was zu tun ist.","Im Schlau-Modus Strg+C ohne Shift drücken.","Probleme? Einstellungen → Diagnose-Paket erstellen und die ZIP-Datei vom Desktop schicken."]
+    facts:["Fertiges Item schützen: Maus drauf, Strg+C, dann Strg+Shift+P. Klicks darauf sind gesperrt, mit Alt geht es trotzdem.","Steht „Nicht sicher lesbar“ da, drück einmal Strg+C, das prüft und entsperrt.","Strg+Alt+C zeigt im Spiel zusätzlich Präfix, Suffix und genaue Bereiche.","Tiers (T1 = bestes) kommen aus den Spieldaten.","Läuft das Spiel als Administrator, sagt dir der Systemcheck, was zu tun ist.","Probleme? Einstellungen → Diagnose-Paket erstellen und die ZIP-Datei vom Desktop schicken."]
   },
   en: {
     navMods:"Pick mods", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Settings", navHelp:"Help",
@@ -589,13 +598,13 @@ const I18N = {
     mode1:"Simple", mode1d:"Short pause after every orb click. No Ctrl+C needed.",
     mode3:"Automatic <span class=\"tag\">recommended</span>", mode3d:"Ctrl+C once, then spam. I read along after every click and lock on a wished mod.",
     mode2:"Smart", mode2d:"Locked after every click until you press Ctrl+C. Then I check the item.",
-    pauseTitle:"Pause (Simple)", oKey:"In-game key", oShift:"Only brake while I hold Shift<small>For spam-crafting with Shift held</small>",
+    pauseTitle:"Pause (Simple)", oKey:"In-game key", keyRec:"Custom key …", keyRecHint:"Press the key now, e.g. Ctrl+G or mouse button 4. Esc = cancel", keyRecCancel:"Cancelled", keyRecBad:"This key can't be used, please pick another", keyNeedMod:"Letters and digits need Ctrl, Alt or Shift", oShift:"Only brake while I hold Shift<small>For spam-crafting with Shift held</small>",
     oUnsure:"Release when unsure<small>Smoother, but a hit could slip through. Divine always stays locked.</small>",
     oSound:"Sound on a hit", oSnd:"Hit sound", sndTest:"Listen", sndCustomNone:"(no file chosen)",
-    snd_seal:"Seal", snd_hit:"Anvil", snd_chime:"Bell", snd_coin:"Coins", snd_ping:"Short ping", snd_windows:"Windows sound", snd_custom:"Own file …",
+    snd_seal:"Seal", snd_gong:"Gong", snd_crystal:"Crystal", snd_harp:"Harp", snd_drum:"Drum", snd_hit:"Anvil", snd_chime:"Bell", snd_coin:"Coins", snd_ping:"Short ping", snd_windows:"Windows sound", snd_custom:"Own file …",
     oVolume:"Volume<small>Only affects Chaos Ward</small>", oHitAnim:"Hit animation<small>Seal: the lock clicks shut in half a second. Instant: no motion</small>", animSlot:"Seal", animInstant:"Instant", oHbSecs:"Show hit bar<small>Clicking always stays locked</small>", hbUntil:"until {k}",
     oTestHits:"Try the hit bar", testHitChaos:"Chaos", testHitDv:"Divine",
-    oIsland:"Island at the top of the game<small>Small seal for quick access. Hover it to open Chaos Ward or toggle the guard</small>", oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
+    secProt:"Item protection", oProt:"Block clicks on protected items<small>In game: hover the item, Ctrl+C, then Ctrl+Shift+P. Clicks on it are blocked, so no stray orb and no accidental selling. Hold Alt to click it anyway.</small>", protRemove:"Unprotect", protNone:"No protected items yet.", oMarket:"Market reader in the Currency Exchange<small>Hover the rate list: spread, how fast it trades and which ratio to set</small>", oIsland:"Island at the top of the game<small>Small seal for quick access. Hover it to open Chaos Ward or toggle the guard</small>", oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
     oPlace:"Move in-game windows<small>Messages, hit bar, item display and island</small>", placeStart:"Move", placeReset:"Default",
     oDetect:"Detect item type automatically<small>Ctrl+C jumps to the matching list</small>", oFrac:"Don't count fractured mods",
     oOcr:"Text recognition", ocrReset:"Re-calibrate", ocrFilterMax:"colour channel {n}", ocrFilterLum:"brightness {n}",
@@ -612,11 +621,11 @@ const I18N = {
       ["Turn the guard on","Press {key} in game."],
       ["Craft","Hover the item, Ctrl+C once. Then right-click the orb, hold Shift and spam."],
       ["Hit!","As soon as it fits, the seal locks and your click is blocked. Press {key} when you're done."]],
-    facts:["If it says “Couldn't read it reliably”, press Ctrl+C once, that checks and unlocks.","Ctrl+Alt+C additionally shows prefix, suffix and exact ranges in game.","Tiers (T1 = best) come from the game data.","If the game runs as administrator, the system check tells you what to do.","In Smart mode press Ctrl+C without Shift.","Problems? Settings → create diagnostic package and send the ZIP file from your desktop."]
+    facts:["Protect a finished item: hover it, Ctrl+C, then Ctrl+Shift+P. Clicks on it are blocked, hold Alt to click anyway.","If it says “Couldn't read it reliably”, press Ctrl+C once, that checks and unlocks.","Ctrl+Alt+C additionally shows prefix, suffix and exact ranges in game.","Tiers (T1 = best) come from the game data.","If the game runs as administrator, the system check tells you what to do.","Problems? Settings → create diagnostic package and send the ZIP file from your desktop."]
   }
 };
 const PAUSES = [300, 500, 800, 1000, 1500, 2000];
-const SOUNDS = ["seal", "hit", "chime", "coin", "ping", "windows", "custom"];
+const SOUNDS = ["seal", "gong", "crystal", "harp", "drum", "hit", "chime", "coin", "ping", "windows", "custom"];
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const post = (...a) => { try { window.chrome.webview.postMessage(a.map(x => String(x).replace(/\x1f/g, " ")).join("\x1f")); } catch (e) {} };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
@@ -748,7 +757,9 @@ function selectCat(id, fromGame) {
   if (!DB.byId[id]) return;
   ST.activeCat = id; openGroup = DB.byId[id].main;
   if (!fromGame) post("set", "ActiveCat", id);
+  if (fromGame) { $("#search").value = ""; filter = "all"; $$("#chips .chip").forEach(x => x.classList.toggle("on", x.dataset.f === "all")); showPage("pMods"); }
   renderSide(); renderList(); renderHunt();
+  if (fromGame) { const el = document.querySelector(`.cat[data-cat="${id}"]`); if (el) el.scrollIntoView({ block: "center" }); $("#list").scrollTop = 0; }
 }
 function setWish(gid, v) { const w = wishesOf(ST.activeCat); w[gid] = v; post("wish", ST.activeCat, gid, v); renderSide(); renderList(); renderHunt(); }
 
@@ -824,6 +835,12 @@ function dvFind(el) { const r = el.closest(".dn"); if (!r) return null; const d 
   return L ? { L, i: +r.dataset.i, n: L.nums[+r.dataset.i - 1], r: (d.rules[L.key] || {})[+r.dataset.i] } : null; }
 
 // ---------- Tracker ----------
+let PROT = [];
+function renderProt() {
+  $("#protList").innerHTML = PROT.length ? PROT.map(x => `<div class="pitem"><span><b>${esc(x.name)}</b><small>${esc(x.base)}</small></span><button class="link" data-prot="${esc(x.name)}">${t("protRemove")}</button></div>`).join("")
+    : `<p class="hint">${t("protNone")}</p>`;
+}
+$("#protList").onclick = e => { const b = e.target.closest("[data-prot]"); if (b) post("protRemove", b.dataset.prot); };
 let trkKind = null;   // Tracker: "c" = Chaos Orbs, "d" = Divine Orbs
 function renderStats() {
   if (!trkKind) trkKind = STATS.cur === "d" ? "d" : "c";
@@ -853,7 +870,9 @@ function renderSettings() {
   $("#pauseRow").style.display = +ST.mode === 1 ? "" : "none";
   $("#pauses").innerHTML = PAUSES.map(p => `<button class="chip${p === +ST.pauseMs ? " on" : ""}" data-p="${p}">${(p / 1000).toLocaleString(ST.lang)} s</button>`).join("");
   $$(".sw[data-k]").forEach(s => s.classList.toggle("on", !!+ST[s.dataset.k]));
-  $("#keySel").innerHTML = ST.keys.map(k => `<option${k === ST.key ? " selected" : ""}>${k}</option>`).join("");
+  const raw = ST.keyRaw || ST.key, own = !ST.keys.includes(raw);
+  $("#keySel").innerHTML = ST.keys.map(k => `<option value="${k}"${k === raw ? " selected" : ""}>${k}</option>`).join("") +
+    (own ? `<option value="${esc(raw)}" selected>${esc(ST.key)}</option>` : "") + `<option value="__rec">${t("keyRec")}</option>`;
   $$("#langSeg button").forEach(b => b.classList.toggle("on", b.dataset.l === ST.lang));
   if (document.activeElement !== $("#rules")) $("#rules").value = ST.rules;
   $("#uninstall").style.display = +ST.installed ? "" : "none";
@@ -966,7 +985,34 @@ $$(".opt").forEach(o => o.onclick = () => { ST.mode = +o.dataset.mode; post("set
 $("#pauses").onclick = e => { const b = e.target.closest("[data-p]"); if (!b) return; ST.pauseMs = +b.dataset.p; post("set", "PauseMs", ST.pauseMs); renderSettings(); };
 $$(".sw[data-k]").forEach(s => s.onclick = e => { if (e.target.closest("button")) return; const k = s.dataset.k; ST[k] = +ST[k] ? 0 : 1;
   post("set", k[0].toUpperCase() + k.slice(1), ST[k]); renderSettings(); });
-$("#keySel").onchange = e => { ST.key = e.target.value; post("set", "Key", ST.key); renderGuard(); applyI18n(); renderSettings(); };
+$("#keySel").onchange = e => { const v = e.target.value; if (v === "__rec") { recordKey(); return; } post("set", "Key", v); };
+// eigene Taste aufnehmen: nächste Taste (mit Strg/Alt/Shift) oder Maustaste 3/4/5; Esc bricht ab
+function recordKey() {
+  toast(t("keyRecHint"), true);
+  const done = () => { removeEventListener("keydown", onKey, true); removeEventListener("mousedown", onMouse, true); removeEventListener("mouseup", stop, true); renderSettings(); };
+  const stop = e => { e.preventDefault(); e.stopPropagation(); };
+  const mods = e => (e.ctrlKey ? "^" : "") + (e.altKey ? "!" : "") + (e.shiftKey ? "+" : "");
+  const onKey = e => {
+    stop(e);
+    if (["Control", "Shift", "Alt", "Meta"].includes(e.key)) return;
+    if (e.key === "Escape") { toast(t("keyRecCancel")); done(); return; }
+    const c = e.code; let k = "";
+    if (/^F([1-9]|1\d|2[0-4])$/.test(c)) k = c;
+    else if (/^Key[A-Z]$/.test(c)) k = c.slice(3).toLowerCase();
+    else if (/^Digit\d$/.test(c)) k = c.slice(5);
+    else if (/^Numpad/.test(c)) k = c;
+    else if (["Insert", "Home", "End", "PageUp", "PageDown", "Delete", "Pause", "ScrollLock"].includes(c)) k = c.replace("PageUp", "PgUp").replace("PageDown", "PgDn");
+    if (!k) { toast(t("keyRecBad"), true); return; }
+    if (/^[a-z0-9]$/.test(k) && !(e.ctrlKey || e.altKey || e.shiftKey)) { toast(t("keyNeedMod"), true); return; }
+    post("set", "Key", mods(e) + k); done();
+  };
+  const onMouse = e => {
+    const k = { 1: "MButton", 3: "XButton1", 4: "XButton2" }[e.button];
+    if (!k) return;
+    stop(e); post("set", "Key", mods(e) + k); done();
+  };
+  addEventListener("keydown", onKey, true); addEventListener("mousedown", onMouse, true); addEventListener("mouseup", stop, true);
+}
 $("#sndSel").addEventListener("change", e => { const v = e.target.value; ST.soundName = v;
   if (v === "custom") post("soundPick"); else { post("set", "SoundName", v); post("soundTest"); } renderSettings(); });
 $("#sndTest").onclick = () => post("soundTest");
@@ -1002,6 +1048,7 @@ try {
     else if (m.type === "ocr") { ST.ocr = m.ocr; renderOcr(); }
     else if (m.type === "sys") { SYS = m.items || []; renderSys(); }
     else if (m.type === "page") showPage(m.id);
+    else if (m.type === "prot") { PROT = m.items || []; renderProt(); }
     else if (m.type === "dv") { ST.dv = m.dv; renderDv(); }
     else if (m.type === "toast") toast(m.text, +m.long);
   });

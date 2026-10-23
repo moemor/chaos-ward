@@ -31,7 +31,7 @@ CoordMode "Pixel", "Screen"
 try DllCall("SetThreadDpiAwarenessContext", "Ptr", -4, "Ptr")
 
 global APP         := "Chaos Ward"
-global APP_VER     := "8.1.0"
+global APP_VER     := "8.2.0"
 global APP_FILE    := "ChaosWard"
 global INSTALL_DIR := EnvGet("LOCALAPPDATA") "\ChaosWard"
 global OLD_DIR     := EnvGet("LOCALAPPDATA") "\PoE2-CraftSchutz"      ; alte Version (Craft-Schutz)
@@ -41,6 +41,8 @@ global WISH        := A_ScriptDir "\Wunschliste.txt"
 global MODS_FILE   := A_ScriptDir "\Mods.tsv"
 global HITS_FILE   := A_ScriptDir "\Treffer.txt"
 global LEARN_FILE  := A_ScriptDir "\Gelernt.txt"
+global PROT_FILE   := A_ScriptDir "\Geschuetzt.txt"
+global MARKET_FILE := A_ScriptDir "\Markt.txt"
 global DIAG_DIR    := A_ScriptDir "\Diagnose"
 global DATA_DIR    := EnvGet("LOCALAPPDATA") "\ChaosWard\webdata"
 global THEMES      := Map("obsidian", "121314")                         ; v8: ein Stil ("Siegel")
@@ -80,18 +82,20 @@ global OcrMaxMCode := 0, OcrLumMCode := 0
 global ClickX := 0, ClickY := 0, OcrBusy := false
 global Stats := {Session: 0, Total: 0, SinceHit: 0, History: [], DvSession: 0, DvTotal: 0, DvSince: 0, Cur: "c"}   ; ohne Dv = Chaos
 global TargetG := 0, TargetCtl := {}, LastItemName := "", PlaceGuis := Map()
+global Prot := [], ProtUnder := 0, ProtSeen := "", MarketG := 0, MarketAt := 0
+global MarketHist := 0, MarketFee := Map(), MarketSeen := 0, MarketPairC := 0
 global IslandG := 0, IslandLast := "", IslandPos := 0, IslandOpen := false, IslandLeaveTick := 0, IslandState := "", IslandPulseT0 := 0
 global HitHits := 0, HitBarErr := "", HITBAR_SECS := [0, 3, 5, 10], OcrCalib := ""
 global WatchSt := {N: 0, Hit: 0, TO: 0, Ms: 0}     ; Statistik der Änderungs-Erkennung (für das Diagnose-Paket)
 global HitSurf := 0, HitBmps := Map()          ; HitBmps: zwischengespeicherte Teilbilder der Treffer-Leiste
-global SOUNDS := ["seal", "hit", "chime", "coin", "ping", "windows", "custom"]
+global SOUNDS := ["seal", "gong", "crystal", "harp", "drum", "hit", "chime", "coin", "ping", "windows", "custom"]
 global FontsOk := false                         ; Overpass aus ui\fonts geladen?
 global Dv := {Item: "", Lines: [], Rules: Map(), Any: 0}, CurPage := "", LastItemText := ""
 global GameLang := ""                           ; Spielsprache laut letztem Strg+C: "", "en", "other"
 global HitBarG := 0, HitBarT0 := 0, HitBarInfo := {Hits: 0, Orbs: 0}, HitBarPos := {X: 0, Y: 0, W: 0, H: 0}
 global LastOcr := 0, Aliases := Map(), NumFixes := Map()
 
-try TraySetIcon(A_ScriptDir "\ui\icon.ico")
+try TraySetIcon(A_ScriptDir "\ui\seal.ico")
 LoadFonts()
 LoadConfig()
 if HasVal(A_Args, "/uninstall") {                ; aus Windows "Apps" -> Deinstallieren (#SingleInstance beendet ein laufendes Chaos Ward)
@@ -105,10 +109,15 @@ EnsureWishlist()
 LoadRules()
 LoadStats()
 LoadLearned()
+LoadProt()
 LoadMb()
 LoadDv()
 BuildUI()
 RegisterKey(Cfg.Key)
+HotIf(PoEHotIf)
+Hotkey("^+p", ProtToggleLast)                ; Item-Schutz: zuletzt kopiertes Item schützen / freigeben
+HotIf()
+SetTimer(HoverWatch, 60)
 SetupTray()
 OnClipboardChange(ClipChanged)
 OnMessage(0x202, IslandMsg)                  ; Klick auf die Island öffnet Chaos Ward
@@ -118,7 +127,11 @@ return
 
 ; ============================================================================
 ;  Klick-Sperre (nur aktiv, wenn das Spiel im Vordergrund ist)
+;  Zuerst der Item-Schutz: Klick auf ein geschütztes Item wird gesperrt (Alt = trotzdem klicken)
 ; ============================================================================
+#HotIf ProtBlock()
+*LButton::ProtBlocked()
+*LButton Up::return
 #HotIf GuardReady()
 ~*LButton Up::OnClickUp()
 #HotIf GuardLocked()
@@ -343,7 +356,7 @@ ClipChanged(dataType) {
     detected := IsObject(cat)
     if !detected && DB.CatById.Has(Cfg.ActiveCat)
         cat := DB.CatById[Cfg.ActiveCat]
-    if detected && Cfg.ActiveCat != cat.Id
+    if detected                                  ; immer zur Item-Art springen (Seite "Mods wählen"), auch wenn sie schon gewählt war
         SelectCat(cat.Id, true)
     need := IsObject(cat) ? GetNeed(cat.Id) : 1
     hits := Evaluate(item, cat)
@@ -417,13 +430,16 @@ NormLine(line) {
     return Trim(line)
 }
 
+; Item-Art aus dem Grundtyp: längster passender Name gewinnt ("Runeforged Sacred Focus" vor "Sacred Focus")
 DetectCat(item) {
     i := item.NameLines.Length
     while i >= 1 {
-        line := item.NameLines[i]
+        line := item.NameLines[i], best := 0
         for b in DB.Bases
-            if InStr(line, b.Name, true)
-                return DB.CatById.Has(b.Cat) ? DB.CatById[b.Cat] : 0
+            if InStr(line, b.Name, true) && (!best || StrLen(b.Name) > StrLen(best.Name))
+                best := b
+        if best
+            return DB.CatById.Has(best.Cat) ? DB.CatById[best.Cat] : 0
         i--
     }
     return 0
@@ -937,10 +953,11 @@ BuildPageGuard(g) {
     P := Pages[2]
     Card(g, P, 26, 152, 520, 250, "1.  WIE SOLL ICH DICH SCHÜTZEN?")
     Ctl.ModeBtns := []
-    for i, m in [["EINFACH", "nach jedem Klick kurz Pause"], ["SCHLAU", "erst Strg+C, dann prüfe ich"]] {
+    for i, m in [["EINFACH", "nach jedem Klick kurz Pause", 1], ["AUTOMATISCH", "einmal Strg+C, dann spammen", 3]] {
         y := 186 + (i - 1) * 70
         g.SetFont("s12 bold")
-        b := MkBtn(g, "x46 y" y " w480 h60", "", SetMode.Bind(i))
+        b := MkBtn(g, "x46 y" y " w480 h60", "", SetMode.Bind(m[3]))
+        b.Mode := m[3]
         b.Text := "   " m[1] "   ·   " m[2]
         Ctl.ModeBtns.Push(b)
         P.Push(b)
@@ -977,7 +994,7 @@ BuildPageGuard(g) {
     P.Push(g.AddText("x586 y" y + 8 " w220 BackgroundTrans", "Taste zum An-/Ausschalten im Spiel:"))
     g.SetFont("s12 bold")
     P.Push(MkBtn(g, "x820 y" y + 2 " w34 h30", "‹", (*) => ChangeKey(-1)))
-    Ctl.KeyLbl := g.AddText("x858 y" y + 2 " w70 h30 Center +0x200 Background" Clr.Field " c" Clr.Gold2, Cfg.Key)
+    Ctl.KeyLbl := g.AddText("x858 y" y + 2 " w70 h30 Center +0x200 Background" Clr.Field " c" Clr.Gold2, KeyLabel())
     P.Push(Ctl.KeyLbl)
     P.Push(MkBtn(g, "x932 y" y + 2 " w34 h30", "›", (*) => ChangeKey(1)))
 
@@ -1001,9 +1018,9 @@ BuildPageHelp(g) {
     steps := [
         ["Spiel vorbereiten", "Stell das Spiel auf 'Fenster-Vollbild' (Windowed Fullscreen). Sonst siehst du meine Anzeigen nicht."],
         ["Wünsche anhaken", "Reiter 'Mods wählen': links die Item-Art wählen, dann die Mods anhaken, die du willst. Tipp: Kopier dein Item im Spiel mit Strg+C - dann wähle ich die richtige Item-Art von selbst."],
-        ["Schutz einschalten", "Im Spiel " Cfg.Key " drücken. Oben erscheint 'Chaos Ward AN'."],
+        ["Schutz einschalten", "Im Spiel " KeyLabel() " drücken. Oben erscheint 'Chaos Ward AN'."],
         ["Craften", "Rechtsklick auf den Chaos Orb, Shift halten, aufs Item klicken. Einfach-Modus: nach jedem Klick kurz Pause. Schlau-Modus: nach jedem Klick Strg+C drücken."],
-        ["TREFFER!", "Ist genug von deiner Wunschliste drauf, wird es rot: Klicken ist gesperrt, du kannst nicht drüberklicken. Mit " Cfg.Key " bist du fertig."]]
+        ["TREFFER!", "Ist genug von deiner Wunschliste drauf, wird es rot: Klicken ist gesperrt, du kannst nicht drüberklicken. Mit " KeyLabel() " bist du fertig."]]
     y := 192
     for i, s in steps {
         g.SetFont("s14 bold c" Clr.Bg)
@@ -1074,24 +1091,24 @@ UpdateHeader() {
     if St.Hit {
         Ctl.Pill.Text := "●  TREFFER!"
         Paint(Ctl.Pill, Clr.RedDark, "FFFFFF")
-        Ctl.Toggle.Text := "FERTIG - SCHUTZ AUS   ·   " Cfg.Key
+        Ctl.Toggle.Text := "FERTIG - SCHUTZ AUS   ·   " KeyLabel()
         Paint(Ctl.Toggle, Clr.Red, "FFFFFF")
     } else if St.On {
         Ctl.Pill.Text := "●  SCHUTZ IST AN"
         Paint(Ctl.Pill, Clr.GreenDark, Clr.Green)
-        Ctl.Toggle.Text := "SCHUTZ AUSSCHALTEN   ·   " Cfg.Key
+        Ctl.Toggle.Text := "SCHUTZ AUSSCHALTEN   ·   " KeyLabel()
         Paint(Ctl.Toggle, Clr.Panel2, Clr.Text)
     } else {
         Ctl.Pill.Text := "●  SCHUTZ IST AUS"
         Paint(Ctl.Pill, Clr.Panel2, Clr.Muted)
-        Ctl.Toggle.Text := "▶  SCHUTZ EINSCHALTEN   ·   " Cfg.Key
+        Ctl.Toggle.Text := "▶  SCHUTZ EINSCHALTEN   ·   " KeyLabel()
         Paint(Ctl.Toggle, Clr.Gold, Clr.Bg)
     }
 }
 
 UpdateGuardPage() {
     for i, b in Ctl.ModeBtns
-        Paint(b, i = Cfg.Mode ? Clr.GreenDark : Clr.Panel2, i = Cfg.Mode ? Clr.Green : Clr.Muted)
+        Paint(b, b.Mode = Cfg.Mode ? Clr.GreenDark : Clr.Panel2, b.Mode = Cfg.Mode ? Clr.Green : Clr.Muted)
     for i, b in Ctl.PauseBtns
         Paint(b, PAUSES[i] = Cfg.PauseMs ? Clr.Gold : Clr.Panel2, PAUSES[i] = Cfg.PauseMs ? Clr.Bg : Clr.Muted)
     for key, pill in Ctl.Toggles {
@@ -1099,7 +1116,7 @@ UpdateGuardPage() {
         pill.Text := on ? "AN" : "AUS"
         Paint(pill, on ? Clr.Green : Clr.Panel2, on ? Clr.Bg : Clr.Muted)
     }
-    Ctl.KeyLbl.Text := Cfg.Key
+    Ctl.KeyLbl.Text := KeyLabel()
 }
 
 SetMode(i, *) {
@@ -1365,6 +1382,8 @@ SaveAll() {
         IniWrite(Cfg.ShiftOnly, INI, "Einstellungen", "NurMitShift")
         IniWrite(Cfg.ItemOverlay, INI, "Einstellungen", "ItemAnzeige")
         IniWrite(Cfg.Island, INI, "Einstellungen", "Island")
+        IniWrite(Cfg.ItemProt, INI, "Einstellungen", "ItemSchutz")
+        IniWrite(Cfg.Market, INI, "Einstellungen", "MarktLeser")
         IniWrite(Cfg.AutoDetect, INI, "Einstellungen", "AutoErkennen")
         IniWrite(Cfg.Sound, INI, "Einstellungen", "Ton")
         IniWrite(Cfg.Key, INI, "Einstellungen", "Taste")
@@ -1456,6 +1475,8 @@ LoadConfig() {
     Cfg.ShiftOnly   := Integer(IniRead(INI, "Einstellungen", "NurMitShift", "1"))
     Cfg.ItemOverlay := Integer(IniRead(INI, "Einstellungen", "ItemAnzeige", "1"))
     Cfg.Island := Integer(IniRead(INI, "Einstellungen", "Island", "1"))
+    Cfg.ItemProt := Integer(IniRead(INI, "Einstellungen", "ItemSchutz", "1"))
+    Cfg.Market := Integer(IniRead(INI, "Einstellungen", "MarktLeser", "1"))
     Cfg.PosIsland := IniRead(INI, "Positionen", "Island", "")
     Cfg.AutoDetect  := Integer(IniRead(INI, "Einstellungen", "AutoErkennen", "1"))
     Cfg.Sound       := Integer(IniRead(INI, "Einstellungen", "Ton", "1"))
@@ -1487,7 +1508,9 @@ LoadConfig() {
         Cfg.Theme := "obsidian"
     if Cfg.Lang != "en"
         Cfg.Lang := "de"
-    if Cfg.Mode != 2 && Cfg.Mode != 3
+    if Cfg.Mode = 2                                 ; v8.2: "Schlau" gibt es nicht mehr -> Automatisch
+        Cfg.Mode := 3
+    if Cfg.Mode != 3
         Cfg.Mode := 1
     ok := false
     for v in PAUSES
@@ -1495,11 +1518,7 @@ LoadConfig() {
             ok := true
     if !ok
         Cfg.PauseMs := 800
-    ok := false
-    for k in KEYS
-        if k = Cfg.Key
-            ok := true
-    if !ok
+    if !ValidKey(Cfg.Key)
         Cfg.Key := "F6"
 }
 
@@ -1550,7 +1569,31 @@ LoadDB() {
     DB.Bases := sorted
 }
 
-KeyLabel() => Cfg.Key
+; Taste für den Schutz: Cfg.Key in AutoHotkey-Schreibweise ("F6", "^+g", "XButton1"), KeyLabel() = lesbar ("Strg+Shift+G")
+KeyLabel(k := "") {
+    k := k = "" ? Cfg.Key : k
+    out := ""
+    while RegExMatch(k, "^([\^!+#])", &m) {
+        out .= m[1] = "^" ? T("kCtrl") "+" : m[1] = "!" ? "Alt+" : m[1] = "+" ? "Shift+" : "Win+"
+        k := SubStr(k, 2)
+    }
+    switch k {
+        case "XButton1": k := T("kMouse4")
+        case "XButton2": k := T("kMouse5")
+        case "MButton": k := T("kMouse3")
+        default: k := StrLen(k) = 1 ? StrUpper(k) : k
+    }
+    return out k
+}
+
+; eigene Taste erlaubt? F-Tasten, Ziffernblock, Maustasten 3-5, Buchstaben/Ziffern nur mit Strg/Alt/Shift
+ValidKey(k) {
+    if !RegExMatch(k, "^([\^!+#]*)(F(?:[1-9]|1\d|2[0-4])|[a-z0-9]|Numpad\w+|XButton[12]|MButton|Insert|Home|End|PgUp|PgDn|Delete|Pause|ScrollLock)$", &m)
+        return false
+    if RegExMatch(m[2], "^[a-z0-9]$") && !RegExMatch(m[1], "[\^!+]")
+        return false
+    return true
+}
 
 RegisterKey(newKey) {
     global CurKey
@@ -1669,12 +1712,14 @@ MaybeInstall() {
             if FileExist(A_ScriptDir "\" f)
                 FileCopy(A_ScriptDir "\" f, INSTALL_DIR "\" f, 1)
         exe := INSTALL_DIR "\" APP_FILE ".exe"
-        ico := INSTALL_DIR "\ui\icon.ico"
+        ico := INSTALL_DIR "\ui\seal.ico"                   ; neuer Name: Windows zeigt sonst evtl. das alte Bild aus dem Zwischenspeicher
         FileCreateShortcut(exe, A_Desktop "\" LNK_NAME, INSTALL_DIR, , "Chaos Ward - Craft-Schutz für Path of Exile 2", ico)
         FileCreateShortcut(exe, A_Programs "\" LNK_NAME, INSTALL_DIR, , "Chaos Ward - Craft-Schutz für Path of Exile 2", ico)
         ; alte Version aufräumen
         try FileDelete(A_Desktop "\PoE2 Craft-Schutz.lnk")
         try FileDelete(A_Programs "\PoE2 Craft-Schutz.lnk")
+        try FileDelete(INSTALL_DIR "\ui\icon.ico")              ; altes Symbol (bis 8.1)
+        try DllCall("shell32\SHChangeNotify", "Int", 0x08000000, "UInt", 0, "Ptr", 0, "Ptr", 0)   ; Symbole neu laden
         RegisterUninstall()
         if DirExist(OLD_DIR)
             Run(A_ComSpec ' /c timeout /t 5 /nobreak >nul & rmdir /s /q "' OLD_DIR '"', , "Hide")
@@ -1700,7 +1745,7 @@ RegisterUninstall() {
         RegWrite("Chaos Ward", "REG_SZ", k, "DisplayName")
         RegWrite(APP_VER, "REG_SZ", k, "DisplayVersion")
         RegWrite("moemor", "REG_SZ", k, "Publisher")
-        RegWrite(INSTALL_DIR "\ui\icon.ico", "REG_SZ", k, "DisplayIcon")
+        RegWrite(INSTALL_DIR "\ui\seal.ico", "REG_SZ", k, "DisplayIcon")
         RegWrite(INSTALL_DIR, "REG_SZ", k, "InstallLocation")
         RegWrite('"' exe '" "' INSTALL_DIR "\" APP_FILE '.ahk" /uninstall', "REG_SZ", k, "UninstallString")   ; Skript nennen, sonst gilt /uninstall als Skriptname
         RegWrite(1, "REG_DWORD", k, "NoModify")
@@ -1797,6 +1842,14 @@ HandleWeb(msg) {
         case "ready":
             SendState()
             PushStats()
+            WebPost(Map("type", "prot", "items", ProtList()))
+        case "protRemove":
+            if p.Length >= 2
+                for x in Prot
+                    if x.Name = p[2] {
+                        ProtToggle(x.Name, x.Base)
+                        break
+                    }
         case "toggle":
             ToggleGuard()
         case "set":
@@ -2004,17 +2057,24 @@ HandleWeb(msg) {
 SetOpt(key, val) {
     switch key {
         case "Mode":
-            Cfg.Mode := (val = 2 || val = 3) ? Integer(val) : 1
+            Cfg.Mode := (val = 2 || val = 3) ? 3 : 1
         case "PauseMs":
             for v in PAUSES
                 if IsInteger(val) && v = Integer(val)
                     Cfg.PauseMs := v
         case "Key":
-            for k in KEYS
-                if k = val {
-                    Cfg.Key := k
-                    RegisterKey(k)
+            if ValidKey(val) && val != Cfg.Key {
+                old := Cfg.Key
+                try {
+                    RegisterKey(val)
+                    Cfg.Key := val
+                } catch {
+                    RegisterKey(old)                   ; Taste geht nicht (z.B. schon belegt) -> alte behalten
+                    ShowBanner(T("bKeyFail"), KeyLabel(val), Clr.Amber)
+                    SetTimer(HideBanner, -3000)
                 }
+            }
+            SendState()
             PushStatus()
         case "Theme":
             if THEMES.Has(val) {
@@ -2042,7 +2102,7 @@ SetOpt(key, val) {
         case "ActiveCat":
             if DB.CatById.Has(val)
                 Cfg.ActiveCat := val
-        case "ShiftOnly", "ItemOverlay", "AutoDetect", "Sound", "IgnoreFractured", "UnsureRelease", "StreamVisible", "Diag", "Island":
+        case "ShiftOnly", "ItemOverlay", "AutoDetect", "Sound", "IgnoreFractured", "UnsureRelease", "StreamVisible", "Diag", "Island", "ItemProt", "Market":
             Cfg.%key% := (val = "1") ? 1 : 0
         default:
             return
@@ -2056,8 +2116,8 @@ SendState() {
     rulesTxt := ""
     try rulesTxt := FileRead(WISH, "UTF-8")
     WebPost(Map("type", "state", "lang", Cfg.Lang, "theme", Cfg.Theme, "mode", Cfg.Mode, "pauseMs", Cfg.PauseMs
-        , "shiftOnly", Cfg.ShiftOnly, "itemOverlay", Cfg.ItemOverlay, "island", Cfg.Island, "autoDetect", Cfg.AutoDetect, "sound", Cfg.Sound
-        , "ignoreFractured", Cfg.IgnoreFractured, "unsureRelease", Cfg.UnsureRelease, "streamVisible", Cfg.StreamVisible, "targetPanel", Cfg.TargetPanel, "volume", Cfg.Volume, "diag", Cfg.Diag, "learned", Aliases.Count + NumFixes.Count, "key", Cfg.Key, "keys", KEYS, "activeCat", Cfg.ActiveCat
+        , "shiftOnly", Cfg.ShiftOnly, "itemOverlay", Cfg.ItemOverlay, "island", Cfg.Island, "itemProt", Cfg.ItemProt, "market", Cfg.Market, "autoDetect", Cfg.AutoDetect, "sound", Cfg.Sound
+        , "ignoreFractured", Cfg.IgnoreFractured, "unsureRelease", Cfg.UnsureRelease, "streamVisible", Cfg.StreamVisible, "targetPanel", Cfg.TargetPanel, "volume", Cfg.Volume, "diag", Cfg.Diag, "learned", Aliases.Count + NumFixes.Count, "key", KeyLabel(), "keyRaw", Cfg.Key, "keys", KEYS, "activeCat", Cfg.ActiveCat
         , "on", St.On ? 1 : 0, "hit", St.Hit ? 1 : 0, "wishes", Wishes, "need", NeedMap, "rules", rulesTxt
         , "ver", APP_VER, "installed", (A_ScriptDir = INSTALL_DIR) ? 1 : 0
         , "mb", Map("rules", Mb.Rules, "any", Mb.Any, "eff", Mb.Eff, "ban", MbBanList(), "dup", Mb.Dup), "legacies", LEGACIES
@@ -2177,6 +2237,14 @@ T(key) {
         "dvLoaded", "Divine: Item übernommen", "dvLoadedSub", "{n} Zahlen – jetzt Schwellen einstellen",
         "dvErr", "Fehler beim Einlesen", "dvNoItem", "Noch kein Item kopiert – im Spiel Maus aufs Item und Strg+C",
         "dvNotItem", "Das ist kein Item-Text aus PoE2 (im Spiel Strg+C auf das Item, dann hier Strg+V)",
+        "prFirstCopy", "Erst Strg+C auf das Item", "prFirstCopySub", "dann Strg+Shift+P zum Schützen",
+        "prNoName", "Nur Items mit eigenem Namen", "prNoNameSub", "seltene und einzigartige Items lassen sich schützen",
+        "prOn", "Item geschützt", "prOnSub", "Klicks darauf sind gesperrt (Alt = trotzdem)", "prOff", "Schutz aufgehoben",
+        "prBlocked", "Geschützt", "prBlockedSub", "Alt halten, um es trotzdem anzuklicken",
+        "mk_none", "Lohnt nicht", "mk_ok", "Knapp", "mk_good", "Lohnt sich",
+        "mkSpread", "Spanne {s} %", "mkOrder", "Order bei {r} setzen (vorne)", "mkJoin", "Order bei {r} ({n} vor dir)",
+        "mkPer", "Abstand: {d} {a} je 1 {b}", "mkPrev", "Vor {m} Min: Spanne {s} %", "mkSold", "{n} oben verkauft", "mkFee", "Gold-Gebühr zuletzt: {g}", "mkNoFee", "Gold-Gebühr: Maus kurz auf „Place Order“",
+        "kCtrl", "Strg", "kMouse3", "Mausrad-Klick", "kMouse4", "Maus 4", "kMouse5", "Maus 5", "bKeyFail", "Diese Taste geht nicht",
         "plBanner", "Meldungen", "plHit", "Treffer-Leiste", "plItem", "Item-Anzeige", "plIsland", "Island",
         "isOff", "Schutz aus", "isOn", "Schutz an", "isHit", "Treffer", "isOpen", "Öffnen",
         "plDrag", "Mit der Maus an die gewünschte Stelle ziehen",
@@ -2260,6 +2328,14 @@ T(key) {
         "dvLoaded", "Divine: item loaded", "dvLoadedSub", "{n} numbers – now set thresholds",
         "dvErr", "error while reading", "dvNoItem", "No item copied yet – in game hover the item and press Ctrl+C",
         "dvNotItem", "That's not PoE2 item text (in game Ctrl+C on the item, then Ctrl+V here)",
+        "prFirstCopy", "Press Ctrl+C on the item first", "prFirstCopySub", "then Ctrl+Shift+P to protect it",
+        "prNoName", "Only items with their own name", "prNoNameSub", "rare and unique items can be protected",
+        "prOn", "Item protected", "prOnSub", "clicks on it are blocked (Alt = click anyway)", "prOff", "Protection removed",
+        "prBlocked", "Protected", "prBlockedSub", "hold Alt to click it anyway",
+        "mk_none", "Not worth it", "mk_ok", "Tight", "mk_good", "Worth it",
+        "mkSpread", "Spread {s} %", "mkOrder", "Place your order at {r} (front)", "mkJoin", "Order at {r} ({n} ahead of you)",
+        "mkPer", "Gap: {d} {a} per 1 {b}", "mkPrev", "{m} min ago: spread {s} %", "mkSold", "{n} sold at the top", "mkFee", "Last gold fee: {g}", "mkNoFee", "Gold fee: rest the mouse on “Place Order”",
+        "kCtrl", "Ctrl", "kMouse3", "Middle mouse", "kMouse4", "Mouse 4", "kMouse5", "Mouse 5", "bKeyFail", "This key can't be used",
         "plBanner", "Messages", "plHit", "Hit bar", "plItem", "Item display", "plIsland", "Island",
         "isOff", "Guard off", "isOn", "Guard on", "isHit", "Hit", "isOpen", "Open",
         "plDrag", "Drag to where you want it with the mouse",
@@ -2304,7 +2380,7 @@ T(key) {
     d := (IsObject(Cfg) && Cfg.HasOwnProp("Lang") && Cfg.Lang = "en") ? en : de
     s := d.Has(key) ? d[key] : (de.Has(key) ? de[key] : key)
     if IsObject(Cfg) && Cfg.HasOwnProp("Key")
-        s := StrReplace(s, "{k}", Cfg.Key)
+        s := StrReplace(s, "{k}", KeyLabel())
     return s
 }
 
@@ -3078,6 +3154,657 @@ TierLabel(mn) {
 }
 
 ; ============================================================================
+;  Item-Schutz (Prototyp): fertige Items vor verirrten Klicks schützen.
+;  Markieren: Maus aufs Item, Strg+C, dann Strg+Shift+P (nochmal = Schutz aufheben).
+;  Danach liest Chaos Ward den Tooltip, sobald die Maus kurz auf einem Item ruht. Ist es ein
+;  geschütztes Item, wird ein Linksklick darauf gesperrt (kein Orb, kein Verkaufen, kein Wegwerfen).
+;  Mit gedrückter Alt-Taste geht der Klick trotzdem durch (zum Bewegen oder Anziehen).
+;  Wie überall: Chaos Ward liest nur und hält höchstens DEINEN Klick zurück.
+; ============================================================================
+LoadProt() {
+    global Prot
+    Prot := []
+    try txt := FileRead(PROT_FILE, "UTF-8")
+    catch
+        return
+    for line in StrSplit(txt, "`n", "`r") {
+        p := StrSplit(line, "`t")
+        if p.Length >= 2 && Trim(p[1]) != ""
+            Prot.Push({Name: p[1], Base: p[2], Key: LKey(p[1])})
+    }
+}
+
+SaveProt() {
+    out := ""
+    for x in Prot
+        out .= x.Name "`t" x.Base "`n"
+    try {
+        f := FileOpen(PROT_FILE, "w", "UTF-8")
+        f.Write(out)
+        f.Close()
+    }
+    WebPost(Map("type", "prot", "items", ProtList()))
+}
+
+ProtList() {
+    out := []
+    for x in Prot
+        out.Push(Map("name", x.Name, "base", x.Base))
+    return out
+}
+
+; Strg+Shift+P im Spiel: zuletzt kopiertes Item schützen bzw. Schutz aufheben
+ProtToggleLast(*) {
+    if LastItemText = "" || A_TickCount - LastItemTick > 15000 {
+        ShowBanner(T("prFirstCopy"), T("prFirstCopySub"), Clr.Amber)
+        SetTimer(HideBanner, -3500)
+        return
+    }
+    item := ParseItem(LastItemText)
+    if !IsObject(item) || item.NameLines.Length < 2 {   ; nur Items mit eigenem Namen (selten / einzigartig)
+        ShowBanner(T("prNoName"), T("prNoNameSub"), Clr.Amber)
+        SetTimer(HideBanner, -3500)
+        return
+    }
+    ProtToggle(item.NameLines[1], item.NameLines[item.NameLines.Length])
+}
+
+ProtToggle(name, base) {
+    for i, x in Prot
+        if x.Name = name {
+            Prot.RemoveAt(i)
+            SaveProt()
+            ShowBanner(T("prOff"), name, Clr.Dim)
+            SetTimer(HideBanner, -2500)
+            return
+        }
+    Prot.Push({Name: name, Base: base, Key: LKey(name)})
+    SaveProt()
+    ShowBanner("🔒  " T("prOn"), name "   ·   " T("prOnSub"), Clr.Ward)
+    SetTimer(HideBanner, -3500)
+}
+
+; ruht die Maus kurz auf einer Stelle, wird der Tooltip dort gelesen (nur wenn es geschützte Items gibt)
+; ruht die Maus kurz auf einer Stelle: Kursliste im Exchange? -> Markt-Leser. Sonst Tooltip für den Item-Schutz lesen.
+HoverWatch() {
+    global ProtUnder, ProtSeen
+    static lx := -1, ly := -1, still := 0
+    useProt := Cfg.ItemProt && Prot.Length, useMk := Cfg.Market
+    if !(useProt || useMk) || !IsPoE() || OcrBusy || St.Locked {
+        ProtUnder := 0, lx := -1
+        HideMarket()
+        return
+    }
+    CoordMode("Mouse", "Screen")
+    MouseGetPos(&mx, &my)
+    if Abs(mx - lx) > 6 || Abs(my - ly) > 6 {        ; Maus bewegt -> neu warten
+        lx := mx, ly := my, still := A_TickCount
+        if IsObject(ProtUnder) && (Abs(mx - ProtUnder.X) > 30 * OvScale() || Abs(my - ProtUnder.Y) > 30 * OvScale())
+            ProtUnder := 0
+        if IsObject(MarketG) && (Abs(mx - MarketAt.X) > 60 * OvScale() || Abs(my - MarketAt.Y) > 60 * OvScale())
+            HideMarket()
+        ProtSeen := ""
+        return
+    }
+    if A_TickCount - still < 140 || ProtSeen = mx "," my
+        return
+    ProtSeen := mx "," my
+    if useMk && IsObject(spot := MarketSpot(mx, my)) {
+        mk := MarketRead(spot)
+        if IsObject(mk) {
+            global MarketAt, MarketSeen, MarketPairC
+            ev := MarketEval(mk)
+            MarketAt := {X: mx, Y: my}, MarketSeen := A_TickCount
+            ; Paar-Namen nur neu lesen, wenn die Liste woanders steht oder es länger her ist
+            key := Round(spot.X / 20) "," Round(spot.Y / 20)
+            if !IsObject(MarketPairC) || MarketPairC.Key != key || A_TickCount - MarketPairC.T > 4000
+                MarketPairC := {Key: key, T: A_TickCount, Pair: MarketPair(mk)}
+            MarketPairC.T := A_TickCount
+            pair := MarketPairC.Pair
+            ShowMarket(mk, ev, pair, MarketRemember(pair, ev))
+            MarketDiag(mk, ev, pair)
+            return
+        }
+    }
+    if useMk && MarketSeen && A_TickCount - MarketSeen < 300000   ; Exchange war gerade offen: Gold-Gebühr über "Place Order" lesen
+        if MarketFeeRead(mx, my) {
+            HideMarket()
+            return
+        }
+    HideMarket()
+    if !useProt
+        return
+    hit := ProtRead(mx, my)
+    ProtUnder := hit != "" ? {X: mx, Y: my, Name: hit} : 0
+}
+
+; Tooltip um die Maus lesen und Kopfzeilen mit den geschützten Namen vergleichen -> Name oder ""
+ProtRead(mx, my) {
+    global OcrBusy
+    m := GameMon(), s := OvScale()
+    w := Round(1100 * s), h := Round(1200 * s)
+    x1 := Max(m.L, Min(m.L + m.W - w, mx - w // 2)), y1 := Max(m.T, my - Round(1050 * s))
+    h := Min(h, m.T + m.H - y1), w := Min(w, m.L + m.W - x1)
+    if w < 100 || h < 100
+        return ""
+    scale := Max(1, Min(2, (OCR.MaxImageDimension - 8) / Max(w, h)))
+    OcrBusy := true
+    try {
+        OcrFilter(Cfg.OcrBest >= 1000)
+        res := OCR.FromRect(x1, y1, w, h, {lang: OcrLanguage(), scale: scale, monochrome: Mod(Cfg.OcrBest, 1000), invertcolors: 1})
+    } catch {
+        OcrBusy := false
+        return ""
+    }
+    OcrBusy := false
+    words := [], own := OwnOverlayRects()            ; Text in den eigenen Fenstern (z.B. Meldung mit dem Namen) zählt nicht
+    for wd in res.Words {
+        cx := wd.x + wd.w / 2, cy := wd.y + wd.h / 2, mine := false
+        for rc in own
+            if cx >= rc.X && cx < rc.X + rc.W && cy >= rc.Y && cy < rc.Y + rc.H
+                mine := true
+        if !mine
+            words.Push({T: wd.Text, X: wd.x, Y: wd.y, W: wd.w, H: wd.h})
+    }
+    for sg in BuildSegments(words) {
+        k := LKey(sg.Text)
+        if StrLen(k) < 5
+            continue
+        for x in Prot
+            if Sim(k, x.Key) >= 0.8 || (StrLen(x.Key) >= 6 && InStr(k, x.Key))
+                return x.Name
+    }
+    return ""
+}
+
+; Klick sperren? (Maus noch dort, wo das geschützte Item erkannt wurde, und Alt nicht gedrückt)
+ProtBlock() {
+    if !IsObject(ProtUnder) || GetKeyState("Alt", "P") || !IsPoE()
+        return false
+    CoordMode("Mouse", "Screen")
+    MouseGetPos(&mx, &my)
+    return Abs(mx - ProtUnder.X) <= 30 * OvScale() && Abs(my - ProtUnder.Y) <= 30 * OvScale()
+}
+
+ProtBlocked() {
+    static last := 0
+    if A_TickCount - last < 1500
+        return
+    last := A_TickCount
+    ShowBanner("🔒  " T("prBlocked"), ProtUnder.Name "   ·   " T("prBlockedSub"), Clr.Ward)
+    SetTimer(HideBanner, -2500)
+}
+
+; ============================================================================
+;  Markt-Leser (Prototyp): Hovert man im Currency Exchange über die Kursliste ("Available Trades" /
+;  "Competing Trades"), liest Chaos Ward die beiden Tabellen und zeigt daneben, ob sich das Paar lohnt:
+;  Spanne, wie schnell es geht, und zu welchem Verhältnis man die eigene Order setzen sollte.
+;  Nur lesen und raten: Die Order setzt man selbst.
+;  Erkennung billig vorab: Die Liste ist hell (Pergament), das Spiel sonst dunkel -> nur dann lesen.
+; ============================================================================
+
+; heller Bereich um die Maus? -> Rechteck (Bildschirm) oder 0. 40x48 Felder über 1000x1000 (x OvScale)
+MarketSpot(mx, my) {
+    s := OvScale(), m := GameMon()
+    w := Round(1000 * s), h := Round(1000 * s)
+    x := Max(m.L, Min(m.L + m.W - w, mx - w // 2)), y := Max(m.T, Min(m.T + m.H - h, my - h // 2))
+    rc := {X: x, Y: y, W: Min(w, m.W), H: Min(h, m.H)}
+    fp := TipPrint(rc)
+    if !IsObject(fp)
+        return 0
+    n := 0, x1 := 99, y1 := 99, x2 := -1, y2 := -1
+    for i, v in fp
+        if v >= 430 {                                   ; Pergament: hell (Summe R+G+B), Spiel-Oberfläche: dunkel
+            n++, cx := Mod(i - 1, 40), cy := (i - 1) // 40
+            x1 := Min(x1, cx), x2 := Max(x2, cx), y1 := Min(y1, cy), y2 := Max(y2, cy)
+        }
+    if n < 40 * 48 * 0.08                               ; zu wenig Helles -> keine Kursliste
+        return 0
+    fw := rc.W / 40, fh := rc.H / 48
+    return {X: Round(rc.X + (x1 - 1) * fw), Y: Round(rc.Y + (y1 - 1) * fh), W: Round((x2 - x1 + 3) * fw), H: Round((y2 - y1 + 3) * fh)}
+}
+
+; Kursliste lesen: dunkle Schrift auf hellem Grund -> ohne Umkehren, Helligkeits-Schwelle
+MarketRead(rc) {
+    ; Schritt 1: groben hellen Bereich schnell lesen und nur die beiden Überschriften suchen
+    segs := MarketOcr(rc, 1.2)
+    ha := 0, hc := 0
+    for sg in segs {
+        k := LKey(sg.Text)
+        if !ha && (Sim(k, "availabletrades") >= 0.7 || InStr(k, "available"))
+            ha := sg
+        else if !hc && (Sim(k, "competingtrades") >= 0.7 || InStr(k, "competing"))
+            hc := sg
+    }
+    if !IsObject(ha) || !IsObject(hc) {
+        MarketDiagRaw("keine Überschriften", segs, rc)
+        return 0
+    }
+    ; Schritt 2: nur das Kursfenster (zwischen/unter den Überschriften) groß und genau lesen
+    hw := Max(ha.X2 - ha.X1, hc.X2 - hc.X1), cx := (ha.Cx + hc.Cx) / 2
+    top := Min(ha.Y, hc.Y) - ha.H, gap := Abs(hc.Y - ha.Y)
+    pr := {X: Round(cx - hw * 0.75), Y: Round(top), W: Round(hw * 1.5), H: Round(gap * 2.1 + ha.H)}
+    m := GameMon()
+    pr.X := Max(m.L, pr.X), pr.Y := Max(m.T, pr.Y), pr.W := Min(pr.W, m.L + m.W - pr.X), pr.H := Min(pr.H, m.T + m.H - pr.Y)
+    segs := MarketOcr(pr, 0)
+    mk := MarketParse(segs)
+    if !IsObject(mk) {
+        MarketDiagRaw("nicht lesbar", segs, pr)
+        return 0
+    }
+    mk.Spot := pr
+    return mk
+}
+
+; dunkle Schrift auf hellem Grund lesen -> Segmente. scale 0 = so groß wie möglich
+MarketOcr(rc, scale) {
+    global OcrBusy
+    if !scale
+        scale := Max(1, Min(3, (OCR.MaxImageDimension - 8) / Max(rc.W, rc.H, 1)))
+    OcrBusy := true
+    try {
+        OcrFilter(false)
+        res := OCR.FromRect(rc.X, rc.Y, rc.W, rc.H, {lang: OcrLanguage(), scale: scale, monochrome: 125, invertcolors: 0})
+    } catch {
+        OcrBusy := false
+        return []
+    }
+    OcrBusy := false
+    words := []
+    for wd in res.Words
+        words.Push({T: wd.Text, X: wd.x, Y: wd.y, W: wd.w, H: wd.h})
+    return BuildSegments(words)
+}
+
+; Diagnose: was gelesen wurde, wenn die Kursliste nicht klappt (höchstens alle 3 s)
+MarketDiagRaw(why, segs, rc) {
+    static last := 0
+    if !Cfg.Diag || A_TickCount - last < 3000
+        return
+    last := A_TickCount
+    try {
+        DirCreate(DIAG_DIR)
+        out := FormatTime(, "yyyy-MM-dd HH:mm:ss") "  Markt-Leser " APP_VER ": " why "  Bereich " rc.X "," rc.Y " " rc.W "x" rc.H "`n"
+        for sg in segs
+            out .= "  " sg.Text "  |  " Round(sg.Cx) " | " Round(sg.Y) " | " Round(sg.H) "`n"
+        FileAppend(out "`n", DIAG_DIR "\markt.txt", "UTF-8")
+    }
+}
+
+; Zeilen -> {Avail: [{A, B, P, S}], Comp: [...], X2, Y1, Y2} oder 0.  Format "Will : Habe", P = Habe je 1 Will
+MarketParse(segs) {
+    ya := "", yc := "", x2 := 0, y1 := 99999, y2 := 0
+    for sg in segs {
+        k := LKey(sg.Text)
+        if Sim(k, "availabletrades") >= 0.7 || InStr(k, "available")
+            ya := sg.Y
+        else if Sim(k, "competingtrades") >= 0.7 || InStr(k, "competing")
+            yc := sg.Y
+    }
+    if ya = "" || yc = ""
+        return 0
+    rows := []                                          ; Segmente nach Höhe zu Zeilen zusammenfassen
+    for sg in segs {
+        if sg.Y <= Min(ya, yc)
+            continue
+        placed := false
+        for r in rows
+            if Abs(r.Cy - (sg.Y + sg.H / 2)) < 0.6 * Max(r.H, sg.H) {
+                r.Parts.Push(sg), placed := true
+                break
+            }
+        if !placed
+            rows.Push({Cy: sg.Y + sg.H / 2, H: sg.H, Parts: [sg]})
+        x2 := Max(x2, sg.X2), y1 := Min(y1, sg.Y), y2 := Max(y2, sg.Y + sg.H)
+    }
+    rows := MarketSortRows(rows)
+    av := [], cp := [], pend := 0
+    for r in rows {
+        txt := ""
+        for sg in SortSegsX(r.Parts)
+            txt .= " " sg.Text
+        ; umgebrochene Zahl ("1 :" / "278.33") kann auch mit der nächsten Zeile verschmolzen sein: "278.33  1 : 278  1.668"
+        if IsObject(pend) && RegExMatch(MarketClean(txt), "^\s*\D?\s*(\d+\.\d+)\s+(.*\d\s*:\s*\d.*)$", &wm) {
+            pend.B := wm[1]
+            if IsObject(pe2 := MarketFinish(pend)) {
+                if pend.Cy > ya && (yc < ya || pend.Cy < yc)
+                    av.Push(pe2)
+                else
+                    cp.Push(pe2)
+            }
+            pend := 0, txt := wm[2]
+        }
+        e := MarketRow(txt)
+        if IsObject(pend) && !IsObject(e) {             ; "1 :" in einer Zeile, "278.33" in der nächsten (Zeilenumbruch)
+            n := MarketNum(txt)
+            if n != "" && pend.B = ""
+                pend.B := n, e := MarketFinish(pend)
+            pend := 0
+        }
+        if !IsObject(e) {
+            if IsObject(pe := MarketRowPart(txt))
+                pend := pe, pend.Cy := r.Cy
+            continue
+        }
+        cy := r.Cy
+        if (cy > ya && (yc < ya || cy < yc))
+            av.Push(e)
+        else if (cy > yc && (ya < yc || cy < ya))
+            cp.Push(e)
+    }
+    if av.Length < 1 || cp.Length < 1
+        return 0
+    return {Avail: av, Comp: cp, X2: x2, Y1: y1, Y2: y2}
+}
+
+MarketSortRows(rows) {
+    out := []
+    for i in SortIdx(rows, (r) => r.Cy)
+        out.Push(rows[i])
+    return out
+}
+
+SortSegsX(parts) {
+    out := []
+    for i in SortIdx(parts, (p) => p.X1)
+        out.Push(parts[i])
+    return out
+}
+
+; typische Lesefehler in Zahlen reparieren, Komma als Punkt
+MarketClean(txt) {
+    tq := txt
+    for a, b in Map("O", "0", "o", "0", "l", "1", "I", "1", "|", "1", "S", "5", "B", "8", ",", ".", ";", ":")
+        tq := StrReplace(tq, a, b, true)
+    return tq
+}
+
+; Zahl am Zeilenende (Menge): Punkte sind Tausender-Trenner ("16.430" = 16430)
+MarketNum(txt) {
+    if !RegExMatch(MarketClean(txt), "(\d+(?:\.\d+)*)\s*$", &m)
+        return ""
+    return m[1]
+}
+
+; "1 : 279   25" / "9.70 : 1   485" -> {A, B, P, S, D}
+MarketRow(txt) {
+    tq := MarketClean(txt)
+    if RegExMatch(tq, "(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)*)", &m)
+        return MarketFinish({A: m[1], B: m[2], S: m[3]})
+    ; Doppelpunkt nicht gelesen: genau drei Zahlen, eine davon "1" am Anfang oder in der Mitte -> Verhältnis + Menge
+    nums := [], pos := 1
+    while pos := RegExMatch(tq, "\d+(?:\.\d+)*", &nm, pos)
+        nums.Push(nm[0]), pos += StrLen(nm[0])
+    if nums.Length = 3 && (nums[1] = "1" || nums[2] = "1")
+        return MarketFinish({A: nums[1], B: nums[2], S: nums[3]})
+    return 0
+}
+
+; Zeile ohne zweite Zahl im Verhältnis ("1 :   835") -> Teil, wird mit der nächsten Zeile ergänzt
+MarketRowPart(txt) {
+    tq := MarketClean(txt)
+    if !RegExMatch(tq, "(\d+(?:\.\d+)?)\s*:\s+(\d+(?:\.\d+)*)\s*$", &m)
+        return 0
+    return {A: m[1], B: "", S: m[2]}
+}
+
+MarketFinish(e) {
+    a := e.A, b := e.B, sv := StrReplace(e.S, ".", "")
+    if !IsNumber(a) || !IsNumber(b) || !IsInteger(sv) || a + 0 <= 0 || b + 0 <= 0
+        return 0
+    decA := InStr(a, ".") ? StrLen(a) - InStr(a, ".") : 0, decB := InStr(b, ".") ? StrLen(b) - InStr(b, ".") : 0
+    return {A: a + 0, B: b + 0, P: (b + 0) / (a + 0), S: Integer(sv), DA: decA, DB: decB}
+}
+
+; Bewertung nur aus der sichtbaren Liste: beste sofortige Order (Available) gegen beste Konkurrenz (Competing)
+MarketEval(mk) {
+    pa := 0, pc := 0, ea := 0, ec := 0
+    for e in mk.Avail                                   ; Available: am billigsten = beste
+        if !pa || e.P < pa
+            pa := e.P, ea := e
+    for e in mk.Comp                                    ; Competing: höchstes Gebot = beste Konkurrenz
+        if e.P > pc
+            pc := e.P, ec := e
+    spread := pc > 0 ? (pa / pc - 1) * 100 : 0
+    oneFirst := ea.A = 1 && ec.A = 1                    ; Anzeige-Format "1 : x" oder "x : 1"
+    d := 0
+    for e in mk.Avail
+        d := Max(d, oneFirst ? e.DB : e.DA)
+    for e in mk.Comp
+        d := Max(d, oneFirst ? e.DB : e.DA)
+    tick := 10 ** -Max(d, oneFirst ? 0 : 2)
+    if oneFirst {                                       ; "1 : x": höheres x = besseres Gebot
+        nb := ec.B + tick, inside := nb < ea.B - tick / 2
+        ratio := "1 : " Format("{:." d "f}", inside ? nb : ec.B)
+    } else {                                            ; "x : 1": kleineres x = besseres Gebot
+        dd := Max(d, 2)
+        nb := ec.A - tick, inside := nb > ea.A + tick / 2
+        ratio := Format("{:." dd "f}", inside ? nb : ec.A) " : 1"
+    }
+    ahead := 0
+    if !inside
+        for e in mk.Comp
+            if e.P = pc
+                ahead += e.S
+    liquid := mk.Avail.Length >= 3 && mk.Comp.Length >= 3
+    if spread >= 1 && liquid
+        v := "good"
+    else if spread >= 0.4 && liquid
+        v := "ok"
+    else
+        v := "none"
+    ; Gewinn je Einheit (absolut): "1 : x" -> x-Abstand in Habe-Währung je 1 Will, "x : 1" -> Abstand in Will je 1 Habe
+    diff := oneFirst ? ea.B - ec.B : ec.A - ea.A
+    return {Spread: spread, Ratio: ratio, Inside: inside, Ahead: ahead, Verdict: v, PA: pa, PC: pc, Liquid: liquid
+        , TopA: ea.S, TopC: ec.S, Diff: diff, OneFirst: oneFirst, D: d}
+}
+
+; Namen des Paars: links neben der Liste "Ich will", rechts "Ich habe" (helle Schrift auf dunklem Feld)
+MarketPair(mk) {
+    global OcrBusy
+    s := OvScale(), m := GameMon(), sp := mk.Spot
+    x1 := Max(m.L, sp.X - Round(480 * s)), x2 := Min(m.L + m.W, sp.X + sp.W + Round(480 * s))
+    y1 := Max(m.T, mk.Y1 - Round(40 * s)), h := Round(170 * s)
+    OcrBusy := true
+    try {
+        OcrFilter(Cfg.OcrBest >= 1000)
+        res := OCR.FromRect(x1, y1, x2 - x1, h, {lang: OcrLanguage(), scale: 1.5, monochrome: Mod(Cfg.OcrBest, 1000), invertcolors: 1})
+    } catch {
+        OcrBusy := false
+        return ""
+    }
+    OcrBusy := false
+    words := []
+    for wd in res.Words
+        words.Push({T: wd.Text, X: wd.x, Y: wd.y, W: wd.w, H: wd.h})
+    want := "", have := "", lw := 0, lh := 0
+    for sg in BuildSegments(words) {
+        k := LKey(sg.Text)
+        if StrLen(k) < 4 || RegExMatch(k, "^(iwant|ihave|currencyexchange|marketratio|placeorder|ratio|stock)$")
+            continue
+        if !RegExMatch(sg.Text, "[A-Za-z]{3}")
+            continue
+        w := sg.X2 - sg.X1
+        if sg.X2 < sp.X && w > lw
+            want := Trim(sg.Text), lw := w
+        else if sg.X1 > sp.X + sp.W && w > lh
+            have := Trim(sg.Text), lh := w
+    }
+    return want != "" && have != "" ? want " → " have : ""
+}
+
+; Verlauf je Paar merken (Diagnose\..\Markt.txt): Zeit, beste Preise, Mengen oben -> Trend + wie schnell gehandelt wird
+MarketRemember(pair, ev) {
+    global MarketHist
+    if pair = ""
+        return ""
+    if !IsObject(MarketHist)
+        MarketLoad()
+    prev := MarketHist.Has(pair) ? MarketHist[pair] : 0
+    MarketHist[pair] := {T: A_Now, PA: ev.PA, PC: ev.PC, TopA: ev.TopA, Spread: ev.Spread}
+    SetTimer(MarketSave, -2000)
+    if !IsObject(prev)
+        return ""
+    mins := DateDiff(A_Now, prev.T, "Minutes")
+    if mins < 1 || mins > 600
+        return ""
+    sold := prev.PA = ev.PA && prev.TopA > ev.TopA ? prev.TopA - ev.TopA : 0
+    sp := Format("{:.2f}", prev.Spread)
+    txt := StrReplace(StrReplace(T("mkPrev"), "{m}", mins), "{s}", Cfg.Lang = "de" ? StrReplace(sp, ".", ",") : sp)
+    if sold
+        txt .= "   ·   " StrReplace(T("mkSold"), "{n}", sold)
+    return txt
+}
+
+MarketLoad() {
+    global MarketHist
+    MarketHist := Map()
+    try txt := FileRead(MARKET_FILE, "UTF-8")
+    catch
+        return
+    for line in StrSplit(txt, "`n", "`r") {
+        p := StrSplit(line, "`t")
+        if p.Length >= 6 && IsNumber(p[3]) && IsNumber(p[4])
+            MarketHist[p[1]] := {T: p[2], PA: p[3] + 0, PC: p[4] + 0, TopA: Integer(p[5]), Spread: p[6] + 0}
+    }
+}
+
+MarketSave() {
+    if !IsObject(MarketHist)
+        return
+    out := ""
+    for k, v in MarketHist
+        out .= k "`t" v.T "`t" v.PA "`t" v.PC "`t" v.TopA "`t" v.Spread "`n"
+    try {
+        f := FileOpen(MARKET_FILE, "w", "UTF-8")
+        f.Write(out)
+        f.Close()
+    }
+}
+
+; Gold-Gebühr: steht über "Place Order" (nur zu sehen, solange die Kursliste zu ist).
+; Ruht die Maus auf "Place Order", wird sie gelesen und zum Paar gemerkt.
+MarketFeeRead(mx, my) {
+    global OcrBusy, MarketFee
+    s := OvScale(), m := GameMon()
+    x1 := Max(m.L, mx - Round(560 * s)), y1 := Max(m.T, my - Round(190 * s))
+    w := Min(Round(1120 * s), m.L + m.W - x1), h := Round(230 * s)
+    OcrBusy := true
+    try {
+        OcrFilter(Cfg.OcrBest >= 1000)
+        res := OCR.FromRect(x1, y1, w, h, {lang: OcrLanguage(), scale: 1.5, monochrome: Mod(Cfg.OcrBest, 1000), invertcolors: 1})
+    } catch {
+        OcrBusy := false
+        return false
+    }
+    OcrBusy := false
+    words := []
+    for wd in res.Words
+        words.Push({T: wd.Text, X: wd.x, Y: wd.y, W: wd.w, H: wd.h})
+    segs := BuildSegments(words), po := 0
+    for sg in segs
+        if InStr(LKey(sg.Text), "placeorder")
+            po := sg
+    if !IsObject(po)
+        return false
+    fee := "", want := "", have := "", lw := 0, lh := 0
+    for sg in segs {
+        if sg.Y < po.Y && sg.Y > po.Y - 3 * po.H && Abs(sg.Cx - po.Cx) < 4 * po.H && RegExMatch(MarketClean(sg.Text), "(\d+(?:\.\d{3})*)", &fm)
+            fee := StrReplace(fm[1], ".", "")
+        k := LKey(sg.Text)
+        if StrLen(k) >= 4 && RegExMatch(sg.Text, "[A-Za-z]{3}") && !RegExMatch(k, "^(iwant|ihave|currencyexchange|marketratio|placeorder)$") && sg.Y < po.Y {
+            wdt := sg.X2 - sg.X1
+            if sg.Cx < po.Cx - 4 * po.H && wdt > lw
+                want := Trim(sg.Text), lw := wdt
+            else if sg.Cx > po.Cx + 4 * po.H && wdt > lh
+                have := Trim(sg.Text), lh := wdt
+        }
+    }
+    if fee = "" || want = "" || have = ""
+        return false
+    MarketFee[want " → " have] := Integer(fee)
+    return true
+}
+
+ShowMarket(mk, ev, pair, hist) {
+    global MarketG
+    old := MarketG
+    g := NewOverlay(Clr.Tip)
+    g.MarginX := OvPx(14), g.MarginY := OvPx(10)
+    fr := OvFrame(g, Clr.Line)
+    col := ev.Verdict = "good" ? Clr.Ward : Clr.Dim
+    edge := g.AddText("x0 y0 w10 h" OvPx(2) " Background" col)
+    OvFont(g, FS(12.5) " w600 c" (ev.Verdict = "good" ? Clr.Ward2 : Clr.Muted))
+    g.AddText("xm ym +0x80", T("mk_" ev.Verdict))
+    if pair != "" {
+        OvFont(g, FS(9.5) " w400 c" Clr.Muted, , pair)
+        g.AddText("xm y+" OvPx(1) " +0x80", pair)
+    }
+    OvFont(g, FS(10) " w400 c" Clr.Text)
+    sp := Format("{:.2f}", ev.Spread)
+    g.AddText("xm y+" OvPx(5) " +0x80", StrReplace(T("mkSpread"), "{s}", Cfg.Lang = "de" ? StrReplace(sp, ".", ",") : sp))
+    g.AddText("xm y+" OvPx(2) " +0x80", StrReplace(StrReplace(T(ev.Inside ? "mkOrder" : "mkJoin"), "{r}", ev.Ratio), "{n}", ev.Ahead))
+    if pair != "" && ev.Diff > 0 {                       ; absoluter Abstand mit Namen, z.B. "48 Divine Orb je 1 Mirror of Kalandra"
+        nm := StrSplit(pair, " → ")
+        if nm.Length = 2 {
+            gap := Format("{:." Max(ev.D, ev.OneFirst ? 0 : 2) "f}", ev.Diff)
+            if InStr(gap, ".")
+                gap := RTrim(RTrim(gap, "0"), ".")
+            g.AddText("xm y+" OvPx(2) " +0x80", StrReplace(StrReplace(StrReplace(T("mkPer"), "{d}", gap)
+                , "{a}", ev.OneFirst ? nm[2] : nm[1]), "{b}", ev.OneFirst ? nm[1] : nm[2]))
+        }
+    }
+    OvFont(g, FS(9) " w400 c" Clr.Muted)
+    if hist != ""
+        g.AddText("xm y+" OvPx(5) " +0x80", hist)
+    fee := pair != "" && MarketFee.Has(pair) ? MarketFee[pair] : ""
+    g.AddText("xm y+" OvPx(hist != "" ? 2 : 6) " +0x80", fee != "" ? StrReplace(T("mkFee"), "{g}", MarketGold(fee)) : T("mkNoFee"))
+    g.Show("Hide AutoSize")
+    g.GetPos(, , &gw, &gh)
+    m := GameMon()
+    x := Min(m.L + m.W - gw, mk.X2 + OvPx(14)), y := Max(m.T, mk.Y1)
+    g.Show("NA x" x " y" y)
+    try WinSetTransparent(240, "ahk_id " g.Hwnd)
+    RoundCorners(g.Hwnd)
+    edge.Move(, , gw)
+    OvFrameFit(fr, gw, gh)
+    MarketG := g
+    if IsObject(old)
+        old.Destroy()
+}
+
+MarketGold(n) {
+    s := String(n), out := ""
+    while StrLen(s) > 3
+        out := (Cfg.Lang = "de" ? "." : ",") SubStr(s, -3) out, s := SubStr(s, 1, StrLen(s) - 3)
+    return s out
+}
+
+HideMarket() {
+    global MarketG
+    if IsObject(MarketG)
+        try MarketG.Destroy()
+    MarketG := 0
+}
+
+; Diagnose: gelesene Zeilen speichern (zum Einstellen der Erkennung auf echten Bildschirmen)
+MarketDiag(mk, ev, pair) {
+    if !Cfg.Diag
+        return
+    try {
+        DirCreate(DIAG_DIR)
+        out := "Markt-Leser " APP_VER "  Paar: " pair "`nAvailable:`n"
+        for e in mk.Avail
+            out .= "  " e.A " : " e.B "   " e.S "`n"
+        out .= "Competing:`n"
+        for e in mk.Comp
+            out .= "  " e.A " : " e.B "   " e.S "`n"
+        out .= Format("Spanne {:.3f} %  Urteil {}  Empfehlung {}  vor dir {}`n", ev.Spread, ev.Verdict, ev.Ratio, ev.Ahead)
+        FileAppend(FormatTime(, "yyyy-MM-dd HH:mm:ss") "  " out "`n", DIAG_DIR "\markt.txt", "UTF-8")
+    }
+}
+
+; ============================================================================
 ;  Island: kleiner, halb durchsichtiger Kreis mit dem Chaos-Ward-Siegel oben im Spiel.
 ;  Maus drüber -> klappt zu einem Schnellzugriff auf: "Öffnen" und "Schutz an/aus".
 ;  Ein eigenes Fenster mit Alpha je Pixel: durchsichtige Stellen lassen Klicks ans Spiel durch.
@@ -3448,7 +4175,7 @@ PlaceStop() {
 ; Bildschirm-Rechtecke der eigenen Anzeigen (deren Text liest die Erkennung nicht mit)
 OwnOverlayRects() {
     out := []
-    for g in [Banner, ItemG, HitBarG, IslandG] {
+    for g in [Banner, ItemG, HitBarG, IslandG, MarketG] {
         if !IsObject(g)
             continue
         try {
@@ -4053,7 +4780,7 @@ HitBarAutoHide() {
     if !St.Hit || !IsObject(HitBarG)
         return
     HideHitBar()
-    ShowBanner("🔒  " T("bHitLocked"), StrReplace(T("bHitLockedSub"), "{k}", Cfg.Key), Clr.Gold)
+    ShowBanner("🔒  " T("bHitLocked"), StrReplace(T("bHitLockedSub"), "{k}", KeyLabel()), Clr.Gold)
 }
 
 HideHitBar() {

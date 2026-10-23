@@ -13,7 +13,8 @@ Kurz gesagt (nicht verbindlich, es gilt der Lizenztext):
   - Verkaufen, als eigenes Produkt herausbringen oder kommerziell nutzen: NICHT erlaubt.
 
 Nicht von dieser Lizenz erfasst (eigene Lizenzen, liegen jeweils bei):
-  - ChaosWard.exe = AutoHotkey v2 (GPL, siehe LIZENZ-AutoHotkey.txt)
+  - ChaosWard.exe = AutoHotkey v2 (GPL, siehe LIZENZ-AutoHotkey.txt), unverändert bis auf das Programm-Symbol.
+    Quelltext: https://github.com/AutoHotkey/AutoHotkey
   - lib\WebView2.ahk (thqby, MIT) und lib\OCR.ahk (Descolada, MIT)
   - ui\fonts\ = Overpass (SIL Open Font License, siehe OFL-Overpass.txt)
   - Mod-Daten (Mods.tsv) stammen aus den Spieldaten von Path of Exile 2; Path of Exile ist eine

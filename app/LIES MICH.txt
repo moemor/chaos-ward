@@ -1,5 +1,5 @@
-﻿CHAOS WARD v8.1.0  (früher "Craft-Schutz")  -  in 3 Schritten startklar
-   (Am einfachsten: "ChaosWard-Setup-8.1.0.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
+﻿CHAOS WARD v8.2.0  (früher "Craft-Schutz")  -  in 3 Schritten startklar
+   (Am einfachsten: "ChaosWard-Setup-8.2.0.exe" doppelklicken - fertig. Dann weiter bei Schritt 3.
     Deinstallieren: Windows-Einstellungen -> Apps -> Chaos Ward.)
 ==============================================
 
@@ -19,7 +19,8 @@
 3) Im Spiel
    - Im Fenster "Mods wählen": Item-Art wählen und Wunsch-Mods anhaken.
    - Spiel auf "Fenster-Vollbild" (Windowed Fullscreen) stellen.
-   - F6 drücken = Chaos Ward AN.
+   - F6 drücken = Chaos Ward AN. Andere Taste? Einstellungen -> "Taste im Spiel" -> "Eigene Taste"
+     (z. B. Strg+G oder Maustaste 4).
    - Modus "Automatisch" (Einstellungen): Maus aufs Item, EINMAL Strg+C.
    - Rechtsklick auf Chaos Orb, Shift halten, aufs Item spammen.
      Die App liest nach jedem Klick den Tooltip vom Bildschirm mit.
@@ -30,7 +31,8 @@
      halben Sekunde ein und zeigt deinen Mod (bei Divine: die erreichten Werte).
      Lieber ganz ohne Bewegung? Einstellungen -> Treffer-Animation -> "Sofort".
    - F6 = fertig.
-   - Einstellungen: Treffer-Sound wählen ("Siegel" passt genau zur Animation; auch eigene .wav),
+   - Einstellungen: Treffer-Sound wählen ("Siegel" passt genau zur Animation, dazu Gong, Kristall,
+     Harfe, Trommel und mehr; auch eigene .wav),
      wie lange die Treffer-Leiste stehen bleibt, und "Texterkennung -> Neu einstellen" nach Monitor-/HDR-Wechsel.
    - Einstellungen -> "Fenster im Spiel verschieben": Meldungen, Treffer-Leiste und
      Item-Anzeige mit der Maus hinziehen, dann "Fertig".
@@ -47,6 +49,15 @@
    - Island: kleines Siegel oben im Spiel. Maus drüber: "Öffnen" oder Schutz an/aus.
      Abschaltbar und verschiebbar unter Einstellungen.
    - Jede Seite (Mods, Mageblood, Divine) hat einen Knopf "Treffer testen".
+   - Item-Schutz: Maus auf ein fertiges Item, Strg+C, dann Strg+Shift+P. Danach sind Klicks
+     darauf gesperrt (kein Orb, kein Verkaufen aus Versehen). Alt halten = trotzdem klicken.
+     Nochmal Strg+Shift+P oder Einstellungen -> Item-Schutz -> "Freigeben" hebt den Schutz auf.
+   - Markt-Leser: Im Currency Exchange die Maus auf die Kursliste ("Available Trades" /
+     "Competing Trades"). Daneben steht, ob sich das Paar lohnt (Spanne, wie schnell es geht)
+     und zu welchem Verhältnis du deine Order setzen solltest. Die Order setzt du selbst.
+     Chaos Ward merkt sich je Paar den letzten Stand (Markt.txt) und zeigt beim nächsten Mal,
+     wie sich die Spanne verändert hat. Die Gold-Gebühr liest es, wenn die Maus kurz auf
+     "Place Order" ruht, und zeigt sie dann beim Paar mit an.
 
 Läuft es nicht richtig?
    Einstellungen -> "Systemcheck": zeigt rot, was auf diesem PC nicht passt

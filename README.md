@@ -24,15 +24,17 @@ Chaos Ward was designed, directed and tested by moemor and developed with the he
 - 🎯 **Pick mods**: every mod for every item type straight from the game data, with tiers (T1 = best). Tick what you want, set a minimum tier or value, and choose whether one hit or several at once should stop you.
 - 🩸 **Mageblood**: set how many of each Legacy you want (duplicates allowed), ban unwanted Legacies, or stop on *any* duplicate, with an optional minimum effect per duplicate.
 - ✨ **Divine**: load an item with Ctrl+C and set a threshold for every number (e.g. "Spell Damage ≥ 172"). Chaos Ward locks as soon as all thresholds (or any one) are met.
-- 🛡️ **Three guard modes**
+- 🛡️ **Two guard modes**
   - ⚡ *Automatic* (recommended): press Ctrl+C once, then spam. Chaos Ward reads the tooltip after every click and locks on a hit.
-  - 🧠 *Smart*: locked after every click until you press Ctrl+C.
   - ⏸️ *Simple*: a short pause after every orb click.
 - 🔒 **Hit display**: a seal locks in half a second and shows the mod that hit (Divine: the values you reached), with a matching sound. Then it stays still. An *Instant* option skips the motion.
 - 🔍 **In-game item display**: shows your item with tier marks and your hits in gold.
 - 📊 **Tracker**: Chaos Orbs and Divine Orbs counted separately: since the last hit, this session, total, average per hit and a history.
 - 🏝️ **Island**: a small see-through seal at the top of the game. Hover it for quick access: open Chaos Ward or toggle the guard. Never takes focus from the game.
 - 🧪 **Test buttons** on the Mods, Mageblood and Divine pages show exactly what a hit will look like.
+- 🔐 **Item protection**: hover a finished item, Ctrl+C, then Ctrl+Shift+P. Clicks on it are blocked from then on, so no stray orb and no accidental selling. Hold Alt to click it anyway.
+- ⌨️ **Your own guard key**: F2 to F12, or record any key with Ctrl/Alt/Shift, or mouse button 3/4/5.
+- 💱 **Market reader** (prototype): hover the rate list in the Currency Exchange and Chaos Ward shows the spread, whether it trades fast, and which ratio to set for your order. You still place the order yourself.
 - 🖥️ **Works on many setups**: multiple monitors, 1080p to 4K, ultrawide, Windows scaling, HDR and SDR. A built-in system check explains anything that doesn't fit.
 - 🌍 German and English interface.
 
@@ -100,7 +102,6 @@ Chaos Ward is still young and has only been tested on a few PCs so far. If somet
 | 🌐 Mods are not recognised | The game must be set to **English**. Other game languages are not supported yet. |
 | ❓ *"Couldn't read it reliably"* | Press Ctrl+C once on the item, this checks and unlocks. After changing monitor, resolution or HDR use **Settings → Text recognition → Re-calibrate**. |
 | 📝 Automatic mode reads nothing | Windows OCR needs the English language pack: **Settings → Time & language → Language → Add English (US)**, then restart. |
-| ⌨️ Smart mode: Ctrl+C does nothing | Release Shift before pressing Ctrl+C. |
 | 🐢 Hit animation stutters | Choose **Settings → Hit animation → Instant**. The frame time is logged in `Diagnose/leistung.txt`. |
 | 🧭 Overlays in the wrong place on multi monitor setups | Fixed in 7.3 for monitors with different Windows scaling. If it still happens, use **Move in game windows** in the settings and send a diagnostic package. |
 | 🆕 New mods are missing after a league start | The mod data has to be updated for each league. Update to the latest version. |
