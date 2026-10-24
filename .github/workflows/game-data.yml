@@ -1,0 +1,45 @@
+name: Game data
+
+# Every 3 hours: fetch the PoE2 game data from RePoE (github.com/repoe-fork/poe2)
+# and the unique prices per league from the poe.ninja economy API.
+# If there is a new patch, build data/Mods-<patch>.tsv and list it in data/index.tsv.
+# Chaos Ward's "Check for updates" button reads data/index.tsv.
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get RePoE PoE2 data
+        run: git clone --depth 1 https://github.com/repoe-fork/poe2.git repoe
+
+      - name: Build mod list for a new patch
+        run: python3 tools/update_moddb.py repoe data
+
+      - name: Unique prices per league (poe.ninja economy API, cached here so the app never asks poe.ninja itself)
+        # once a day is enough (keeps the repo small); a manual run always updates
+        run: |
+          if [ "$(date -u +%H)" = "06" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python3 tools/update_uniques.py repoe data
+          fi
+        continue-on-error: true
+
+      - name: Commit if something changed
+        run: |
+          git add data
+          if git diff --cached --quiet; then
+            echo "No new patch."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Game data and unique prices $(date -u +%Y-%m-%d)"
+          git push

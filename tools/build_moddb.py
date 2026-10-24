@@ -137,7 +137,11 @@ def add_group(gen, typ, mods):
     tier_txt = ';;'.join(f'T{n - k}~{lvl}~{name}~{t.replace(chr(10), " / ")}'
                          for k, (lvl, name, t) in enumerate(tiers))
     gid = f'{gen[0].upper()}.{typ}.{ids[0]}.{ids[-1]}'
-    assert not re.search(r'[:,|\t~]', gid) and gid not in {r[0] for r in group_rows}, gid
+    taken = {r[0] for r in group_rows}
+    base_gid, k = gid, 2
+    while gid in taken:                       # gleicher Name, andere Tier-Liste (z.B. neue Waffenart) -> eindeutig machen
+        gid, k = f'{base_gid}.{k}', k + 1
+    assert not re.search(r'[:,|\t~]', gid), gid
     group_index[key] = gid
     rng = []
     for lvl, name, t in reversed(tiers):  # T1 (beste) zuerst
@@ -192,6 +196,31 @@ for main, spec in TREE:
             label = ', '.join(names) if len(names) <= 3 else names[0] + ' ...'
             g, b = collect(cls, lambda tags, t2, key=key: ','.join(tags) == key)
             emit(slug(main + '_' + label), main, label, g, b)
+
+# Neue Waffenarten automatisch aufnehmen (z.B. Schwerter, Äxte, Flegel, sobald es sie gibt).
+# Nur fuer 0.5.5.4.2 bekannt: die Daten melden diese Klassen schon als "released", im Spiel gibt es sie aber noch nicht.
+NOT_IN_GAME_YET = {'0.5.5.4.2': {'One Hand Swords', 'Two Hand Swords', 'One Hand Axes', 'Two Hand Axes', 'Flails', 'Fishing Rods'}}
+covered = set()
+for main, spec in TREE:
+    if isinstance(spec, list):
+        covered.update(cls for _, cls in spec)
+    elif ':' in spec:
+        covered.add(spec.split(':', 1)[1])
+covered.update({'Shields', 'Bucklers', 'Foci', 'Quivers'})
+for cls in sorted(MB):
+    if cls in covered or cls in NOT_IN_GAME_YET.get(VERSION, set()) or 'Hidden' in cls:
+        continue
+    rel = [b for ts in MB[cls].values() for b in released(ts)]
+    tags = {t for b in rel for t in BI[b].get('tags', [])}
+    main = 'One Handed Weapons' if 'one_hand_weapon' in tags else 'Two Handed Weapons' if 'two_hand_weapon' in tags else ''
+    if not rel or not main:
+        continue
+    g, b = collect(cls)
+    emit(slug(main + '_' + cls), main, cls, g, b)
+    print('  new weapon class', cls)
+# gleiche Hauptgruppe zusammen lassen (neue Waffen hinter die bekannten derselben Gruppe)
+order = {m: i for i, (m, _) in enumerate(TREE)}
+cat_rows.sort(key=lambda r: order.get(r[1], 99))
 
 with open(OUT, 'w', encoding='utf-8', newline='\n') as f:
     f.write('﻿# PoE2 Craft-Schutz Mod-Datenbank - Quelle: Spieldaten via RePoE (repoe-fork/poe2)\n')

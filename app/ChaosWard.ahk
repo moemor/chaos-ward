@@ -31,7 +31,7 @@ CoordMode "Pixel", "Screen"
 try DllCall("SetThreadDpiAwarenessContext", "Ptr", -4, "Ptr")
 
 global APP         := "Chaos Ward"
-global APP_VER     := "8.2.0"
+global APP_VER     := "8.3.0"
 global APP_FILE    := "ChaosWard"
 global INSTALL_DIR := EnvGet("LOCALAPPDATA") "\ChaosWard"
 global OLD_DIR     := EnvGet("LOCALAPPDATA") "\PoE2-CraftSchutz"      ; alte Version (Craft-Schutz)
@@ -39,6 +39,13 @@ global LNK_NAME    := "Chaos Ward.lnk"
 global INI         := A_ScriptDir "\Einstellungen.ini"
 global WISH        := A_ScriptDir "\Wunschliste.txt"
 global MODS_FILE   := A_ScriptDir "\Mods.tsv"
+global MODS_BUNDLED := A_ScriptDir "\Mods.tsv"            ; mitgelieferte Liste (Rückfall)
+global GAMEDATA_DIR := A_ScriptDir "\Spieldaten"          ; heruntergeladene Patches: Mods-<Patch>.tsv
+global DATA_URL     := "https://raw.githubusercontent.com/moemor/chaos-ward/main/data/"
+global DataRemote := [], DataMsg := "", DataOk := 1, DataBusy := false
+global UQ_BUNDLED := A_ScriptDir "\Uniques.tsv"           ; mitgelieferte Preisliste (Rückfall)
+global UQ_DIR := A_ScriptDir "\Spieldaten\uniques"         ; heruntergeladene Preislisten pro Liga
+global Uq := {Name: "", BaseType: "", Wish: [], File: ""}, UqMsg := "", UqBusy := false, UqTries := 0
 global HITS_FILE   := A_ScriptDir "\Treffer.txt"
 global LEARN_FILE  := A_ScriptDir "\Gelernt.txt"
 global PROT_FILE   := A_ScriptDir "\Geschuetzt.txt"
@@ -78,8 +85,13 @@ global Mb := {Rules: Map(), Any: 0, Eff: "", Ban: Map(), Dup: 0}, MbMode := fals
 ; Texterkennungs-Einstellungen: Zahl = Schwelle. Ab 1000 = "Farbkanal"-Filter (stärkster Kanal statt Helligkeit,
 ; liest farbige Schrift wie PoE-Blau auch ohne HDR voll hell), darunter = klassische Helligkeit.
 global OCR_SETS := [1215, 1190, 1160, 200, 175, 225, 150, 130]
+global OV_SIZES := [80, 90, 100, 115, 130, 150]
+; Treffer-Farbe (frei wählbar): Grundton + heller Ton
+global ACCENTS := Map("gold", ["D6A640", "F0CF7A"], "ember", ["DD7A3E", "F4B183"], "crimson", ["D2505E", "F18F98"]
+    , "violet", ["9A7EEB", "C9B8FF"], "ice", ["5BB6DD", "A9DDF4"])
 global OcrMaxMCode := 0, OcrLumMCode := 0
-global ClickX := 0, ClickY := 0, OcrBusy := false
+global ClickX := 0, ClickY := 0, OcrBusy := false, ItemAt := 0, ArmTick := 0, Ee2Tick := 0, Ee2Hot := "", Ee2Waiting := 0
+global RECENT_FILE := EnvGet("LOCALAPPDATA") "\ChaosWard\Verlauf.txt", Recent := []
 global Stats := {Session: 0, Total: 0, SinceHit: 0, History: [], DvSession: 0, DvTotal: 0, DvSince: 0, Cur: "c"}   ; ohne Dv = Chaos
 global TargetG := 0, TargetCtl := {}, LastItemName := "", PlaceGuis := Map()
 global Prot := [], ProtUnder := 0, ProtSeen := "", MarketG := 0, MarketAt := 0
@@ -98,6 +110,7 @@ global LastOcr := 0, Aliases := Map(), NumFixes := Map()
 try TraySetIcon(A_ScriptDir "\ui\seal.ico")
 LoadFonts()
 LoadConfig()
+ModsSelect()
 if HasVal(A_Args, "/uninstall") {                ; aus Windows "Apps" -> Deinstallieren (#SingleInstance beendet ein laufendes Chaos Ward)
     Uninstall()
     ExitApp
@@ -112,12 +125,18 @@ LoadLearned()
 LoadProt()
 LoadMb()
 LoadDv()
+LoadUq()
 BuildUI()
+AutostartFix()
+if Cfg.Ee2Auto                               ; Exiled Exchange 2 gleich mitstarten (Einstellung)
+    SetTimer(Ee2Start, -1500)
+OnExit((*) => MainWinSave())
 RegisterKey(Cfg.Key)
-HotIf(PoEHotIf)
-Hotkey("^+p", ProtToggleLast)                ; Item-Schutz: zuletzt kopiertes Item schützen / freigeben
-HotIf()
+RegisterProtKey()                            ; Item-Schutz-Taste Strg+Shift+P (ab Werk aus)
+LoadRecent()
+RegisterEe2Key()                             ; mit Exiled Exchange 2 verbunden: dessen Preis-Check mitlesen (ab Werk aus)
 SetTimer(HoverWatch, 60)
+MarketTrace("start", "gestartet, Markt-Leser " (Cfg.Market ? "an" : "aus"))
 SetupTray()
 OnClipboardChange(ClipChanged)
 OnMessage(0x202, IslandMsg)                  ; Klick auf die Island öffnet Chaos Ward
@@ -159,6 +178,15 @@ IsPoE() {
 OnClickUp() {
     if Cfg.ShiftOnly && !GetKeyState("Shift", "P")
         return
+    if Cfg.Mode = 3 && Track.Active && !ClickOnItem() {   ; Klick daneben (z.B. Laufen, anderes Fenster im Spiel) -> kein Orb, nichts sperren
+        static warned := 0
+        if A_TickCount - warned > 20000 {
+            warned := A_TickCount
+            ShowBanner(T("bNotOnItem"), T("bNotOnItemSub"), Clr.Dim)
+            SetTimer(HideBanner, -2500)
+        }
+        return
+    }
     St.Locked := true
     CountOrb(1)
     if Cfg.Mode = 1 {
@@ -181,6 +209,119 @@ Unlock() {
         return
     St.Locked := false
     ShowOnBanner()
+}
+
+; Schutz-Taste im Spiel. Mit "Taste kopiert das Item" (Einstellung, aus ab Werk):
+; Einschalten kopiert zuerst das Item unter der Maus (ein Strg+C, wie von Hand) und
+; schaltet nur ein, wenn dabei wirklich ein Item kopiert wurde. Ausschalten sendet nie etwas.
+GuardKey(*) {
+    if Cfg.KeyCopy && !St.On && !St.Hit && IsPoE()
+        GuardArm()
+    else
+        ToggleGuard()
+}
+
+GuardArm() {
+    ToggleGuard()                                       ; erst an, damit das kopierte Item sofort ausgewertet wird
+    if CopyHovered() = "" {                             ; kein Item unter der Maus -> nicht scharf schalten
+        if St.On && !St.Hit
+            ToggleGuardQuiet()
+        ShowBanner(T("bArmNoItem"), T("bArmNoItemSub"), Clr.Amber)
+        SetTimer(HideBanner, -2500)
+    }
+}
+
+; Item unter der Maus kopieren: genau ein Strg+C ins Spiel (wie von Hand), nur wenn die Maus über dem Spiel ist.
+; Rückgabe: Item-Text, oder "" (dann ist die alte Zwischenablage wieder da). Sicherungen siehe unten.
+CopyHovered() {
+    global ArmTick
+    static last := 0
+    if A_TickCount - last < 700                         ; nicht mehrfach kurz hintereinander
+        return ""
+    last := A_TickCount
+    gw := GameWindow()
+    if !gw || !IsPoE() || OverIsland()
+        return ""
+    CoordMode("Mouse", "Screen")
+    MouseGetPos(&mx, &my)
+    try WinGetPos(&gx, &gy, &gwid, &ght, "ahk_id " gw)
+    catch
+        return ""
+    if mx < gx || my < gy || mx >= gx + gwid || my >= gy + ght  ; Maus nicht über dem Spielfenster
+        return ""
+    if GetKeyState("LButton", "P") || GetKeyState("RButton", "P")   ; gerade am Klicken -> lieber nicht
+        return ""
+    saved := ClipboardAll()
+    A_Clipboard := ""
+    ArmTick := A_TickCount                              ; dieses Kopieren wertet ClipChanged aus (auch ohne "Strg+C auswerten")
+    SetKeyDelay(15, 25)                                 ; wie von Hand: kurz halten, sonst übersieht das Spiel die Taste
+    SendEvent("{Ctrl down}{c down}{c up}{Ctrl up}")
+    txt := ClipWait(0.8) ? A_Clipboard : ""
+    if txt = "" || !IsObject(ParseItem(txt)) {
+        try A_Clipboard := saved                        ; deine vorherige Zwischenablage zurück
+        ArmTick := 0
+        return ""
+    }
+    return txt
+}
+
+; Item-Schutz-Taste (Strg+Shift+P) nur registrieren, wenn sie in den Einstellungen an ist
+RegisterProtKey() {
+    HotIf(PoEHotIf)
+    try Hotkey("^+p", ProtKeyPressed, Cfg.ProtKey ? "On" : "Off")
+    HotIf()
+}
+
+ProtKeyPressed(*) {
+    txt := CopyHovered()
+    if txt = "" {
+        ShowBanner(T("bArmNoItem"), T("prKeySub"), Clr.Amber)
+        SetTimer(HideBanner, -2500)
+        return
+    }
+    global LastItemText, LastItemTick
+    LastItemText := txt, LastItemTick := A_TickCount
+    ProtToggleLast()
+}
+
+; Lese-Protokoll: nach jedem F6 vergleicht Chaos Ward die Texterkennung mit dem kopierten Item (die Wahrheit).
+; Eine Zeile je Item in Diagnose\lesetest.txt (nur mit Diagnose an). Daraus lässt sich die Erkennung gezielt verbessern.
+LogReadTest(best, thr, r, tried, ms) {
+    if !Cfg.Diag
+        return
+    wrong := ""
+    if IsObject(r) && r.HasOwnProp("GidVals")
+        for gid, v in Track.Truth
+            if !r.GidVals.Has(gid) || String(r.GidVals[gid]) != String(v)
+                wrong .= "  " (DB.Groups.Has(gid) ? SubStr(DB.Groups[gid].Text, 1, 40) : gid) " = " v " gelesen " (r.GidVals.Has(gid) ? r.GidVals[gid] : "-") ";"
+    tl := ""
+    for x in tried
+        tl .= x.T ":" x.S " "
+    line := FormatTime(, "yyyy-MM-dd HH:mm:ss") "  " APP_VER "  " (Track.Kind = "" ? Track.Cat : Track.Kind) "  richtig " Max(best, 0) "/" Track.Expected
+        . "  Filter " thr "  " ms " ms  versucht " Trim(tl) (wrong != "" ? "  FALSCH:" wrong : "")
+    try {
+        DirCreate(DIAG_DIR)
+        FileAppend(line "`n", DIAG_DIR "\lesetest.txt", "UTF-8")
+    }
+}
+
+; Klick in der Nähe des Items, das zuletzt kopiert wurde? (ein Item ist höchstens 2 Felder breit und 4 hoch)
+ClickOnItem() {
+    if !IsObject(ItemAt)
+        return true
+    MouseGetPos(&mx, &my)
+    s := OvScale()
+    return Abs(mx - ItemAt.X) <= 135 * s && Abs(my - ItemAt.Y) <= 240 * s
+}
+
+; Schutz aus ohne "Schutz aus"-Meldung (für den Fall "kein Item kopiert")
+ToggleGuardQuiet() {
+    St.On := false, St.Locked := false
+    SetTimer(Unlock, 0)
+    HideItem()
+    IslandRefresh()
+    RefreshTarget()
+    UpdateHeader()
 }
 
 ToggleGuard(*) {
@@ -228,15 +369,18 @@ ShowOnBanner() {
 ; reel = Walzen-Daten für die Treffer-Leiste (ReelFromItem / AutoEval / ReelDv), 0 = keine
 TriggerHit(hits, style := "", sub := "", reel := 0) {
     global HitHits
+    if style = "" && (MbMode || Track.Kind = "mb")       ; Mageblood: eigener Stil (Divine Orbs, Kennung "Mageblood")
+        style := "mb"
     SetTimer(Unlock, 0)
     SetTimer(HideBanner, 0)
     St.Hit := true
     St.Locked := true                            ; Klick ist SOFORT gesperrt, die Show kommt danach
     HitHits := hits
-    RecordHit(style)
+    if style != "uq"                             ; Corruption: zählt keine Orbs, zeigt die Versuche
+        RecordHit(style)
     UpdateHeader()
     HideBanner()
-    orbs := Stats.History.Length ? Stats.History[1].Orbs : 0
+    orbs := style = "uq" ? UqTries : Stats.History.Length ? Stats.History[1].Orbs : 0
     if !ShowHitBar(hits, orbs, style, sub, reel) {   ; Treffer-Leiste im Spielautomaten-Stil (Divine: eigener Stil)
         ShowBanner(T("bHit"), StrReplace(T("bHitSub"), "{n}", hits) "`n[v" APP_VER " Notlösung: " HitBarErr "]", Clr.Red, true)
         PlayHitSound(false, style)
@@ -297,6 +441,8 @@ SoundFile(style := "") {
 ; Schlau-Modus: Strg+C gedrückt, aber nichts kopiert? (z.B. weil Shift noch gehalten wird)
 OnCopyPressed() {
     global CopyTick
+    if !Cfg.ManualCopy
+        return
     CopyTick := A_TickCount
     if Cfg.Mode >= 2 && !St.Hit
         SetTimer(CheckCopy, -900)
@@ -314,6 +460,12 @@ ClipChanged(dataType) {
     global LastItemTick
     if dataType != 1 || !IsPoE()
         return
+    if Cfg.Ee2Link && A_TickCount - Ee2Tick < 2500 && A_TickCount - ArmTick > 2500 {   ; Preis-Check von Exiled Exchange 2: nur merken
+        try RecentAdd(A_Clipboard, "ee2")
+        return
+    }
+    if !Cfg.ManualCopy && A_TickCount - ArmTick > 2500    ; nur eigenes Kopieren (Schutz-Taste / Item-Schutz-Taste) auswerten
+        return
     try txt := A_Clipboard
     catch
         return
@@ -322,11 +474,19 @@ ClipChanged(dataType) {
     item := ParseItem(txt)
     if !IsObject(item)
         return
+    RecentAdd(txt, A_TickCount - ArmTick <= 2500 ? "key" : "copy")
+    global ItemAt
+    MouseGetPos(&ix, &iy)
+    ItemAt := {X: ix, Y: iy}                     ; hier liegt das Item (für "Klick auf das Item?")
     LastItemTick := A_TickCount
     global LastItemName, MbMode, LastItemText
     LastItemName := item.Name, LastItemText := txt
     if CurPage = "pDv" || DvActiveFor(item) {   ; Divine: Werte der vorhandenen Mods
         DvFlowSafe(item, CurPage = "pDv")
+        return
+    }
+    if UqActiveFor(item, txt) {                  ; Uniques-Reiter: gewünschte Corruption-Enchants
+        UqFlow(item, txt)
         return
     }
     if IsMageblood(item) {                       ; eigener Ablauf für Mageblood
@@ -615,7 +775,7 @@ ShowOverlay(g, x, y, alpha, posKey := "", fixW := 0, fixH := 0) {
     }
     x := Max(m.L, Min(m.L + m.W - gw, x)), y := Max(m.T, Min(m.T + m.H - gh, y))
     g.Show("NA x" x " y" y)
-    try WinSetTransparent(alpha, "ahk_id " g.Hwnd)
+    try WinSetTransparent(OvA(alpha), "ahk_id " g.Hwnd)
     RoundCorners(g.Hwnd)
     return gh
 }
@@ -1369,6 +1529,7 @@ GetNeed(catId) => NeedMap.Has(catId) ? NeedMap[catId] : 1
 ; ============================================================================
 OnMainClose(*) {
     global TrayTipShown
+    MainWinSave()
     if !TrayTipShown {
         TrayTip(T("trayTip"), APP)
         TrayTipShown := true
@@ -1399,6 +1560,17 @@ SaveAll() {
         IniWrite(Cfg.Diag, INI, "Einstellungen", "Diagnose")
         IniWrite(Cfg.Theme, INI, "Einstellungen", "Design")
         IniWrite(Cfg.Lang, INI, "Einstellungen", "Sprache")
+        IniWrite(Cfg.OvSize, INI, "Einstellungen", "AnzeigeGroesse")
+        IniWrite(Cfg.OvAlpha, INI, "Einstellungen", "AnzeigeDeckkraft")
+        IniWrite(Cfg.Accent, INI, "Einstellungen", "TrefferFarbe")
+        IniWrite(Cfg.KeyCopy, INI, "Einstellungen", "TasteKopiertItem")
+        IniWrite(Cfg.ManualCopy, INI, "Einstellungen", "StrgCAuswerten")
+        IniWrite(Cfg.ProtKey, INI, "Einstellungen", "ItemSchutzTaste")
+        IniWrite(Cfg.Ee2Auto, INI, "ExiledExchange2", "Mitstarten")
+        IniWrite(Cfg.Ee2Link, INI, "ExiledExchange2", "Verbinden")
+        IniWrite(Cfg.Ee2Path, INI, "ExiledExchange2", "Pfad")
+        IniWrite(Cfg.ModsVer, INI, "Spieldaten", "Patch")
+        IniWrite(Cfg.DataAuto, INI, "Spieldaten", "AutoPruefen")
         if IsObject(Ctl) && Ctl.HasOwnProp("Wish") {
             f := FileOpen(WISH, "w", "UTF-8")
             f.Write(StrReplace(Ctl.Wish.Value, "`r", ""))
@@ -1476,7 +1648,7 @@ LoadConfig() {
     Cfg.ItemOverlay := Integer(IniRead(INI, "Einstellungen", "ItemAnzeige", "1"))
     Cfg.Island := Integer(IniRead(INI, "Einstellungen", "Island", "1"))
     Cfg.ItemProt := Integer(IniRead(INI, "Einstellungen", "ItemSchutz", "1"))
-    Cfg.Market := Integer(IniRead(INI, "Einstellungen", "MarktLeser", "1"))
+    Cfg.Market := Integer(IniRead(INI, "Einstellungen", "MarktLeser", "0"))   ; Beta: erst einschalten, wer es will
     Cfg.PosIsland := IniRead(INI, "Positionen", "Island", "")
     Cfg.AutoDetect  := Integer(IniRead(INI, "Einstellungen", "AutoErkennen", "1"))
     Cfg.Sound       := Integer(IniRead(INI, "Einstellungen", "Ton", "1"))
@@ -1503,6 +1675,23 @@ LoadConfig() {
     ob := IniRead(INI, "Einstellungen", "Texterkennung", "1215")
     Cfg.OcrBest := HasVal(OCR_SETS, IsInteger(ob) ? Integer(ob) : 0) ? Integer(ob) : 1215
     Cfg.Theme       := "obsidian"                    ; v7: nur noch ein Stil
+    Cfg.OvSize := Integer(IniRead(INI, "Einstellungen", "AnzeigeGroesse", "100"))
+    Cfg.OvAlpha := Integer(IniRead(INI, "Einstellungen", "AnzeigeDeckkraft", "100"))
+    Cfg.Accent := IniRead(INI, "Einstellungen", "TrefferFarbe", "gold")
+    Cfg.WinPos := IniRead(INI, "Positionen", "Fenster", "")
+    Cfg.KeyCopy := Integer(IniRead(INI, "Einstellungen", "TasteKopiertItem", "1"))      ; v8.3: ab Werk an (Strg+C von Hand ist jetzt Option)
+    Cfg.ManualCopy := Integer(IniRead(INI, "Einstellungen", "StrgCAuswerten", "0"))
+    Cfg.ProtKey := Integer(IniRead(INI, "Einstellungen", "ItemSchutzTaste", "0"))
+    Cfg.Ee2Auto := Integer(IniRead(INI, "ExiledExchange2", "Mitstarten", "0"))
+    Cfg.Ee2Link := Integer(IniRead(INI, "ExiledExchange2", "Verbinden", "0"))
+    Cfg.Ee2Path := IniRead(INI, "ExiledExchange2", "Pfad", "")
+    Cfg.ModsVer := IniRead(INI, "Spieldaten", "Patch", "")
+    Cfg.DataAuto := Integer(IniRead(INI, "Spieldaten", "AutoPruefen", "1"))
+    Cfg.OvSize := HasVal(OV_SIZES, Cfg.OvSize) ? Cfg.OvSize : 100
+    Cfg.OvAlpha := Max(50, Min(100, Cfg.OvAlpha))
+    if !ACCENTS.Has(Cfg.Accent)
+        Cfg.Accent := "gold"
+    ApplyAccent()
     Cfg.Lang        := IniRead(INI, "Einstellungen", "Sprache", SubStr(A_Language, -2) = "07" ? "de" : "en")
     if !THEMES.Has(Cfg.Theme)
         Cfg.Theme := "obsidian"
@@ -1523,6 +1712,7 @@ LoadConfig() {
 }
 
 LoadDB() {
+    DB.Ver := "", DB.Groups := Map(), DB.Cats := [], DB.CatById := Map(), DB.Bases := []
     if !FileExist(MODS_FILE) {
         MsgBox(T("modsMissing"), APP, "Icon!")
         return
@@ -1600,7 +1790,7 @@ RegisterKey(newKey) {
     HotIf(PoEHotIf)
     if CurKey != "" && CurKey != newKey
         try Hotkey(CurKey, "Off")
-    Hotkey(newKey, ToggleGuard, "On")
+    Hotkey(newKey, GuardKey, "On")
     HotIf()
     CurKey := newKey
 }
@@ -1628,7 +1818,7 @@ EnsureWishlist() {
     tmpl := "
     (
 # ===== EIGENE WÜNSCHE ALS TEXT (optional) =====
-# Normalerweise hakst du deine Wünsche im Reiter "Mods wählen" an.
+# Normalerweise hakst du deine Wünsche im Reiter "Chaos" an.
 # Hier kannst du zusätzlich Text-Wünsche eintragen, die für ALLE Items gelten.
 # Praktisch, wenn du den Spiel-Client auf Deutsch spielst.
 # Eine Zeile = ein Wunsch.  Mit  >= Zahl  meinst du: mindestens so viel.
@@ -1702,6 +1892,8 @@ MaybeInstall() {
         FileCopy(A_AhkPath, INSTALL_DIR "\" APP_FILE ".exe", 1)
         FileCopy(A_ScriptFullPath, INSTALL_DIR "\" APP_FILE ".ahk", 1)
         FileCopy(A_ScriptDir "\Mods.tsv", INSTALL_DIR "\Mods.tsv", 1)
+        if FileExist(A_ScriptDir "\Uniques.tsv")
+            FileCopy(A_ScriptDir "\Uniques.tsv", INSTALL_DIR "\Uniques.tsv", 1)
         for d in ["ui", "lib"]
             if DirExist(A_ScriptDir "\" d)
                 DirCopy(A_ScriptDir "\" d, INSTALL_DIR "\" d, 1)
@@ -1772,9 +1964,28 @@ SetupTray() {
     m.Add(T("trayOpen"), (*) => MainGui.Show())
     m.Add(T("trayToggle"), ToggleGuard)
     m.Add()
+    m.Add(T("trayIsland"), TrayIsland)
+    m.Add(T("trayAuto"), TrayAutostart)
+    if Cfg.Island
+        m.Check(T("trayIsland"))
+    if AutostartOn()
+        m.Check(T("trayAuto"))
+    m.Add()
     m.Add(T("trayExit"), (*) => ExitApp())
     m.Default := T("trayOpen")
     m.ClickCount := 1
+}
+
+TrayIsland(*) {
+    SetOpt("Island", Cfg.Island ? "0" : "1")
+    SetupTray()
+    SendState()
+}
+
+TrayAutostart(*) {
+    SetAutostart(!AutostartOn())
+    SetupTray()
+    SendState()
 }
 
 ; ============================================================================
@@ -1798,7 +2009,7 @@ BuildWebUI() {
         g.BackColor := THEMES[Cfg.Theme]
         g.OnEvent("Close", OnMainClose)
         g.OnEvent("Size", OnWebSize)
-        g.Show("w1180 h780")
+        g.Show(MainWinOpts(1180, 780) (HasVal(A_Args, "/tray") ? " Minimize" : ""))
         ApplyTitleTheme(g.Hwnd)
         DirCreate(DATA_DIR)
         WVC := WebView2.create(g.Hwnd, , 0, DATA_DIR)
@@ -1814,6 +2025,8 @@ BuildWebUI() {
         WV.Navigate("https://craftschutz.localhost/ui/index.html")
         MainGui := g
         UI_MODE := "web"
+        if HasVal(A_Args, "/tray")                     ; mit Windows gestartet -> still im Infobereich warten
+            SetTimer(() => (MainGui.Restore(), MainGui.Hide()), -800)
         return true
     } catch {
         WV := 0, WVC := 0
@@ -1836,18 +2049,55 @@ OnWebMessage(sender, args) {
 }
 
 HandleWeb(msg) {
-    global OcrCalib, CurPage, LastItemText
+    global OcrCalib, CurPage, LastItemText, ItemAt
     p := StrSplit(msg, Chr(31))
     switch p[1] {
         case "ready":
+            RecentPush()
+            DataPush()
+            UqPush()
+            if Cfg.DataAuto
+                SetTimer(DataCheck.Bind(true), -4000)
             SendState()
             PushStats()
             WebPost(Map("type", "prot", "items", ProtList()))
+        case "uqUpdate":
+            SetTimer(UqUpdate, -30)
+        case "uqWish":
+            if p.Length >= 5
+                UqSetWish(p[2], p[3], p[4], p[5] = "1")
+        case "uqFile":
+            if p.Length >= 2 {
+                Uq.File := p[2]
+                SaveUq()
+            }
+        case "open":
+            if p.Length >= 2
+                OpenLink(p[2])
+        case "ee2Start":
+            Ee2Start()
+            SetTimer(SendState, -2500)
+        case "ee2Pick":
+            Ee2Pick()
+        case "ee2Setup":
+            Ee2Setup()
+        case "recentClear":
+            Recent.Length := 0
+            SaveRecent()
+            RecentPush()
+        case "dataCheck":
+            SetTimer(DataCheck, -30)
+        case "dataGet":
+            if p.Length >= 2
+                SetTimer(DataGet.Bind(p[2]), -30)
+        case "dataUse":
+            if p.Length >= 2
+                DataUse(p[2])
         case "protRemove":
             if p.Length >= 2
                 for x in Prot
                     if x.Name = p[2] {
-                        ProtToggle(x.Name, x.Base)
+                        ProtToggle(x.Name, x.BaseType)
                         break
                     }
         case "toggle":
@@ -1964,12 +2214,14 @@ HandleWeb(msg) {
                 SaveDv()
             }
         case "dvTake":                         ; "Letztes kopiertes Item übernehmen"
+            ItemAt := 0                            ; Item kam nicht aus dem Spiel -> Lage unbekannt, jeden Klick prüfen
             item := LastItemText != "" ? ParseItem(LastItemText) : 0
             if IsObject(item)
                 DvFlowSafe(item, true)
             else
                 WebPost(Map("type", "toast", "text", T("dvNoItem"), "long", 1))
         case "dvPaste":                        ; Strg+V im Divine-Reiter
+            ItemAt := 0                            ; Item kam nicht aus dem Spiel -> Lage unbekannt, jeden Klick prüfen
             txt := SubStr(msg, StrLen("dvPaste") + 2)
             item := CheckGameLang(txt) ? ParseItem(txt) : 0
             if IsObject(item) {
@@ -2102,8 +2354,32 @@ SetOpt(key, val) {
         case "ActiveCat":
             if DB.CatById.Has(val)
                 Cfg.ActiveCat := val
-        case "ShiftOnly", "ItemOverlay", "AutoDetect", "Sound", "IgnoreFractured", "UnsureRelease", "StreamVisible", "Diag", "Island", "ItemProt", "Market":
+        case "OvSize":
+            if IsInteger(val) && HasVal(OV_SIZES, Integer(val)) {
+                Cfg.OvSize := Integer(val)
+                OverlaysRebuild()
+            }
+        case "OvAlpha":
+            if IsInteger(val) {
+                Cfg.OvAlpha := Max(50, Min(100, Integer(val)))
+                OverlaysRebuild()
+            }
+        case "Accent":
+            if ACCENTS.Has(val) {
+                Cfg.Accent := val
+                ApplyAccent()
+                OverlaysRebuild()
+            }
+        case "Autostart":
+            SetAutostart(val = "1")
+            SendState()
+            return
+        case "ShiftOnly", "ItemOverlay", "AutoDetect", "Sound", "IgnoreFractured", "UnsureRelease", "StreamVisible", "Diag", "Island", "ItemProt", "Market", "DataAuto", "KeyCopy", "ManualCopy", "ProtKey", "Ee2Auto", "Ee2Link":
             Cfg.%key% := (val = "1") ? 1 : 0
+            if key = "Ee2Link"
+                RegisterEe2Key()
+            if key = "ProtKey"
+                RegisterProtKey()
         default:
             return
     }
@@ -2122,7 +2398,765 @@ SendState() {
         , "ver", APP_VER, "installed", (A_ScriptDir = INSTALL_DIR) ? 1 : 0
         , "mb", Map("rules", Mb.Rules, "any", Mb.Any, "eff", Mb.Eff, "ban", MbBanList(), "dup", Mb.Dup), "legacies", LEGACIES
         , "soundName", Cfg.SoundName, "soundCustom", Cfg.SoundCustom = "" ? "" : RegExReplace(Cfg.SoundCustom, ".*\\"), "hitBarSecs", Cfg.HitBarSecs, "hitAnim", Cfg.HitAnim
-        , "ocr", OcrInfo(), "dv", DvState()))
+        , "ocr", OcrInfo(), "dv", DvState()
+        , "ovSize", Cfg.OvSize, "ovAlpha", Cfg.OvAlpha, "accent", Cfg.Accent, "autostart", AutostartOn() ? 1 : 0
+        , "dataAuto", Cfg.DataAuto, "modsPath", ModsWebPath(), "keyCopy", Cfg.KeyCopy, "manualCopy", Cfg.ManualCopy, "protKey", Cfg.ProtKey, "ee2Auto", Cfg.Ee2Auto, "ee2Link", Cfg.Ee2Link, "ee2", Ee2Info()))
+}
+
+; ----------------------------------------------------------------------------
+;  Mit Windows starten: Eintrag unter HKCU\...\Run (nur für diesen Benutzer, ohne Adminrechte).
+;  Beim Autostart öffnet sich kein Fenster: Chaos Ward wartet still im Infobereich.
+; ----------------------------------------------------------------------------
+AUTORUN_KEY() => "HKCU\Software\Microsoft\Windows\CurrentVersion\Run"
+
+AutostartCmd() => A_IsCompiled ? '"' A_ScriptFullPath '" /tray' : '"' A_AhkPath '" "' A_ScriptFullPath '" /tray'
+
+AutostartOn() {
+    try return RegRead(AUTORUN_KEY(), "ChaosWard") != ""
+    return false
+}
+
+SetAutostart(on) {
+    try {
+        if on
+            RegWrite(AutostartCmd(), "REG_SZ", AUTORUN_KEY(), "ChaosWard")
+        else
+            RegDelete(AUTORUN_KEY(), "ChaosWard")
+    }
+}
+
+; Autostart zeigt noch auf einen alten Ort (z.B. nach Umzug in den Installationsordner)? -> mitziehen
+AutostartFix() {
+    if AutostartOn()
+        try if RegRead(AUTORUN_KEY(), "ChaosWard") != AutostartCmd()
+            SetAutostart(true)
+}
+
+; Größe, Deckkraft oder Farbe geändert: offene Anzeigen neu aufbauen, damit es sofort sichtbar ist
+OverlaysRebuild() {
+    IslandHide()
+    HideMarket()
+    if St.On && !St.Locked && !IslandShows()
+        ShowOnBanner()
+}
+
+; Hauptfenster: Größe und Ort merken (Anteil vom Bildschirm wäre bei mehreren Monitoren unklar -> echte Pixel, beim Start geprüft)
+MainWinOpts(defW, defH) {
+    if RegExMatch(Cfg.WinPos, "^(-?\d+),(-?\d+),(\d+),(\d+)$", &wp) {
+        x := Integer(wp[1]), y := Integer(wp[2]), w := Integer(wp[3]), h := Integer(wp[4])
+        loop MonitorGetCount() {
+            MonitorGetWorkArea(A_Index, &ml, &mt, &mr, &mbt)
+            if x + 80 >= ml && x + 80 < mr && y + 20 >= mt && y + 20 < mbt   ; Titelleiste liegt sichtbar auf einem Monitor
+                return "x" x " y" y " w" Max(960, w) " h" Max(620, h)
+        }
+    }
+    return "w" defW " h" defH
+}
+
+MainWinSave() {
+    if !IsObject(MainGui)
+        return
+    try {
+        if WinGetMinMax("ahk_id " MainGui.Hwnd) != 0
+            return
+        WinGetPos(&x, &y, , , "ahk_id " MainGui.Hwnd)
+        MainGui.GetClientPos(, , &w, &h)
+        Cfg.WinPos := x "," y "," w "," h
+        IniWrite(Cfg.WinPos, INI, "Positionen", "Fenster")
+    }
+}
+
+; ============================================================================
+;  Uniques: Preise pro Season (von unserer GitHub-Automatik, Quelle poe.ninja Economy-API),
+;  mögliche Corruption-Enchants (Spieldaten) und gewünschte Enchants für den Schutz beim Corrupten.
+; ============================================================================
+LoadUq() {
+    Uq.Name := IniRead(INI, "Unique", "Name", ""), Uq.BaseType := IniRead(INI, "Unique", "Grundtyp", "")
+    Uq.File := IniRead(INI, "Unique", "Liste", "")
+    Uq.Wish := []
+    for w in StrSplit(IniRead(INI, "Unique", "Wuensche", ""), "||")
+        if Trim(w) != ""
+            Uq.Wish.Push(w)
+}
+
+SaveUq() {
+    w := ""
+    for x in Uq.Wish
+        w .= (w = "" ? "" : "||") x
+    try {
+        IniWrite(Uq.Name, INI, "Unique", "Name")
+        IniWrite(Uq.BaseType, INI, "Unique", "Grundtyp")
+        IniWrite(w, INI, "Unique", "Wuensche")
+        IniWrite(Uq.File, INI, "Unique", "Liste")
+    }
+}
+
+; Preislisten: heruntergeladene (neueste Season zuerst, wie im Index) + mitgelieferte
+UqFiles() {
+    out := [], seen := Map()
+    idx := UQ_DIR "\index.tsv"
+    if FileExist(idx) {
+        try {
+            Loop Read idx {
+                f := StrSplit(A_LoopReadLine, "`t")
+                if f.Length >= 3 && f[1] = "L" && FileExist(UQ_DIR "\" f[3]) && !seen.Has(f[2]) {
+                    out.Push(Map("league", f[2], "path", "../Spieldaten/uniques/" f[3] "?d=" (f.Length >= 4 ? f[4] : ""), "date", f.Length >= 4 ? f[4] : ""))
+                    seen[f[2]] := 1
+                }
+            }
+        }
+    }
+    if FileExist(UQ_BUNDLED) {
+        lgn := "", dt := ""
+        try {
+            Loop Read UQ_BUNDLED {
+                f := StrSplit(A_LoopReadLine, "`t")
+                if f[1] = "H" && f.Length >= 3 {
+                    lgn := f[2], dt := f[3]
+                    break
+                }
+            }
+        }
+        if lgn != "" && !seen.Has(lgn)
+            out.Push(Map("league", lgn, "path", "../Uniques.tsv", "date", dt))
+    }
+    return out
+}
+
+UqPush() {
+    files := UqFiles(), cur := ""
+    for f in files
+        if f["path"] = Uq.File
+            cur := Uq.File
+    if cur = "" && files.Length
+        cur := files[1]["path"]
+    WebPost(Map("type", "uq", "files", files, "cur", cur, "msg", UqMsg, "busy", UqBusy ? 1 : 0
+        , "sel", Map("name", Uq.Name, "base", Uq.BaseType, "wish", Uq.Wish)))
+}
+
+; neue Preislisten von GitHub holen; nur vollständige Dateien ersetzen die alten
+UqUpdate() {
+    global UqMsg, UqBusy
+    if UqBusy
+        return
+    UqBusy := true, UqMsg := T("uqLoading")
+    UqPush()
+    tmp := A_Temp "\chaosward-uq-index.tsv"
+    err := HttpGet(DATA_URL "uniques/index.tsv", tmp)
+    if err != "" {
+        UqBusy := false, UqMsg := T(err = "HTTP 404" ? "uqNoList" : "dtNoNet")
+        UqPush()
+        return
+    }
+    got := 0, lines := []
+    try {
+        Loop Read tmp
+            lines.Push(A_LoopReadLine)
+    }
+    for line in lines {
+        f := StrSplit(line, "`t")
+        if f.Length < 3 || f[1] != "L" || !RegExMatch(f[3], "^[a-z0-9-]+\.tsv$")
+            continue
+        t2 := A_Temp "\chaosward-uq-" f[3]
+        if HttpGet(DATA_URL "uniques/" f[3], t2) != ""
+            continue
+        n := 0
+        try {
+            Loop Read t2
+                n += SubStr(A_LoopReadLine, 1, 2) = "U`t"
+        }
+        if n < 50 {                                     ; unvollständig -> alte Liste behalten
+            try FileDelete(t2)
+            continue
+        }
+        try {
+            DirCreate(UQ_DIR)
+            FileMove(t2, UQ_DIR "\" f[3], true)
+            got++
+        }
+    }
+    if got
+        try FileMove(tmp, UQ_DIR "\index.tsv", true)
+    try FileDelete(tmp)
+    UqBusy := false, UqMsg := got ? StrReplace(T("uqDone"), "{n}", got) : T("uqFail")
+    UqPush()
+}
+
+UqSetWish(name, base, text, on) {
+    if name != Uq.Name || base != Uq.BaseType {             ; anderes Unique gewählt -> neue Wunschliste
+        Uq.Name := name, Uq.BaseType := base
+        Uq.Wish := []
+    }
+    i := 0
+    for k, x in Uq.Wish
+        if x = text
+            i := k
+    if on && !i
+        Uq.Wish.Push(text)
+    else if !on && i
+        Uq.Wish.RemoveAt(i)
+    SaveUq()
+    UqPush()
+    FlashSaved()
+}
+
+; Enchant-Text ohne Zahlen als Schlüssel ("(10-15)% increased Rarity" -> "increasedrarityofitemsfound")
+UqKey(txt) => LKey(RegExReplace(txt, "\([^)]*\)", ""))
+
+; Strg+C auf ein Unique: auf dem Uniques-Reiter immer, sonst nur, wenn es das gewählte Unique mit Wünschen ist
+UqActiveFor(item, txt) {
+    if !RegExMatch(txt, "im)^Rarity:\s*Unique")
+        return false
+    if CurPage = "pUq"
+        return true
+    return Uq.Wish.Length && item.NameLines.Length && LKey(item.NameLines[1]) = LKey(Uq.Name)
+}
+
+; Enchant-Zeilen des Items (aus Strg+C), die einem Wunsch entsprechen
+UqHave(txt) {
+    have := []
+    for line in StrSplit(StrReplace(txt, "`r"), "`n") {
+        if !InStr(line, "(enchant)")
+            continue
+        k := UqKey(StrReplace(line, "(enchant)"))
+        for w in Uq.Wish
+            if Sim(k, UqKey(w)) >= 0.85 {
+                have.Push(Trim(StrReplace(line, "(enchant)")))
+                break
+            }
+    }
+    return have
+}
+
+UqFlow(item, txt) {
+    if CurPage = "pUq" && item.NameLines.Length >= 2 {  ; Unique im Reiter auswählen (Wünsche bleiben, wenn es dasselbe ist)
+        nm := item.NameLines[1], bs := item.NameLines[item.NameLines.Length]
+        if nm != Uq.Name || bs != Uq.BaseType {
+            Uq.Name := nm, Uq.BaseType := bs
+            Uq.Wish := []
+        }
+        SaveUq()
+        UqPush()
+        WebPost(Map("type", "uqPick", "name", Uq.Name, "base", Uq.BaseType))
+    }
+    have := UqHave(txt)
+    if Cfg.Mode = 3 && Uq.Wish.Length
+        StartTrackUQ(item, txt)
+    if St.On && !St.Hit {
+        if have.Length
+            TriggerHit(have.Length, "uq", "", ReelMake(have, 1, have[1]))
+        else if St.Locked && Cfg.Mode >= 2
+            Unlock()
+    }
+}
+
+StartTrackUQ(item, txt) {
+    global Track, ClickX, ClickY, UqTries
+    names := []
+    for n in item.NameLines
+        if StrLen(LKey(n)) >= 4
+            names.Push(LKey(n))
+    wkeys := []
+    for w in Uq.Wish
+        wkeys.Push(UqKey(w))
+    sig := (InStr(txt, "`nCorrupted") ? "c" : "") "|" UqHave(txt).Length
+    if !(Track.Kind = "uq" && Track.Active)
+        UqTries := 0
+    Track := {Active: names.Length > 0 && wkeys.Length > 0, Kind: "uq", Cat: "", Names: names, FracKeys: [], Expected: 0
+        , Truth: Map(), LastSig: sig, Thr: Cfg.OcrBest, Alts: OcrAlts([Cfg.OcrBest]), Rect: 0, UqKeys: wkeys}
+    if !Track.Active
+        return
+    MouseGetPos(&ClickX, &ClickY)
+}
+
+; nach dem Klick: Tooltip lesen, gewünschte Enchants suchen. Signatur = corrupted? + Zahl der Treffer
+AutoEvalUQ(segs) {
+    best := 0, head := 0
+    for sg in segs {
+        k := LKey(sg.Text)
+        if StrLen(k) < 4
+            continue
+        for n in Track.Names {
+            v := HeadSim(k, n)
+            if v > best
+                best := v, head := sg
+        }
+    }
+    if best < 0.7
+        return {Status: "nohead"}
+    tip := [], found := [], corr := false
+    for sg in segs
+        if Abs(sg.Cx - head.Cx) <= 2.0 * head.H && sg.Y >= head.Y - 3 * head.H
+            tip.Push(sg)
+    for sg in tip {
+        k := LKey(sg.Text)
+        if k = "corrupted" || k = "twicecorrupted"
+            corr := true
+        if StrLen(k) < 6
+            continue
+        for wk in Track.UqKeys
+            if Sim(k, wk) >= 0.85 {
+                found.Push(Trim(sg.Text))
+                break
+            }
+    }
+    sig := (corr ? "c" : "") "|" found.Length
+    return {Status: "ok", Hits: found.Length, Unsure: false, Sig: sig, Groups: 1, GidVals: Map(), Head: head, TipSegs: tip
+        , Reel: found.Length ? ReelMake(found, 1, found[1]) : 0}
+}
+
+; Links öffnen (nur https), z.B. Trade-Suche, im Standard-Browser
+OpenLink(url) {
+    if !RegExMatch(url, "^https://[^\s`"<>]+$")
+        return
+    try Run(url)
+}
+
+; ============================================================================
+;  Verlauf: zuletzt kopierte / geprüfte Items (F6, eigenes Strg+C, Preis-Check von Exiled Exchange 2)
+; ============================================================================
+; Preis-Taste von Exiled Exchange 2 mitlesen (nur beobachten, "~" = die Taste geht ganz normal weiter)
+RegisterEe2Key() {
+    global Ee2Hot
+    HotIf(PoEHotIf)
+    if Ee2Hot != ""
+        try Hotkey(Ee2Hot, "Off")
+    Ee2Hot := ""
+    if Cfg.Ee2Link {
+        k := "~" Ee2HotkeyAhk(Ee2Keys()["price"])
+        try {
+            Hotkey(k, Ee2Seen, "On")
+            Ee2Hot := k
+        }
+    }
+    HotIf()
+}
+
+Ee2Seen(*) {
+    global Ee2Tick
+    Ee2Tick := A_TickCount
+}
+
+; "Ctrl + D" -> "^d"
+Ee2HotkeyAhk(k) {
+    out := "", key := ""
+    for part in StrSplit(k, "+") {
+        part := Trim(part)
+        if part = "Ctrl"
+            out .= "^"
+        else if part = "Alt"
+            out .= "!"
+        else if part = "Shift"
+            out .= "+"
+        else
+            key := StrLower(part)
+    }
+    return out (key = "" ? "d" : key)
+}
+
+LoadRecent() {
+    global Recent
+    Recent := []
+    try {
+        Loop Read RECENT_FILE {
+            f := StrSplit(A_LoopReadLine, "`t")
+            if f.Length >= 8
+                Recent.Push(Map("t", f[1], "src", f[2], "rarity", f[3], "name", f[4], "base", f[5], "cat", f[6], "cls", f[7]
+                    , "mods", StrSplit(f[8], "||")))
+        }
+    }
+}
+
+SaveRecent() {
+    out := ""
+    for e in Recent {
+        m := ""
+        for x in e["mods"]
+            m .= (m = "" ? "" : "||") StrReplace(x, "`t", " ")
+        out .= e["t"] "`t" e["src"] "`t" e["rarity"] "`t" e["name"] "`t" e["base"] "`t" e["cat"] "`t" e["cls"] "`t" m "`n"
+    }
+    try {
+        f := FileOpen(RECENT_FILE, "w", "UTF-8")
+        f.Write(out)
+        f.Close()
+    }
+}
+
+RecentPush() => WebPost(Map("type", "recent", "items", Recent))
+
+; ein Item vorne in den Verlauf (gleiches Item direkt hintereinander nur einmal), höchstens 60
+RecentAdd(txt, src) {
+    item := ParseItem(txt)
+    if !IsObject(item) || !item.NameLines.Length
+        return
+    rar := RegExMatch(txt, "im)^Rarity:\s*(\w+)", &rm) ? rm[1] : ""
+    cls := RegExMatch(txt, "im)^Item Class:\s*(.+)$", &cm) ? Trim(cm[1]) : ""
+    name := item.NameLines[1], base := item.NameLines[item.NameLines.Length]
+    cat := DetectCat(item)
+    mods := []
+    for m in item.Mods
+        if mods.Length < 14
+            mods.Push(m.Norm)
+    if Recent.Length && Recent[1]["name"] = name && Recent[1]["base"] = base && Recent[1]["mods"].Length = mods.Length {
+        Recent[1]["t"] := FormatTime(, "dd.MM. HH:mm"), Recent[1]["src"] := src
+    } else {
+        Recent.InsertAt(1, Map("t", FormatTime(, "dd.MM. HH:mm"), "src", src, "rarity", rar, "name", name, "base", base
+            , "cat", IsObject(cat) ? cat.Id : "", "cls", cls, "mods", mods))
+        while Recent.Length > 60
+            Recent.Pop()
+    }
+    SetTimer(SaveRecent, -1000)
+    RecentPush()
+}
+
+; ============================================================================
+;  Exiled Exchange 2 (Preis-Check-Tool, eigenes Programm): erkennen, mitstarten, Tasten anzeigen.
+;  Chaos Ward sendet nie die Tasten von Exiled Exchange 2, beide laufen nur nebeneinander.
+; ============================================================================
+EE2_EXE() => "Exiled Exchange 2.exe"
+
+Ee2Path() {
+    if Cfg.Ee2Path != "" && FileExist(Cfg.Ee2Path)
+        return Cfg.Ee2Path
+    for p in [EnvGet("LOCALAPPDATA") "\Programs\exiled-exchange-2\" EE2_EXE(), EnvGet("ProgramFiles") "\Exiled Exchange 2\" EE2_EXE()
+        , EnvGet("LOCALAPPDATA") "\Programs\Exiled Exchange 2\" EE2_EXE()]
+        if FileExist(p)
+            return p
+    return ""
+}
+
+; Tasten aus der Einstellungsdatei von Exiled Exchange 2 (%APPDATA%\exiled-exchange-2\apt-data\config.json)
+Ee2Keys() {
+    out := Map("price", "Ctrl + D", "all", ["Ctrl + D", "Shift + Space", "F5", "F9"])
+    try txt := FileRead(EnvGet("APPDATA") "\exiled-exchange-2\apt-data\config.json", "UTF-8")
+    catch
+        return out
+    all := []
+    if RegExMatch(txt, '"overlayKey"\s*:\s*"([^"]+)"', &m)
+        all.Push(m[1])
+    pos := 1
+    while pos := RegExMatch(txt, '"hotkey"\s*:\s*"([^"]+)"', &m, pos) {
+        all.Push(m[1]), pos += StrLen(m[0])
+    }
+    if i := InStr(txt, '"price-check"') {          ; Preis-Check: Taste + gehaltene Taste (z.B. Ctrl + D)
+        part := SubStr(txt, Max(1, i - 1500), 3000)
+        if RegExMatch(part, '"hotkey"\s*:\s*"([^"]+)"', &k) && RegExMatch(part, '"hotkeyHold"\s*:\s*"([^"]+)"', &h) {
+            out["price"] := h[1] " + " k[1]
+            all.Push(out["price"])
+        }
+    }
+    if all.Length
+        out["all"] := all
+    return out
+}
+
+; Tasten vergleichbar machen: "Strg+Shift+G" / "Ctrl + Shift + G" -> "ctrl+shift+g"
+KeyNorm(k) => StrLower(StrReplace(StrReplace(StrReplace(k, " ", ""), "Strg", "Ctrl"), "Umschalt", "Shift"))
+
+Ee2Info() {
+    path := Ee2Path(), ek := Ee2Keys(), mine := KeyNorm(KeyLabel()), conflict := ""
+    for k in ek["all"]
+        if KeyNorm(k) = mine
+            conflict := k
+    return Map("found", path != "" ? 1 : 0, "running", ProcessExist(EE2_EXE()) ? 1 : 0, "path", path, "waiting", Ee2Waiting ? 1 : 0
+        , "price", ek["price"], "conflict", conflict)
+}
+
+; Ein-Klick-Einrichtung: installiert -> verbinden, mitstarten, starten. Nicht installiert -> Download-Seite
+; öffnen und ein paar Minuten warten, bis es installiert ist, dann von selbst verbinden.
+Ee2Setup() {
+    global Ee2Waiting
+    if Ee2Path() != "" {
+        Ee2Connect()
+        return
+    }
+    OpenLink("https://kvan7.github.io/Exiled-Exchange-2/download")
+    Ee2Waiting := A_TickCount
+    SetTimer(Ee2WaitInstall, 3000)
+    WebPost(Map("type", "toast", "text", T("ee2Wait"), "long", 1))
+}
+
+Ee2WaitInstall() {
+    global Ee2Waiting
+    if Ee2Path() != "" {
+        SetTimer(Ee2WaitInstall, 0)
+        Ee2Waiting := 0
+        Ee2Connect()
+    } else if A_TickCount - Ee2Waiting > 20 * 60000 {   ; nach 20 Minuten aufhören zu warten
+        SetTimer(Ee2WaitInstall, 0)
+        Ee2Waiting := 0
+    }
+}
+
+Ee2Connect() {
+    Cfg.Ee2Link := 1, Cfg.Ee2Auto := 1
+    SaveAll()
+    RegisterEe2Key()
+    Ee2Start()
+    info := Ee2Info()
+    msg := info["conflict"] != "" ? StrReplace(T("ee2DoneConflict"), "{k}", KeyLabel()) : StrReplace(T("ee2Done"), "{p}", info["price"])
+    WebPost(Map("type", "toast", "text", msg, "long", 1))
+    SetTimer(SendState, -2500)                          ; nach dem Start "läuft" anzeigen
+    SendState()
+}
+
+Ee2Start(*) {
+    path := Ee2Path()
+    if path = "" || ProcessExist(EE2_EXE())
+        return
+    try Run('"' path '"')
+}
+
+; installiert an einem anderen Ort (z.B. die "portable" Version) -> selbst auswählen
+Ee2Pick() {
+    f := FileSelect(1, , "Exiled Exchange 2", "Exiled Exchange 2 (*.exe)")
+    if f = ""
+        return
+    Cfg.Ee2Path := f
+    SaveAll()
+    SendState()
+}
+
+; ============================================================================
+;  Spieldaten (Patch): welche Mod-Liste gilt, Updates von GitHub, zwischen Patches wechseln.
+;  Ein Patch wird nur übernommen, wenn die neue Liste vollständig gelesen werden konnte,
+;  sonst bleibt der alte aktiv. Heruntergeladene Listen bleiben liegen (zurückwechseln jederzeit).
+; ============================================================================
+ModsFileOf(ver) => ver = "" ? MODS_BUNDLED : GAMEDATA_DIR "\Mods-" ver ".tsv"
+
+; Patch der mitgelieferten Liste (ändert sich nur mit einem App-Update -> einmal lesen)
+BundledVer() {
+    static v := ""
+    if v = ""
+        v := ModsCheck(MODS_BUNDLED).Ver
+    return v
+}
+
+; beim Start: gewählten Patch nehmen, wenn die Datei noch da und lesbar ist
+ModsSelect() {
+    global MODS_FILE
+    MODS_FILE := MODS_BUNDLED
+    if Cfg.ModsVer != "" && ModsCheck(ModsFileOf(Cfg.ModsVer), Cfg.ModsVer).Ok
+        MODS_FILE := ModsFileOf(Cfg.ModsVer)
+}
+
+; Pfad für die Oberfläche (WebView liest dieselbe Datei)
+ModsWebPath() => MODS_FILE = MODS_BUNDLED ? "../Mods.tsv" : "../Spieldaten/" RegExReplace(MODS_FILE, ".*\\") "?v=" DB.Ver
+
+; Liste prüfen: Kopf mit Patch-Nummer, genug Mods und Item-Arten, jede Item-Art mit Mods
+ModsCheck(file, expect := "") {
+    r := {Ok: false, Ver: "", Groups: 0, Cats: 0, Err: ""}
+    if !FileExist(file) {
+        r.Err := "missing"
+        return r
+    }
+    try {
+        Loop Read file {
+            c := SubStr(A_LoopReadLine, 1, 2)
+            if c = "V`t"
+                r.Ver := Trim(SubStr(A_LoopReadLine, 3))
+            else if c = "G`t"
+                r.Groups++
+            else if c = "C`t" {
+                r.Cats++
+                f := StrSplit(A_LoopReadLine, "`t")
+                if f.Length < 5 || f[5] = "" {
+                    r.Err := "broken"
+                    return r
+                }
+            }
+        }
+    } catch {
+        r.Err := "read"
+        return r
+    }
+    if r.Ver = "" || (expect != "" && r.Ver != expect) {
+        r.Err := "version"
+        return r
+    }
+    if r.Groups < 300 || r.Cats < 20 {
+        r.Err := "incomplete"
+        return r
+    }
+    r.Ok := true
+    return r
+}
+
+; installierte Patches: mitgelieferte Liste + alles im Ordner Spieldaten
+DataLocal() {
+    out := [], seen := Map()
+    b := ModsCheck(MODS_BUNDLED)
+    if b.Ok
+        out.Push(Map("ver", b.Ver, "bundled", 1, "groups", b.Groups, "cats", b.Cats)), seen[b.Ver] := 1
+    loop files GAMEDATA_DIR "\Mods-*.tsv" {
+        v := RegExReplace(A_LoopFileName, "^Mods-(.*)\.tsv$", "$1")
+        if seen.Has(v)
+            continue
+        c := ModsCheck(A_LoopFileFullPath, v)
+        if c.Ok
+            out.Push(Map("ver", v, "bundled", 0, "groups", c.Groups, "cats", c.Cats)), seen[v] := 1
+    }
+    return out
+}
+
+DataPush() {
+    rem := []
+    for x in DataRemote
+        rem.Push(Map("ver", x.Ver, "date", x.Date, "groups", x.Groups, "cats", x.Cats, "have", FileExist(ModsFileOf(x.Ver)) || x.Ver = BundledVer() ? 1 : 0))
+    WebPost(Map("type", "data", "cur", DB.Ver, "groups", DB.Groups.Count, "cats", DB.Cats.Length, "local", DataLocal(), "remote", rem
+        , "busy", DataBusy ? 1 : 0, "msg", DataMsg, "ok", DataOk, "path", ModsWebPath()))
+}
+
+DataSay(msg, ok) {
+    global DataMsg, DataOk
+    DataMsg := msg, DataOk := ok
+    DataPush()
+}
+
+; Datei aus dem Netz holen (nur GitHub). Rückgabe "" = ok, sonst Fehlertext
+HttpGet(url, file) {
+    try {
+        req := ComObject("WinHttp.WinHttpRequest.5.1")
+        req.SetTimeouts(5000, 5000, 8000, 15000)
+        req.Open("GET", url, false)
+        req.SetRequestHeader("User-Agent", "ChaosWard/" APP_VER)
+        req.SetRequestHeader("Cache-Control", "no-cache")
+        req.Send()
+        if req.Status != 200
+            return "HTTP " req.Status
+        stm := ComObject("ADODB.Stream")
+        stm.Type := 1
+        stm.Open()
+        stm.Write(req.ResponseBody)
+        stm.SaveToFile(file, 2)
+        stm.Close()
+        return ""
+    } catch as e
+        return "net"
+}
+
+; SHA-256 einer Datei (Windows bcrypt) als Hex
+FileSha256(file) {
+    try {
+        f := FileOpen(file, "r"), n := f.Length, buf := Buffer(n), f.RawRead(buf, n), f.Close()
+        alg := 0
+        DllCall("bcrypt\BCryptOpenAlgorithmProvider", "Ptr*", &alg, "WStr", "SHA256", "Ptr", 0, "UInt", 0)
+        out := Buffer(32)
+        DllCall("bcrypt\BCryptHash", "Ptr", alg, "Ptr", 0, "UInt", 0, "Ptr", buf, "UInt", n, "Ptr", out, "UInt", 32)
+        DllCall("bcrypt\BCryptCloseAlgorithmProvider", "Ptr", alg, "UInt", 0)
+        hex := ""
+        loop 32
+            hex .= Format("{:02x}", NumGet(out, A_Index - 1, "UChar"))
+        return hex
+    }
+    return ""
+}
+
+; Liste der Patches von GitHub holen. quiet = beim Start: nur melden, wenn es etwas Neues gibt
+DataCheck(quiet := false) {
+    global DataRemote, DataBusy
+    if DataBusy
+        return
+    DataBusy := true
+    if !quiet
+        DataSay(T("dtChecking"), 1)
+    tmp := A_Temp "\chaosward-index.tsv"
+    err := HttpGet(DATA_URL "index.tsv", tmp)
+    DataBusy := false
+    if err != "" {                                      ; 404 = Repo/Liste (noch) nicht auf GitHub, sonst echte Verbindungsprobleme
+        if !quiet
+            DataSay(T(err = "HTTP 404" ? "dtNoList" : "dtNoNet"), 0)
+        return
+    }
+    list := []
+    try {
+        Loop Read tmp {
+            f := StrSplit(A_LoopReadLine, "`t")
+            if f.Length >= 7 && f[1] = "P" && RegExMatch(f[2], "^[\d.]+$") && RegExMatch(f[3], "^Mods-[\d.]+\.tsv$")
+                list.Push({Ver: f[2], File: f[3], Date: f[4], Groups: f[5], Cats: f[6], Sha: f[7]})
+        }
+    }
+    try FileDelete(tmp)
+    if !list.Length {
+        if !quiet
+            DataSay(T("dtBadIndex"), 0)
+        return
+    }
+    DataRemote := list
+    newest := list[1].Ver                                ; Liste ist nach Datum sortiert (neueste zuerst); Patch-Nummern sind nicht immer vergleichbar
+    if newest != DB.Ver && newest != BundledVer() && !FileExist(ModsFileOf(newest))
+        DataSay(StrReplace(T("dtNew"), "{v}", newest), 1)
+    else if !quiet
+        DataSay(StrReplace(T("dtUpToDate"), "{v}", DB.Ver), 1)
+    else
+        DataPush()
+}
+
+; Patch herunterladen, prüfen, dann übernehmen. Klappt etwas nicht, bleibt alles wie es war.
+DataGet(ver) {
+    global DataBusy
+    entry := 0
+    for x in DataRemote
+        if x.Ver = ver
+            entry := x
+    if !IsObject(entry) || DataBusy
+        return
+    DataBusy := true
+    DataSay(StrReplace(T("dtLoading"), "{v}", ver), 1)
+    tmp := A_Temp "\chaosward-" entry.File
+    err := HttpGet(DATA_URL entry.File, tmp)
+    DataBusy := false
+    if err != "" {
+        try FileDelete(tmp)
+        return DataSay(StrReplace(T("dtFailNet"), "{v}", DB.Ver), 0)
+    }
+    if StrLen(entry.Sha) = 64 && FileSha256(tmp) != entry.Sha {
+        try FileDelete(tmp)
+        return DataSay(StrReplace(T("dtFailCheck"), "{v}", DB.Ver), 0)
+    }
+    c := ModsCheck(tmp, ver)
+    if !c.Ok {
+        try FileDelete(tmp)
+        return DataSay(StrReplace(T("dtFailCheck"), "{v}", DB.Ver), 0)
+    }
+    try {
+        DirCreate(GAMEDATA_DIR)
+        FileMove(tmp, ModsFileOf(ver), true)
+    } catch {
+        try FileDelete(tmp)
+        return DataSay(StrReplace(T("dtFailSave"), "{v}", DB.Ver), 0)
+    }
+    DataUse(ver)
+}
+
+; zu einem installierten Patch wechseln (mitgelieferte Liste: ver = deren Nummer)
+DataUse(ver) {
+    global MODS_FILE
+    file := ver = BundledVer() ? MODS_BUNDLED : ModsFileOf(ver)
+    c := ModsCheck(file, ver)
+    if !c.Ok
+        return DataSay(StrReplace(T("dtFailCheck"), "{v}", DB.Ver), 0)
+    old := MODS_FILE, oldVer := DB.Ver
+    MODS_FILE := file
+    LoadDB()
+    if DB.Cats.Length < 20 {                            ; Sicherheitsnetz: zurück zur alten Liste
+        MODS_FILE := old
+        LoadDB()
+        return DataSay(StrReplace(T("dtFailCheck"), "{v}", oldVer), 0)
+    }
+    Cfg.ModsVer := file = MODS_BUNDLED ? "" : ver
+    SaveAll()
+    lost := 0                                           ; Wünsche, deren Mod es in diesem Patch nicht gibt (bleiben gespeichert)
+    for catId, w in Wishes
+        for gid in w
+            if !DB.Groups.Has(gid)
+                lost++
+    msg := StrReplace(StrReplace(StrReplace(T("dtDone"), "{v}", DB.Ver), "{g}", DB.Groups.Count), "{c}", DB.Cats.Length)
+    if lost
+        msg .= " " StrReplace(T("dtLost"), "{n}", lost)
+    RefreshTarget()
+    SendState()
+    DataSay(msg, 1)
 }
 
 OcrHasEnglish() {
@@ -2208,18 +3242,18 @@ T(key) {
         "bHitSub", "{n} Wunsch-Mod(s) gefunden - Klicken ist gesperrt.`nDrück {k}, wenn du fertig bist.",
         "bNoCopy", "Strg+C hat nichts kopiert",
         "bNoCopySub", "Lass Shift los, halte die Maus aufs Item und drück nochmal Strg+C",
-        "bStart", "Einmal Strg+C zum Start",
-        "bStartSub", "Maus aufs Item, Shift loslassen, Strg+C - dann lese ich ab jetzt mit",
+        "bStart", "Noch kein Item gelesen",
+        "bStartSub", "Schutz kurz aus und wieder an: Maus aufs Item, {k}",
         "bTrack", "Mitlesen aktiv - jetzt spammen",
         "bTrackSub", "Ich lese den Tooltip nach jedem Klick und stoppe beim Wunsch-Mod",
         "bNoTip", "Tooltip nicht gefunden",
         "bUnsure", "Nicht sicher lesbar",
         "bNoChange", "Keine Änderung erkannt",
-        "bCheckSub", "Zur Sicherheit gesperrt. Strg+C prüft das Item - oder {k} zum Beenden",
+        "bCheckSub", "Zur Sicherheit gesperrt. {k} beendet, nochmal {k} auf dem Item liest es neu",
         "bOcrFail", "Texterkennung nicht verfügbar",
         "bReleased", "Nicht sicher gelesen - freigegeben",
         "bLearned", "Gemerkt: {n} neue Schreibweise(n) gelernt",
-        "hTitle", "Treffer", "hTitleDv", "Treffer", "hSubDv", "Alle {n} Schwellen erreicht", "hSubDvOne", "Schwelle erreicht", "hDivines", "Divine Orbs",
+        "hTitle", "Treffer", "hTitleDv", "Treffer", "hSubDv", "Alle {n} Schwellen erreicht", "hSubDvOne", "Schwelle erreicht", "hDivines", "Divine Orbs", "hTries", "Versuche", "hCorrupt", "Corruption",
         "hSpin", "Walze dreht …", "hSpinDv", "Werte rollen …",
         "mbAny", "Beliebiges Legacy mindestens {n}×",
         "mbEff", "Effekt pro Duplikat mindestens {n}%",
@@ -2246,7 +3280,15 @@ T(key) {
         "mkPer", "Abstand: {d} {a} je 1 {b}", "mkPrev", "Vor {m} Min: Spanne {s} %", "mkSold", "{n} oben verkauft", "mkFee", "Gold-Gebühr zuletzt: {g}", "mkNoFee", "Gold-Gebühr: Maus kurz auf „Place Order“",
         "kCtrl", "Strg", "kMouse3", "Mausrad-Klick", "kMouse4", "Maus 4", "kMouse5", "Maus 5", "bKeyFail", "Diese Taste geht nicht",
         "plBanner", "Meldungen", "plHit", "Treffer-Leiste", "plItem", "Item-Anzeige", "plIsland", "Island",
-        "isOff", "Schutz aus", "isOn", "Schutz an", "isHit", "Treffer", "isOpen", "Öffnen",
+        "isOff", "Schutz aus", "isOn", "Schutz an", "isHit", "Treffer", "ee2Wait", "Download-Seite geöffnet. Installier Exiled Exchange 2, Chaos Ward verbindet sich danach von selbst.", "ee2Done", "Verbunden: Exiled Exchange 2 startet mit, Preis-Checks ({p}) landen im Verlauf.", "ee2DoneConflict", "Verbunden, aber deine Schutz-Taste {k} ist auch in Exiled Exchange 2 belegt. Bitte eine ändern.",
+        "bNotOnItem", "Klick nicht auf deinem Item", "bNotOnItemSub", "Zählt nicht als Orb. Item verschoben? Maus drauf und {k}.",
+        "bArmNoItem", "Kein Item unter der Maus", "bArmNoItemSub", "Schutz bleibt aus. Maus aufs Item, dann nochmal die Taste.", "prKeySub", "Maus aufs Item, dann Strg+Shift+P.",
+        "uqLoading", "Lade Preise …", "uqNoList", "Auf GitHub liegt noch keine Preisliste. Es bleibt die bisherige.", "uqDone", "Preise aktualisiert ({n} Ligen).", "uqFail", "Keine neuen Preise geladen. Es bleibt die bisherige Liste.",
+        "dtChecking", "Suche nach neuen Spieldaten …", "dtNoNet", "Keine Verbindung zu GitHub. Es bleibt alles, wie es ist.", "dtNoList", "GitHub ist erreichbar, aber dort liegt noch keine Patch-Liste. Es bleibt alles, wie es ist.", "dtBadIndex", "Die Patch-Liste auf GitHub ist gerade nicht lesbar. Es bleibt alles, wie es ist."
+        , "dtNew", "Neuer Patch {v} verfügbar.", "dtUpToDate", "Du bist aktuell (Patch {v}).", "dtLoading", "Lade Patch {v} …"
+        , "dtFailNet", "Download abgebrochen. Du bleibst auf Patch {v}.", "dtFailCheck", "Die neue Liste ist unvollständig oder beschädigt. Du bleibst auf Patch {v}."
+        , "dtFailSave", "Konnte die Liste nicht speichern. Du bleibst auf Patch {v}.", "dtDone", "Erfolgreich: Patch {v} ist aktiv ({g} Mods, {c} Item-Arten).", "dtLost", "{n} deiner Wünsche gibt es in diesem Patch nicht, sie bleiben gespeichert.",
+        "isOpen", "Öffnen", "isAuto", "Auto", "isPause", "Pause",
         "plDrag", "Mit der Maus an die gewünschte Stelle ziehen",
         "plDone", "Fertig", "plReset", "Standard", "plSaved", "Positionen gespeichert",
         "mbOr", "Stopp bei Wunsch-Legacies ODER irgendeinem Duplikat",
@@ -2272,7 +3314,7 @@ T(key) {
         "oNoMods", "Keine Mods gefunden (noch nicht identifiziert?)",
         "trayTip", "Ich laufe unten rechts bei der Uhr weiter.`nKlick auf mein Symbol, um mich wieder zu öffnen.",
         "trayOpen", "Fenster öffnen",
-        "trayToggle", "Schutz an / aus",
+        "trayToggle", "Schutz an / aus", "trayIsland", "Island im Spiel", "trayAuto", "Mit Windows starten",
         "trayExit", "Beenden",
         "modsMissing", "Die Datei 'Mods.tsv' fehlt.`nBitte den ganzen Ordner aus der ZIP entpacken.",
         "instNew", "Hallo!`n`nSoll ich Chaos Ward auf deinem PC einrichten?`n`n   •  ein Symbol auf dem Desktop`n   •  ein Eintrag im Startmenü`n`nJa  = einrichten (empfohlen)`nNein  = nur dieses eine Mal so starten",
@@ -2299,18 +3341,18 @@ T(key) {
         "bHitSub", "{n} wished mod(s) found - clicking is blocked.`nPress {k} when you're done.",
         "bNoCopy", "Ctrl+C didn't copy anything",
         "bNoCopySub", "Let go of Shift, hover the item and press Ctrl+C again",
-        "bStart", "Press Ctrl+C once to start",
-        "bStartSub", "Hover the item, let go of Shift, Ctrl+C - from then on I read along",
+        "bStart", "No item read yet",
+        "bStartSub", "Turn the guard off and on again: hover the item, {k}",
         "bTrack", "Reading along - spam away",
         "bTrackSub", "I read the tooltip after every click and stop on a wished mod",
         "bNoTip", "Tooltip not found",
         "bUnsure", "Couldn't read it reliably",
         "bNoChange", "No change detected",
-        "bCheckSub", "Blocked to be safe. Ctrl+C checks the item - or {k} to finish",
+        "bCheckSub", "Blocked to be safe. {k} ends it, {k} again on the item reads it fresh",
         "bOcrFail", "Text recognition not available",
         "bReleased", "Not read reliably - released",
         "bLearned", "Learned {n} new spelling(s)",
-        "hTitle", "Hit", "hTitleDv", "Hit", "hSubDv", "All {n} thresholds reached", "hSubDvOne", "Threshold reached", "hDivines", "Divine Orbs",
+        "hTitle", "Hit", "hTitleDv", "Hit", "hSubDv", "All {n} thresholds reached", "hSubDvOne", "Threshold reached", "hDivines", "Divine Orbs", "hTries", "Attempts", "hCorrupt", "Corruption",
         "hSpin", "Reel spinning …", "hSpinDv", "Rolling values …",
         "mbAny", "Any Legacy at least {n}×",
         "mbEff", "Effect per duplicate at least {n}%",
@@ -2337,7 +3379,15 @@ T(key) {
         "mkPer", "Gap: {d} {a} per 1 {b}", "mkPrev", "{m} min ago: spread {s} %", "mkSold", "{n} sold at the top", "mkFee", "Last gold fee: {g}", "mkNoFee", "Gold fee: rest the mouse on “Place Order”",
         "kCtrl", "Ctrl", "kMouse3", "Middle mouse", "kMouse4", "Mouse 4", "kMouse5", "Mouse 5", "bKeyFail", "This key can't be used",
         "plBanner", "Messages", "plHit", "Hit bar", "plItem", "Item display", "plIsland", "Island",
-        "isOff", "Guard off", "isOn", "Guard on", "isHit", "Hit", "isOpen", "Open",
+        "isOff", "Guard off", "isOn", "Guard on", "isHit", "Hit", "ee2Wait", "Download page opened. Install Exiled Exchange 2, Chaos Ward then links itself automatically.", "ee2Done", "Linked: Exiled Exchange 2 starts with Chaos Ward, price checks ({p}) go to Recent.", "ee2DoneConflict", "Linked, but your guard key {k} is also used by Exiled Exchange 2. Please change one.",
+        "bNotOnItem", "Click not on your item", "bNotOnItemSub", "Doesn't count as an orb. Moved the item? Hover it and press {k}.",
+        "bArmNoItem", "No item under the mouse", "bArmNoItemSub", "Guard stays off. Hover the item, then press the key again.", "prKeySub", "Hover the item, then Ctrl+Shift+P.",
+        "uqLoading", "Loading prices …", "uqNoList", "There is no price list on GitHub yet. The current one stays.", "uqDone", "Prices updated ({n} leagues).", "uqFail", "No new prices loaded. The current list stays.",
+        "dtChecking", "Checking for new game data …", "dtNoNet", "No connection to GitHub. Nothing was changed.", "dtNoList", "GitHub is reachable, but there is no patch list there yet. Nothing was changed.", "dtBadIndex", "The patch list on GitHub can't be read right now. Nothing was changed."
+        , "dtNew", "New patch {v} available.", "dtUpToDate", "You're up to date (patch {v}).", "dtLoading", "Downloading patch {v} …"
+        , "dtFailNet", "Download failed. You stay on patch {v}.", "dtFailCheck", "The new list is incomplete or damaged. You stay on patch {v}."
+        , "dtFailSave", "Couldn't save the list. You stay on patch {v}.", "dtDone", "Done: patch {v} is active ({g} mods, {c} item types).", "dtLost", "{n} of your wishes don't exist in this patch, they stay saved.",
+        "isOpen", "Open", "isAuto", "Auto", "isPause", "Pause",
         "plDrag", "Drag to where you want it with the mouse",
         "plDone", "Done", "plReset", "Default", "plSaved", "Positions saved",
         "mbOr", "Stop on wished legacies OR any duplicate",
@@ -2363,7 +3413,7 @@ T(key) {
         "oNoMods", "No mods found (not identified yet?)",
         "trayTip", "I keep running next to the clock.`nClick my icon to open me again.",
         "trayOpen", "Open window",
-        "trayToggle", "Guard on / off",
+        "trayToggle", "Guard on / off", "trayIsland", "Island in game", "trayAuto", "Start with Windows",
         "trayExit", "Exit",
         "modsMissing", "The file 'Mods.tsv' is missing.`nPlease extract the whole folder from the ZIP.",
         "instNew", "Hi!`n`nShall I set up Chaos Ward on your PC?`n`n   •  an icon on your desktop`n   •  a Start menu entry`n`nYes  = set up (recommended)`nNo  = just run it this once",
@@ -2428,6 +3478,7 @@ Calibrate() {
         return
     }
     OcrBusy := true
+    t0 := A_TickCount
     best := -1, bestThr := Cfg.OcrBest, bestR := 0, failed := false, tried := []
     for thr in OcrAlts([Cfg.OcrBest], OCR_SETS.Length) {
         try segs := OcrRead(thr, false)
@@ -2461,6 +3512,7 @@ Calibrate() {
     }
     Track.Alts := OcrAlts(ranked)
     OcrCalib := Max(best, 0) " / " Track.Expected
+    LogReadTest(best, bestThr, bestR, tried, A_TickCount - t0)
     SendOcr()
     if best >= Track.Expected && best > 0 && bestThr != Cfg.OcrBest {
         Cfg.OcrBest := bestThr                       ; für nächstes Mal merken (schneller Start)
@@ -2631,6 +3683,8 @@ AutoCheck(attempt) {
     if r.Status = "ok" && r.Hits > 0 && r.Hits >= GetNeed(Track.Cat) {
         if Track.Kind = "dv"
             TriggerHit(r.Hits, "dv", "", r.HasOwnProp("Vals") ? ReelDv(r.Vals) : 0)
+        else if Track.Kind = "uq"
+            TriggerHit(r.Hits, "uq", "", r.Reel)
         else
             TriggerHit(r.Hits, "", "", r.HasOwnProp("Reel") ? r.Reel : 0)
         return
@@ -2832,6 +3886,8 @@ SortIdx(arr, keyFn) {
 }
 
 AutoEval(segs) {
+    if Track.Kind = "uq"
+        return AutoEvalUQ(segs)
     if Track.Kind = "mb"
         return AutoEvalMB(segs)
     if Track.Kind = "dv"
@@ -2867,7 +3923,14 @@ AutoEval(segs) {
             if Sim(k, fk) >= 0.85
                 frac := true
         if !frac
-            lines.Push({Text: sg.Text, K: k})
+            lines.Push({Text: sg.Text, K: k, Y: sg.Y, H: sg.H, Parts: [lines.Length + 1]})
+    }
+    ; lange Mods brechen im Tooltip um -> je zwei aufeinanderfolgende Zeilen auch zusammen prüfen
+    n1 := lines.Length
+    loop n1 - 1 {
+        a := lines[A_Index], b := lines[A_Index + 1]
+        if StrLen(a.K) >= 10 && StrLen(b.K) >= 3 && b.Y - a.Y > 0 && b.Y - a.Y < 1.9 * Max(a.H, b.H)
+            lines.Push({Text: a.Text " " b.Text, K: a.K b.K, Y: a.Y, H: a.H, Parts: [A_Index, A_Index + 1], Join: 1})
     }
     ; 3) Gruppen zuordnen (alle Zeilen einer Gruppe müssen da sein, Hybride zuerst)
     w := GetWishes(cat.Id)
@@ -2903,12 +3966,14 @@ AutoEval(segs) {
             gid := StrSplit(line, "`t")[2]
             free := true
             for i in full[gid].Idx
-                if owner.Has(i)
-                    free := false
+                for pi in lines[i].Parts
+                    if owner.Has(pi)
+                        free := false
             if !free
                 continue
             for i in full[gid].Idx
-                owner[i] := gid
+                for pi in lines[i].Parts
+                    owner[pi] := gid
             groups.Push(gid)
         }
     }
@@ -2916,11 +3981,13 @@ AutoEval(segs) {
     hits := 0, unsure := false, sig := "", vals := Map(), hitG := Map()
     for gid in groups {
         g := DB.Groups[gid]
-        v := VoteNumber(g, gid, lines, owner)
+        v := VoteNumber(g, gid, lines, owner, &cands)
         if v != "" && !ValuePossible(g, v) {           ; Wert gibt es für diesen Mod nicht -> falsch gelesen
             v := ""
             unsure := true
         }
+        if v = "" && cands.Length >= 2                  ; zwei Lesungen uneinig: passt nur eine, oder führen alle zum selben Ergebnis?
+            v := TieResolve(g, gid, cands, w)
         vals[gid] := v
         sig .= gid ":" v "`n"
         if !w.Has(gid)
@@ -2950,7 +4017,7 @@ AutoEval(segs) {
             continue
         taken := true
         for i in pIdx
-            if !i || !owner.Has(i)
+            if !i || !owner.Has(lines[i].Parts[1])
                 taken := false
         if !taken
             unsure := true
@@ -2960,7 +4027,7 @@ AutoEval(segs) {
     ; eigene Text-Wünsche
     ruleHit := 0
     for i, ln in lines
-        for rl in Rules {
+        for rl in (ln.HasOwnProp("Join") ? [] : Rules) {
             rk := LKey(rl.Text)
             if StrLen(rk) >= 4 && InStr(ln.K, rk) {
                 if rl.Op = "" || CompareOk(OcrNumber(ln.Text), rl.Op, rl.Val) {
@@ -3038,7 +4105,16 @@ OcrNumber(s) {
 
 Sim(a, b) => 1 - Lev(a, b) / Max(StrLen(a), StrLen(b), 1)
 
+; typische Verwechslungen der Texterkennung in der Spiel-Schrift (Kapitälchen) kosten weniger als ein echter Fehler
+LevConf() {
+    m := Map()
+    for pr in ["co", "ce", "il", "ij", "lt", "nh", "uv", "ft", "rn", "mn", "ao", "eo", "yv"]
+        m[pr] := 1, m[SubStr(pr, 2) SubStr(pr, 1, 1)] := 1
+    return m
+}
+
 Lev(a, b) {
+    static CF := LevConf()
     la := StrLen(a), lb := StrLen(b)
     if !la
         return lb
@@ -3053,7 +4129,8 @@ Lev(a, b) {
         cur := [i]
         loop lb {
             j := A_Index
-            cur.Push(Min(prev[j + 1] + 1, cur[j] + 1, prev[j] + (ai == bc[j] ? 0 : 1)))
+            bj := bc[j]
+            cur.Push(Min(prev[j + 1] + 1, cur[j] + 1, prev[j] + (ai == bj ? 0 : CF.Has(ai bj) ? 0.4 : 1)))
         }
         prev := cur
     }
@@ -3063,10 +4140,15 @@ Lev(a, b) {
 ; ============================================================================
 ;  Orb-Zähler und Ziel-Fenster im Spiel
 ; ============================================================================
-; welche Orbs gerade verbraucht werden: Divine (Divine-Reiter / Divine-Lesen), sonst Chaos (Mods, Mageblood)
-OrbIsDv() => Track.Kind = "dv" || CurPage = "pDv"
+; Uniques (Divine-Reiter, Mageblood) werden mit Divine Orbs gerollt, nur Mods wählen nutzt Chaos Orbs
+OrbIsDv() => Track.Kind = "dv" || Track.Kind = "mb" || CurPage = "pDv" || CurPage = "pMb"
 
 CountOrb(d) {
+    global UqTries
+    if Track.Kind = "uq" && Track.Active {              ; Corrupten: Versuche zählen, keine Chaos/Divine Orbs
+        UqTries := Max(0, UqTries + d)
+        return
+    }
     if OrbIsDv() {
         Stats.Cur := "d"
         Stats.DvSession := Max(0, Stats.DvSession + d)
@@ -3085,7 +4167,7 @@ CountOrb(d) {
 
 RecordHit(style := "") {
     name := LastItemName != "" ? LastItemName : Cfg.ActiveCat
-    isDvHit := style = "dv"
+    isDvHit := style = "dv" || style = "mb"
     Stats.History.InsertAt(1, {T: FormatTime(, "dd.MM. HH:mm"), Name: name, Orbs: isDvHit ? Stats.DvSince : Stats.SinceHit, Kind: isDvHit ? "d" : "c"})
     while Stats.History.Length > 60
         Stats.History.Pop()
@@ -3170,14 +4252,14 @@ LoadProt() {
     for line in StrSplit(txt, "`n", "`r") {
         p := StrSplit(line, "`t")
         if p.Length >= 2 && Trim(p[1]) != ""
-            Prot.Push({Name: p[1], Base: p[2], Key: LKey(p[1])})
+            Prot.Push({Name: p[1], BaseType: p[2], Key: LKey(p[1])})
     }
 }
 
 SaveProt() {
     out := ""
     for x in Prot
-        out .= x.Name "`t" x.Base "`n"
+        out .= x.Name "`t" x.BaseType "`n"
     try {
         f := FileOpen(PROT_FILE, "w", "UTF-8")
         f.Write(out)
@@ -3189,7 +4271,7 @@ SaveProt() {
 ProtList() {
     out := []
     for x in Prot
-        out.Push(Map("name", x.Name, "base", x.Base))
+        out.Push(Map("name", x.Name, "base", x.BaseType))
     return out
 }
 
@@ -3218,9 +4300,9 @@ ProtToggle(name, base) {
             SetTimer(HideBanner, -2500)
             return
         }
-    Prot.Push({Name: name, Base: base, Key: LKey(name)})
+    Prot.Push({Name: name, BaseType: base, Key: LKey(name)})
     SaveProt()
-    ShowBanner("🔒  " T("prOn"), name "   ·   " T("prOnSub"), Clr.Ward)
+    ShowBanner(T("prOn"), name "   ·   " T("prOnSub"), Clr.Ward)
     SetTimer(HideBanner, -3500)
 }
 
@@ -3228,15 +4310,22 @@ ProtToggle(name, base) {
 ; ruht die Maus kurz auf einer Stelle: Kursliste im Exchange? -> Markt-Leser. Sonst Tooltip für den Item-Schutz lesen.
 HoverWatch() {
     global ProtUnder, ProtSeen
-    static lx := -1, ly := -1, still := 0
+    static lx := -1, ly := -1, still := 0, altWas := false
     useProt := Cfg.ItemProt && Prot.Length, useMk := Cfg.Market
     if !(useProt || useMk) || !IsPoE() || OcrBusy || St.Locked {
+        if useMk && !OcrBusy
+            MarketTrace("wait", "warte: " (!IsPoE() ? "Spiel nicht im Vordergrund" : St.Locked ? "Guard gesperrt" : "?"))
         ProtUnder := 0, lx := -1
         HideMarket()
         return
     }
     CoordMode("Mouse", "Screen")
     MouseGetPos(&mx, &my)
+    alt := GetKeyState("Alt", "P")
+    if alt != altWas {                                ; Alt gedrückt/losgelassen: Kurslisten gehen auf/zu -> neu lesen
+        altWas := alt, still := A_TickCount, ProtSeen := ""
+        return
+    }
     if Abs(mx - lx) > 6 || Abs(my - ly) > 6 {        ; Maus bewegt -> neu warten
         lx := mx, ly := my, still := A_TickCount
         if IsObject(ProtUnder) && (Abs(mx - ProtUnder.X) > 30 * OvScale() || Abs(my - ProtUnder.Y) > 30 * OvScale())
@@ -3249,7 +4338,7 @@ HoverWatch() {
     if A_TickCount - still < 140 || ProtSeen = mx "," my
         return
     ProtSeen := mx "," my
-    if useMk && IsObject(spot := MarketSpot(mx, my)) {
+    if useMk && IsObject(spot := MarketSpot(mx, my, alt)) {
         mk := MarketRead(spot)
         if IsObject(mk) {
             global MarketAt, MarketSeen, MarketPairC
@@ -3331,7 +4420,7 @@ ProtBlocked() {
     if A_TickCount - last < 1500
         return
     last := A_TickCount
-    ShowBanner("🔒  " T("prBlocked"), ProtUnder.Name "   ·   " T("prBlockedSub"), Clr.Ward)
+    ShowBanner(T("prBlocked"), ProtUnder.Name "   ·   " T("prBlockedSub"), Clr.Ward)
     SetTimer(HideBanner, -2500)
 }
 
@@ -3344,7 +4433,7 @@ ProtBlocked() {
 ; ============================================================================
 
 ; heller Bereich um die Maus? -> Rechteck (Bildschirm) oder 0. 40x48 Felder über 1000x1000 (x OvScale)
-MarketSpot(mx, my) {
+MarketSpot(mx, my, force := false) {
     s := OvScale(), m := GameMon()
     w := Round(1000 * s), h := Round(1000 * s)
     x := Max(m.L, Min(m.L + m.W - w, mx - w // 2)), y := Max(m.T, Min(m.T + m.H - h, my - h // 2))
@@ -3358,10 +4447,13 @@ MarketSpot(mx, my) {
             n++, cx := Mod(i - 1, 40), cy := (i - 1) // 40
             x1 := Min(x1, cx), x2 := Max(x2, cx), y1 := Min(y1, cy), y2 := Max(y2, cy)
         }
-    if n < 40 * 48 * 0.08                               ; zu wenig Helles -> keine Kursliste
+    MarketTrace("spot", Format("Maus {},{}  hell {:.0f} %  Alt {}", mx, my, n * 100 / (40 * 48), force ? "ja" : "nein"))
+    if n < 40 * 48 * 0.04 && !force                     ; zu wenig Helles -> keine Kursliste
         return 0
+    if n = 0
+        return {X: rc.X, Y: rc.Y, W: rc.W, H: rc.H, Force: force}
     fw := rc.W / 40, fh := rc.H / 48
-    return {X: Round(rc.X + (x1 - 1) * fw), Y: Round(rc.Y + (y1 - 1) * fh), W: Round((x2 - x1 + 3) * fw), H: Round((y2 - y1 + 3) * fh)}
+    return {X: Round(rc.X + (x1 - 1) * fw), Y: Round(rc.Y + (y1 - 1) * fh), W: Round((x2 - x1 + 3) * fw), H: Round((y2 - y1 + 3) * fh), Force: force}
 }
 
 ; Kursliste lesen: dunkle Schrift auf hellem Grund -> ohne Umkehren, Helligkeits-Schwelle
@@ -3376,9 +4468,30 @@ MarketRead(rc) {
         else if !hc && (Sim(k, "competingtrades") >= 0.7 || InStr(k, "competing"))
             hc := sg
     }
-    if !IsObject(ha) || !IsObject(hc) {
-        MarketDiagRaw("keine Überschriften", segs, rc)
+    near := false                                       ; sieht es nach Currency Exchange aus?
+    for sg in segs
+        if RegExMatch(LKey(sg.Text), "ratio|exchange|stock|placeorder|iwant|ihave|trades")
+            near := true
+    if (!IsObject(ha) || !IsObject(hc)) && !(rc.Force || near) {
+        MarketTrace("nohead", "keine Kursliste um die Maus (" segs.Length " Zeilen gelesen)")
         return 0
+    }
+    if !IsObject(ha) || !IsObject(hc) {               ; nicht um die Maus gefunden -> größeren Bereich um die Maus absuchen (nicht das ganze Bild: zu klein und zu langsam)
+        m := GameMon(), s := OvScale(), fw := Min(m.W, Round(1700 * s)), fh := Min(m.H, Round(1100 * s))
+        mx := rc.X + rc.W // 2, my := rc.Y + rc.H // 2
+        full := {X: Max(m.L, Min(m.L + m.W - fw, mx - fw // 2)), Y: Max(m.T, Min(m.T + m.H - fh, my - fh // 2)), W: fw, H: fh}
+        segs2 := MarketOcr(full, 1.4)
+        for sg in segs2 {
+            k := LKey(sg.Text)
+            if !ha && (Sim(k, "availabletrades") >= 0.7 || InStr(k, "available"))
+                ha := sg
+            else if !hc && (Sim(k, "competingtrades") >= 0.7 || InStr(k, "competing"))
+                hc := sg
+        }
+        if !IsObject(ha) || !IsObject(hc) {
+            MarketDiagRaw("keine Überschriften", segs2.Length ? segs2 : segs, full)
+            return 0
+        }
     }
     ; Schritt 2: nur das Kursfenster (zwischen/unter den Überschriften) groß und genau lesen
     hw := Max(ha.X2 - ha.X1, hc.X2 - hc.X1), cx := (ha.Cx + hc.Cx) / 2
@@ -3386,8 +4499,12 @@ MarketRead(rc) {
     pr := {X: Round(cx - hw * 0.75), Y: Round(top), W: Round(hw * 1.5), H: Round(gap * 2.1 + ha.H)}
     m := GameMon()
     pr.X := Max(m.L, pr.X), pr.Y := Max(m.T, pr.Y), pr.W := Min(pr.W, m.L + m.W - pr.X), pr.H := Min(pr.H, m.T + m.H - pr.Y)
-    segs := MarketOcr(pr, 0)
+    segs := MarketOcr(pr, 0, 0)                         ; Graustufen: die Orb-Symbole neben den Zahlen stören hier weniger
     mk := MarketParse(segs)
+    if !IsObject(mk) {
+        segs := MarketOcr(pr, 0)
+        mk := MarketParse(segs)
+    }
     if !IsObject(mk) {
         MarketDiagRaw("nicht lesbar", segs, pr)
         return 0
@@ -3397,14 +4514,14 @@ MarketRead(rc) {
 }
 
 ; dunkle Schrift auf hellem Grund lesen -> Segmente. scale 0 = so groß wie möglich
-MarketOcr(rc, scale) {
+MarketOcr(rc, scale, mono := 125) {
     global OcrBusy
     if !scale
         scale := Max(1, Min(3, (OCR.MaxImageDimension - 8) / Max(rc.W, rc.H, 1)))
     OcrBusy := true
     try {
         OcrFilter(false)
-        res := OCR.FromRect(rc.X, rc.Y, rc.W, rc.H, {lang: OcrLanguage(), scale: scale, monochrome: 125, invertcolors: 0})
+        res := OCR.FromRect(rc.X, rc.Y, rc.W, rc.H, {lang: OcrLanguage(), scale: scale, monochrome: mono, invertcolors: 0})
     } catch {
         OcrBusy := false
         return []
@@ -3428,6 +4545,24 @@ MarketDiagRaw(why, segs, rc) {
         for sg in segs
             out .= "  " sg.Text "  |  " Round(sg.Cx) " | " Round(sg.Y) " | " Round(sg.H) "`n"
         FileAppend(out "`n", DIAG_DIR "\markt.txt", "UTF-8")
+        static shots := 0
+        if shots < 6 {                                  ; ein paar Bilder davon, damit man sieht, was gelesen wurde
+            shots++
+            m := GameMon()
+            SaveScreenPng(m.L, m.T, m.W, m.H, DIAG_DIR "\markt_" shots ".png")
+        }
+    }
+}
+
+; Spur fürs Einstellen: was der Markt-Leser gerade tut (je Art höchstens alle 4 s, nur mit Diagnose)
+MarketTrace(kind, msg) {
+    static last := Map()
+    if !Cfg.Diag || (last.Has(kind) && A_TickCount - last[kind] < (kind = "wait" ? 60000 : 4000))
+        return
+    last[kind] := A_TickCount
+    try {
+        DirCreate(DIAG_DIR)
+        FileAppend(FormatTime(, "yyyy-MM-dd HH:mm:ss") "  Markt " APP_VER ": " msg "`n", DIAG_DIR "\markt.txt", "UTF-8")
     }
 }
 
@@ -3764,7 +4899,7 @@ ShowMarket(mk, ev, pair, hist) {
     m := GameMon()
     x := Min(m.L + m.W - gw, mk.X2 + OvPx(14)), y := Max(m.T, mk.Y1)
     g.Show("NA x" x " y" y)
-    try WinSetTransparent(240, "ahk_id " g.Hwnd)
+    try WinSetTransparent(OvA(240), "ahk_id " g.Hwnd)
     RoundCorners(g.Hwnd)
     edge.Move(, , gw)
     OvFrameFit(fr, gw, gh)
@@ -3822,10 +4957,10 @@ IslandTick() {
     IslandHoverCheck()
 }
 
-; Maße in Grundeinheiten (mal OvScale): Kreis 44, aufgeklappt 250 breit, rundum 12 Rand für den Puls-Ring
+; Maße in Grundeinheiten (mal UiScale): Kreis 44, aufgeklappt 330 breit, rundum 12 Rand für den Puls-Ring
 IslandDim() {
-    s := OvScale()
-    return {S: s, M: 12, D: 44, PW: 250, W: Round(274 * s), H: Round(68 * s)}
+    s := UiScale()
+    return {S: s, M: 12, D: 44, PW: 330, W: Round(354 * s), H: Round(68 * s)}
 }
 
 IslandBuild() {
@@ -3872,11 +5007,12 @@ IslandHoverCheck() {
 }
 
 ; welcher Knopf liegt unter lx (Grundeinheiten ab Kapsel-Anfang)? "logo" | "open" | "guard"
-IslandButtonAt(lx) => lx < 50 ? "logo" : lx < 136 ? "open" : "guard"
+; Kapsel: Siegel | Öffnen | Modus (Automatisch/Pause) | Schutz an/aus
+IslandButtonAt(lx) => lx < 50 ? "logo" : lx < 136 ? "open" : lx < 222 ? "mode" : "guard"
 
 IslandDraw(open, btn, pu) {
     global IslandLast
-    key := open "|" btn "|" St.On "|" St.Hit "|" Round(pu * 40)
+    key := open "|" btn "|" St.On "|" St.Hit "|" Round(pu * 40) "|" Cfg.Mode "|" Cfg.Accent "|" Cfg.OvAlpha
     if key = IslandLast
         return
     IslandLast := key
@@ -3903,13 +5039,13 @@ IslandDraw(open, btn, pu) {
         IslandPaint(g, open, btn, pu)
     }
     DllCall("gdiplus\GdipDeleteGraphics", "Ptr", g)
-    try ShowLayeredDC(IslandG.Hwnd, hdc, p.X, p.Y, W, H, open || pu ? 255 : 165)   ; zu: halb durchsichtig
+    try ShowLayeredDC(IslandG.Hwnd, hdc, p.X, p.Y, W, H, OvA(open || pu ? 255 : 165))   ; zu: halb durchsichtig
     DllCall("SelectObject", "Ptr", hdc, "Ptr", old, "Ptr")
     DllCall("DeleteObject", "Ptr", hbm)
     DllCall("DeleteDC", "Ptr", hdc)
 }
 
-; Zeichnen in Grundeinheiten ab der Kreis-Ecke (Kreis 44x44, aufgeklappt 250x44); pu = 0..1 Puls, 0 = keiner
+; Zeichnen in Grundeinheiten ab der Kreis-Ecke (Kreis 44x44, aufgeklappt 330x44); pu = 0..1 Puls, 0 = keiner
 IslandPaint(g, open, btn, pu := 0) {
     static logo := 0, tried := false
     if !tried {
@@ -3917,9 +5053,9 @@ IslandPaint(g, open, btn, pu := 0) {
         if FileExist(A_ScriptDir "\ui\icon.png")
             DllCall("gdiplus\GdipLoadImageFromFile", "WStr", A_ScriptDir "\ui\icon.png", "Ptr*", &logo)
     }
-    col := St.Hit ? 0xD6A640 : St.On ? 0x4FAE9B : 0x66635D
+    col := St.Hit ? HexN(Clr.Gold) : St.On ? 0x4FAE9B : 0x66635D
     if open {                                           ; Kapsel mit Rand
-        path := RoundPath(0.5, 0.5, 249, 43, 21.5)
+        path := RoundPath(0.5, 0.5, 329, 43, 21.5)
         br := Brush(0xF2121314)
         DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", path)
         DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
@@ -3927,7 +5063,7 @@ IslandPaint(g, open, btn, pu := 0) {
         DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", path)
         DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
         DllCall("gdiplus\GdipDeletePath", "Ptr", path)
-        for b in [["open", 52, 80], ["guard", 140, 104]] {
+        for b in [["open", 52, 80], ["mode", 140, 78], ["guard", 226, 100]] {
             if btn = b[1] {                             ; Knopf unter der Maus hervorheben
                 path := RoundPath(b[2], 7, b[3], 30, 4)
                 br := Brush(0xFF27292C)
@@ -3937,13 +5073,15 @@ IslandPaint(g, open, btn, pu := 0) {
             }
         }
         DrawText(g, T("isOpen"), 52, 7, 80, 30, 14, 1, 0xFFE7E3DB, 1)
+        DrawText(g, T(Cfg.Mode = 3 ? "isAuto" : "isPause"), 140, 7, 78, 30, 14, 1, 0xFFE7E3DB, 1)
         br := Brush(0xFF000000 | col)                   ; Zustands-Lampe
-        DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", 150, "Float", 18, "Float", 8, "Float", 8)
+        DllCall("gdiplus\GdipFillEllipse", "Ptr", g, "Ptr", br, "Float", 236, "Float", 18, "Float", 8, "Float", 8)
         DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-        DrawText(g, T(St.Hit ? "isHit" : St.On ? "isOn" : "isOff"), 160, 7, 84, 30, 14, 1
-            , St.Hit ? 0xFFF0CF7A : St.On ? 0xFF8AD4C3 : 0xFF9A968E, 0)
+        DrawText(g, T(St.Hit ? "isHit" : St.On ? "isOn" : "isOff"), 246, 7, 80, 30, 14, 1
+            , St.Hit ? 0xFF000000 | HexN(Clr.Gold2) : St.On ? 0xFF8AD4C3 : 0xFF9A968E, 0)
         pen := PenOf(0xFF2A2C30, 1)
-        DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", 136, "Float", 12, "Float", 136, "Float", 32)
+        for lxx in [136, 222]
+            DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", lxx, "Float", 12, "Float", lxx, "Float", 32)
         DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
     } else {                                            ; zugeklappt: nur der runde Knopf
         br := Brush(0xE6121314)
@@ -4003,6 +5141,12 @@ IslandMsg(wParam, lParam, msg, hwnd) {
         IslandRefresh()
         return 0
     }
+    if b = "mode" {                                     ; Modus umschalten: Automatisch <-> Pause
+        SetOpt("Mode", Cfg.Mode = 3 ? 1 : 3)
+        SendState()
+        IslandRefresh()
+        return 0
+    }
     IslandHide()                                        ; Öffnen (Knopf oder Siegel)
     try {
         MainGui.Show()
@@ -4029,7 +5173,7 @@ PlaceDefaults() {
     return Map("Banner", {X: m.L + m.W // 2, Y: m.T + OvPx(30), W: OvPx(460), H: OvPx(66)}
         , "Hit", {X: m.L + m.W // 2, Y: m.T + HitBarDefaultTop(m), W: OvPx(720), H: OvPx(168)}
         , "Item", {X: m.L + m.W - OvPx(40), Y: m.T + OvPx(120), W: OvPx(440), H: OvPx(260)}
-        , "Island", {X: m.L + m.W // 2, Y: m.T + OvPx(8), W: OvPx(260), H: OvPx(70)})
+        , "Island", {X: m.L + m.W // 2, Y: m.T + OvPx(8), W: OvPx(340), H: OvPx(70)})
 }
 
 ; Oberkante der sichtbaren Treffer-Leiste (Standard), relativ zum Monitor
@@ -4082,9 +5226,19 @@ GameWindow() {
 
 ; Anzeigen wachsen mit der Monitorhöhe wie die Spiel-Oberfläche (1080p = 1, 1440p = 1,33, 4K = 2)
 OvScale() => Max(0.75, Min(2.5, GameMon().H / 1080))
-OvPx(n) => Round(n * OvScale())
-; Schriftgröße in Punkt so, dass sie unabhängig von der Windows-Skalierung n*OvScale Pixel@96dpi entspricht
-FS(n) => "s" Max(6, Round(n * OvScale() * 96 / A_ScreenDPI))
+; Größe der Anzeigen: wie das Spiel (OvScale) mal die eigene Einstellung (80 bis 150 %)
+UiScale() => OvScale() * Cfg.OvSize / 100
+OvPx(n) => Round(n * UiScale())
+; Schriftgröße in Punkt so, dass sie unabhängig von der Windows-Skalierung n*UiScale Pixel@96dpi entspricht
+FS(n) => "s" Max(6, Round(n * UiScale() * 96 / A_ScreenDPI))
+; Deckkraft der Anzeigen (eigene Einstellung 50 bis 100 %)
+OvA(a) => Round(a * Cfg.OvAlpha / 100)
+
+ApplyAccent() {
+    a := ACCENTS[Cfg.Accent]
+    Clr.Gold := a[1], Clr.Gold2 := a[2]
+}
+HexN(h) => Integer("0x" h)
 
 PlaceStart() {
     global PlaceGuis
@@ -4101,13 +5255,13 @@ PlaceStart() {
         g := Gui("+AlwaysOnTop -Caption +ToolWindow -DPIScale")
         g.BackColor := Clr.Panel2
         g.MarginX := OvPx(16), g.MarginY := OvPx(12)
-        OvFont(g, FS(13) " w600 c" Clr.Ward2, , "✥  " names[key])
-        g.AddText("xm ym w" d.W - OvPx(32) " +0x80", "✥  " names[key])
+        OvFont(g, FS(13) " w600 c" Clr.Ward2, , names[key])
+        g.AddText("xm ym w" d.W - OvPx(32) " +0x80", names[key])
         OvFont(g, FS(9) " w400 c" Clr.Muted, , T("plDrag"))
         g.AddText("xm y+" OvPx(4) " w" d.W - OvPx(32) " +0x80", T("plDrag"))
         if key = "Hit" {
             OvFont(g, FS(10) " w600 c" Clr.Text, , "✔")
-            b1 := g.AddButton("xm y+" OvPx(14) " w" OvPx(150) " h" OvPx(32) " Default", "✔  " T("plDone"))
+            b1 := g.AddButton("xm y+" OvPx(14) " w" OvPx(150) " h" OvPx(32) " Default", T("plDone"))
             b1.OnEvent("Click", (*) => PlaceSave())
             b2 := g.AddButton("x+" OvPx(10) " yp w" OvPx(150) " h" OvPx(32), "↺  " T("plReset"))
             b2.OnEvent("Click", (*) => PlaceReset(true))
@@ -4116,7 +5270,7 @@ PlaceStart() {
         x := key = "Item" ? ax - d.W : ax - d.W // 2
         x := Max(m.L, Min(m.L + m.W - d.W, x)), ay := Max(m.T, Min(m.T + m.H - d.H, ay))
         g.Show("NA x" x " y" ay " w" d.W " h" d.H)
-        try WinSetTransparent(225, "ahk_id " g.Hwnd)
+        try WinSetTransparent(OvA(225), "ahk_id " g.Hwnd)
         RoundCorners(g.Hwnd)
         PlaceGuis[key] := g
     }
@@ -4420,11 +5574,16 @@ GpOk(status, what, raise := true) {
 ;  Bessere Erkennung: Zahlen abstimmen, aus Korrekturen lernen, Diagnose
 ; ============================================================================
 ; Alle gelesenen Zeilen dieser Gruppe stimmen über die Zahl ab (bei Uneinigkeit: unklar)
-VoteNumber(g, gid, lines, owner) {
+VoteNumber(g, gid, lines, owner, &cands := 0) {
     k1 := GroupKeys(g)[1]
     votes := Map(), best := "", bestN := 0, tie := false
+    cands := []
     for i, ln in lines {
-        if owner.Has(i) && owner[i] != gid
+        other := false
+        for pi in ln.Parts
+            if owner.Has(pi) && owner[pi] != gid
+                other := true
+        if other
             continue
         isMine := (Aliases.Has(ln.K) && Aliases[ln.K] = gid) || Sim(ln.K, k1) >= 0.82
         if !isMine
@@ -4441,7 +5600,39 @@ VoteNumber(g, gid, lines, owner) {
         else if n = bestN
             tie := true
     }
+    if tie
+        for key, n in votes
+            if n = bestN
+                cands.Push(key + 0)
     return (bestN = 0 || tie) ? "" : best + 0
+}
+
+; Gleichstand zwischen Lesungen: unmögliche Werte streichen; bleiben mehrere, zählt nur, ob alle gleich entscheiden
+TieResolve(g, gid, cands, w) {
+    ok := []
+    for c in cands
+        if ValuePossible(g, c)
+            ok.Push(c)
+    if ok.Length = 1
+        return ok[1]
+    if ok.Length < 2 || !w.Has(gid)
+        return ""
+    mn := w[gid], res := ""
+    for c in ok {
+        if mn = ""
+            r := 1
+        else if RegExMatch(mn, "^T(\d+)$", &tm)
+            r := (tn := TierOf(g, c)) ? (tn <= Integer(tm[1])) : -1
+        else
+            r := c >= mn
+        if r = -1 || (res != "" && r != res)
+            return ""
+        res := r
+    }
+    lo := ok[1]
+    for c in ok
+        lo := Min(lo, c)
+    return lo
 }
 
 ; Nach Strg+C kennt die App die Wahrheit -> falsch gelesene Schreibweisen merken
@@ -4592,7 +5783,7 @@ ShowHitBar(hits, orbs, style := "", sub := "", reel := 0) {
         HideHitBar()
         if !GdipStartup()
             throw Error("GDI+ konnte nicht gestartet werden")
-        hs := OvScale()
+        hs := UiScale()
         W := Round(900 * hs), H := Round(420 * hs)        ; Zeichenraster 900x420 (Platz für die Strahlen)
         reel := HitReelReady(reel, style, hits)
         if sub = ""
@@ -4780,7 +5971,7 @@ HitBarAutoHide() {
     if !St.Hit || !IsObject(HitBarG)
         return
     HideHitBar()
-    ShowBanner("🔒  " T("bHitLocked"), StrReplace(T("bHitLockedSub"), "{k}", KeyLabel()), Clr.Gold)
+    ShowBanner(T("bHitLocked"), StrReplace(T("bHitLockedSub"), "{k}", KeyLabel()), Clr.Gold)
 }
 
 HideHitBar() {
@@ -4870,7 +6061,7 @@ DrawHitScene(g, secs, info) {
     br := Brush(0xFF3A3D42)
     DllCall("gdiplus\GdipFillRectangle", "Ptr", g, "Ptr", br, "Float", px, "Float", py, "Float", pw, "Float", 2)
     DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
-    br := Brush(0xFFD6A640)
+    br := Brush(0xFF000000 | HexN(Clr.Gold))
     DllCall("gdiplus\GdipFillRectangle", "Ptr", g, "Ptr", br, "Float", px, "Float", py, "Float", pw * p, "Float", 2)
     DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
 
@@ -4883,23 +6074,52 @@ DrawHitScene(g, secs, info) {
     ta := Round(255 * kt), dy := 5 * (1 - kt)
     if ta > 0 {
         tier := RegExMatch(reel.HasOwnProp("Sub") ? reel.Sub : "", "^(T\d+)", &tm) ? tm[1] : ""
-        lbl := T("hTitle") (isDv ? "  ·  " info.Sub : tier != "" ? "  ·  " tier : "")
+        ; Kennung: Divine -> Schwellen, Mageblood -> "Mageblood", ein Mod -> Tier, mehrere Mods -> nur "Treffer"
+        lbl := T("hTitle") (isDv ? "  ·  " info.Sub : info.Style = "mb" ? "  ·  Mageblood" : info.Style = "uq" ? "  ·  " T("hCorrupt") : tier != "" && info.Hits <= 1 ? "  ·  " tier : "")
         hint := T("hLocked") "  ·  " T("hHint")
         if isDv {
-            DrawText(g, lbl, tx, py + 16 + dy, tw, 20, 13, 1, (ta << 24) | 0xF0CF7A, 0, "cond")
+            DrawText(g, lbl, tx, py + 16 + dy, tw, 20, 13, 1, (ta << 24) | HexN(Clr.Gold2), 0, "cond")
             vals := reel.Values, nv := Min(3, vals.Length), y0 := py + 40 + (3 - nv) * 11
+            ; Tabelle: Name | Schwelle (Zeichen links, Zahl rechtsbündig) | Wert mittig in einer gleich großen Box
+            vx := tx + tw - 96, nx := vx - 62
             loop nv {
                 v := vals[A_Index], yy := y0 + (A_Index - 1) * 23 + dy
-                DrawText(g, v.Label, tx, yy, tw - 150, 23, 14.5, 0, (ta << 24) | 0xE7E3DB, 0)
-                if v.HasOwnProp("Need") && v.Need != ""
-                    DrawText(g, v.Need, tx + tw - 150, yy, 70, 23, 12, 0, (ta << 24) | 0x66635D, 2, "mono")
-                DrawText(g, v.Digits v.Unit, tx + tw - 80, yy, 80, 23, 16, 1, (ta << 24) | 0xF0CF7A, 2, "mono")
+                if A_Index > 1 {                                ; feine Trennlinie zwischen den Zeilen
+                    pen := PenOf((Round(ta * 0.55) << 24) | 0x2A2C30, 1)
+                    DllCall("gdiplus\GdipDrawLine", "Ptr", g, "Ptr", pen, "Float", tx, "Float", yy, "Float", vx - 6, "Float", yy)
+                    DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
+                }
+                path := RoundPath(vx, yy + 2, 96, 19, 3)          ; Box für den Wert
+                br := Brush((Round(ta * 0.9) << 24) | 0x1E1F22)
+                DllCall("gdiplus\GdipFillPath", "Ptr", g, "Ptr", br, "Ptr", path)
+                DllCall("gdiplus\GdipDeleteBrush", "Ptr", br)
+                pen := PenOf((Round(ta * 0.8) << 24) | 0x3A3D42, 1)
+                DllCall("gdiplus\GdipDrawPath", "Ptr", g, "Ptr", pen, "Ptr", path)
+                DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
+                DllCall("gdiplus\GdipDeletePath", "Ptr", path)
+                DrawText(g, v.Label, tx, yy, nx - tx - 8, 23, 14.5, 0, (ta << 24) | 0xE7E3DB, 0)
+                if v.HasOwnProp("Need") && v.Need != "" {
+                    if RegExMatch(v.Need, "^\s*([^\d\s.+-]+)\s*(.*)$", &nm) {
+                        DrawText(g, nm[1], nx, yy, 20, 23, 12, 0, (ta << 24) | 0x66635D, 0, "mono")
+                        DrawText(g, nm[2], nx + 14, yy, 40, 23, 12, 0, (ta << 24) | 0x66635D, 2, "mono")
+                    } else
+                        DrawText(g, v.Need, nx, yy, 54, 23, 12, 0, (ta << 24) | 0x66635D, 2, "mono")
+                }
+                DrawText(g, v.Digits (v.Unit != "" ? " " v.Unit : ""), vx, yy + 1, 96, 23, 16, 1, (ta << 24) | HexN(Clr.Gold2), 1, "mono")   ; mittig in der Box
             }
             DrawText(g, hint, tx, py + ph - 27 + dy, tw, 20, 12, 0, (ta << 24) | 0x9A968E, 0)
         } else {
             main := info.Hits <= 1 && reel.Target <= reel.Lines.Length && info.Style != "mb" ? reel.Lines[reel.Target] : info.Sub
-            DrawText(g, lbl, tx, py + 28 + dy, tw, 20, 13, 1, (ta << 24) | 0xF0CF7A, 0, "cond")
-            DrawText(g, main, tx, py + 50 + dy, tw, 34, 21, 1, (ta << 24) | 0xE7E3DB, 0)
+            DrawText(g, lbl, tx, py + 28 + dy, tw, 20, 13, 1, (ta << 24) | HexN(Clr.Gold2), 0, "cond")
+            static fitKey := "", fitSz := 21
+            main := Trim(RegExReplace(main, "\s*\(\s*-?[\d.]+\s*[-–]\s*-?[\d.]+\s*\)%?", ""))   ; Bereiche (21-35) weglassen
+            if fitKey != main "|" tw {                      ; lange Mods: Schrift verkleinern statt abschneiden (bis 15), einmal je Text messen
+                fitKey := main "|" tw, fitSz := 21
+                while fitSz > 15 && TextW(g, main, fitSz, 1) > tw
+                    fitSz -= 1
+            }
+            fsz := fitSz
+            DrawText(g, main, tx, py + 50 + dy + (21 - fsz) * 0.5, tw, 34, fsz, 1, (ta << 24) | 0xE7E3DB, 0)
             DrawText(g, hint, tx, py + 88 + dy, tw, 20, 12.5, 0, (ta << 24) | 0x9A968E, 0)
         }
     }
@@ -4910,7 +6130,7 @@ DrawHitScene(g, secs, info) {
     DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
     shown := Round(info.Orbs * HitEase((secs - 0.08) / (lock + 0.04)))
     DrawText(g, String(Max(0, shown)), ox, py + 34, px + pw - ox, 46, shown >= 10000 ? 28 : 34, 1, kl >= 1 ? 0xFFE7E3DB : 0xFF9A968E, 1, "mono")
-    DrawText(g, T(isDv ? "hDivines" : "hOrbs"), ox, py + 84, px + pw - ox, 20, 12.5, 0, 0xFF9A968E, 1)
+    DrawText(g, T(info.Style = "uq" ? "hTries" : isDv || info.Style = "mb" ? "hDivines" : "hOrbs"), ox, py + 84, px + pw - ox, 20, 12.5, 0, 0xFF9A968E, 1)
     DllCall("gdiplus\GdipRestoreGraphics", "Ptr", g, "UInt", gs)
 }
 
@@ -4929,11 +6149,11 @@ HitBack(x) {                                            ; Feder-Kurve: schießt 
 ;  p = Anteil der leuchtenden Kerben, kl = 0..1 Einrasten, after = Sekunden seit dem Einrasten
 HitSeal(g, x, y, p, kl, after) {
     RO := 46
-    pen := PenOf(kl >= 1 ? 0xFFD6A640 : 0xFF3A3D42, 1.6)
+    pen := PenOf(kl >= 1 ? 0xFF000000 | HexN(Clr.Gold) : 0xFF3A3D42, 1.6)
     DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", x - RO, "Float", y - RO, "Float", RO * 2, "Float", RO * 2)
     DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
     lit := p * 24
-    penOff := PenOf(0xFF3A3D42, 2), penOn := PenOf(0xFFF0CF7A, 2)
+    penOff := PenOf(0xFF3A3D42, 2), penOn := PenOf(0xFF000000 | HexN(Clr.Gold2), 2)
     for pn in [penOff, penOn]
         DllCall("gdiplus\GdipSetPenStartCap", "Ptr", pn, "Int", 2), DllCall("gdiplus\GdipSetPenEndCap", "Ptr", pn, "Int", 2)
     loop 24 {
@@ -4970,7 +6190,7 @@ HitSeal(g, x, y, p, kl, after) {
     ; ein einzelner Ring läuft nach außen
     if after > 0 && after < 0.5 {
         e := HitEase(after / 0.5), rr := RO + 30 * e
-        pen := PenOf((Round(150 * (1 - e)) << 24) | 0xD6A640, 2)
+        pen := PenOf((Round(150 * (1 - e)) << 24) | HexN(Clr.Gold), 2)
         DllCall("gdiplus\GdipDrawEllipse", "Ptr", g, "Ptr", pen, "Float", x - rr, "Float", y - rr, "Float", rr * 2, "Float", rr * 2)
         DllCall("gdiplus\GdipDeletePen", "Ptr", pen)
     }
@@ -5007,7 +6227,7 @@ HitCacheNew(key, w, h, &g2) {
 HitPanelDraw(g, px, py, pw, ph) {
     hs := HitBarPos.HasOwnProp("S") ? HitBarPos.S : 1
     x0 := px - 24, y0 := py - 24, lw := pw + 48, lh := ph + 48
-    key := "panel8|" pw "|" ph "|" Round(hs * 100)
+    key := "panel8|" pw "|" ph "|" Round(hs * 100) "|" Cfg.Accent
     if !(bmp := HitCacheGet(key)) {
         bmp := HitCacheNew(key, Ceil(lw * hs), Ceil(lh * hs), &g2)
         DllCall("gdiplus\GdipScaleWorldTransform", "Ptr", g2, "Float", hs, "Float", hs, "Int", 0)
@@ -5115,6 +6335,14 @@ RoundPath(x, y, w, h, r) {
 }
 
 ; align: 0 = links, 1 = mittig, 2 = rechts; zu lang -> "…".  bold/face siehe HitFontObj
+; Breite eines Textes in Zeichen-Einheiten (für "Schrift verkleinern, bis es passt")
+TextW(g, text, size, bold, face := "") {
+    box := Buffer(16, 0)
+    DllCall("gdiplus\GdipMeasureString", "Ptr", g, "WStr", String(text), "Int", -1, "Ptr", HitFontObj(size, bold, face)
+        , "Ptr", RectF(0, 0, 5000, 400), "Ptr", 0, "Ptr", box, "Ptr", 0, "Ptr", 0)
+    return NumGet(box, 8, "Float")
+}
+
 DrawText(g, text, x, y, w, h, size, bold, argb, align, face := "") {
     static fmts := Map()
     if !fmts.Has(align) {

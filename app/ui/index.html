@@ -97,6 +97,7 @@ kbd { font: 500 11px var(--mono); color: var(--ash); border: 1px solid var(--lin
 .page { display: none; flex: 1; min-height: 0; flex-direction: column; } .page.on { display: flex; }
 .head { display: flex; align-items: flex-end; gap: 16px; padding: 20px 24px 15px; border-bottom: 1px solid var(--line); flex: none; }
 .head h1 { font: 700 22px/1.15 var(--sans); }
+.head h1.hico { display: flex; align-items: center; gap: 10px; } .head h1.hico img { height: 40px; width: 40px; object-fit: contain; margin: -9px 0; }
 .head p { color: var(--ash); margin-top: 4px; max-width: 72ch; }
 .head .grow { flex: 1; }
 .body { flex: 1; min-height: 0; display: flex; }
@@ -131,7 +132,7 @@ h3.sec { margin: 0 0 10px; }
 .stepper b { min-width: 22px; text-align: center; font: 600 16px var(--mono); }
 
 /* ---------- Mods wählen ---------- */
-.cats { width: 194px; flex: none; border-right: 1px solid var(--line); padding: 14px 10px; }
+.cats { width: 222px; flex: none; border-right: 1px solid var(--line); padding: 14px 10px; }
 .cats input { width: 100%; margin-bottom: 8px; }
 .grp > button { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 9px 8px 4px; color: var(--ash); font-size: 13px; font-weight: 500; }
 .grp > button:hover { color: var(--ink); }
@@ -139,6 +140,7 @@ h3.sec { margin: 0 0 10px; }
 .grp .items { display: none; } .grp.open .items { display: block; }
 .cat { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 5px 8px; border-radius: var(--r); font-size: 14px; text-align: left; gap: 6px; border-left: 2px solid transparent; }
 .cat em { font-style: normal; color: var(--ash); font-size: 12px; }
+.cat .cimg { width: 30px; height: 30px; object-fit: contain; flex: none; margin: -2px 0; } .cat .cname { flex: 1; min-width: 0; }
 .cat:hover { background: var(--s1); }
 .cat.on { background: var(--s2); border-left-color: var(--ward); }
 .cat .badge { min-width: 18px; padding: 0 4px; border-radius: var(--r); background: var(--ward-lo); color: var(--ward-hi); font: 600 11px/17px var(--mono); text-align: center; }
@@ -280,7 +282,60 @@ h3.sec { margin: 0 0 10px; }
 .opt b { display: block; } .opt span { color: var(--ash); font-size: 12.5px; }
 .opt .tag, .tag { font: 600 11px var(--sans); color: var(--ward-hi); border: 1px solid var(--ward-lo); border-radius: var(--r); padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
 .chiprow { display: flex; gap: 6px; flex-wrap: wrap; }
+.swatches { display: flex; gap: 8px; }
+.ee2setup { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--line2); border-radius: var(--r); background: var(--bg); margin-bottom: 4px; }
+.ee2setup ol { list-style: none; padding: 0; margin: 0; flex: 1; display: grid; gap: 4px; font-size: 13px; color: var(--ash); }
+.ee2setup li::before { content: "○"; display: inline-block; width: 18px; color: var(--dim); } .ee2setup li.ok { color: var(--ink); } .ee2setup li.ok::before { content: "✓"; color: var(--ward-hi); }
+.ee2setup li.bad::before { content: "!"; color: var(--bad); font-weight: 700; }
+.ee2setup .go { padding: 8px 14px; border-radius: var(--r); background: var(--ward); color: var(--ward-ink); font-weight: 600; white-space: nowrap; }
+.ee2setup .done { color: var(--ward-hi); font-weight: 600; white-space: nowrap; }
+.reclist { display: flex; flex-direction: column; gap: 8px; }
+.rec { display: grid; grid-template-columns: 52px 1fr auto; gap: 6px 14px; align-items: center; background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 14px; }
+.rec .ri { width: 52px; height: 52px; display: grid; place-items: center; } .rec .ri img { max-width: 52px; max-height: 52px; object-fit: contain; }
+.rec b { font-size: 15px; } .rec b.r-unique { color: #C9874B; } .rec b.r-rare { color: #E8D27A; } .rec b.r-magic { color: #8F9BFF; }
+.rec .meta { color: var(--ash); font-size: 12.5px; margin-top: 2px; } .rec .meta i { font-style: normal; color: var(--ward-hi); }
+.rec .mods { grid-column: 2 / 4; color: var(--ash); font-size: 13px; display: none; } .rec.open .mods { display: block; }
+.rec .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.uqtools { display: flex; gap: 8px; align-items: center; } .uqtools select { min-width: 190px; }
+.uqlist { flex: 1; min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); }
+.uqfilter { display: flex; gap: 10px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); flex-wrap: wrap; } .uqfilter input { width: 220px; }
+.uqinfo { padding: 8px 18px; color: var(--dim); font-size: 12.5px; border-bottom: 1px solid var(--line); }
+.uqrow { display: grid; grid-template-columns: 40px 1fr 110px 92px 70px; gap: 12px; align-items: center; padding: 9px 18px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.uqrow:hover { background: var(--s1); } .uqrow.on { background: var(--ward-a); box-shadow: inset 2px 0 var(--ward); }
+.uqrow b { display: block; color: var(--hit-hi); font-weight: 600; } .uqrow small { color: var(--ash); }
+.uqrow .pr { text-align: right; font-variant-numeric: tabular-nums; } .uqrow .pr.few { color: var(--dim); } .uqrow .ls { text-align: right; color: var(--dim); font-size: 12.5px; }
+.uqrow .ct { color: var(--ash); font-size: 12.5px; }
+.uqdetail { width: 380px; flex: none; padding: 18px 20px; }
+.uqico { width: 40px; height: 40px; display: grid; place-items: center; } .uqico img { max-width: 40px; max-height: 40px; object-fit: contain; }
+.uqbig { height: 150px; display: grid; place-items: center; margin-bottom: 10px; background: radial-gradient(closest-side, var(--s2), transparent); }
+.uqbig img { width: auto; height: auto; transform: scale(1.5); image-rendering: auto; }
+.uqdetail h2 { font: 700 19px var(--sans); color: var(--hit-hi); } .uqdetail .sub { color: var(--ash); margin: 2px 0 12px; }
+.uqbtns { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 16px; }
+.ench { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: center; padding: 7px 8px; border-radius: var(--r); cursor: pointer; }
+.ench:hover { background: var(--s1); } .ench.on { background: var(--ward-a); }
+.ench i { width: 14px; height: 14px; border: 1px solid var(--line2); border-radius: 2px; } .ench.on i { background: var(--ward); border-color: var(--ward); }
+.ench span { font-size: 13.5px; } .ench .link { font-size: 12px; }
+em.beta { font-style: normal; font-size: 11px; font-weight: 600; color: var(--ash); border: 1px solid var(--line2); border-radius: 2px; padding: 0 5px; margin-left: 6px; vertical-align: 2px; }
+.sw.wrap { flex-wrap: wrap; } .sw.wrap > span { flex: 1 1 100%; }
+.swatches button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; outline: 1px solid var(--line2); outline-offset: 2px; }
+.swatches button.on { outline: 2px solid var(--ink); }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; align-items: baseline; }
+.keys kbd { font: 600 12.5px var(--sans); color: var(--ink); background: var(--s3); border: 1px solid var(--line2); border-bottom-width: 2px; border-radius: 3px; padding: 2px 7px; white-space: nowrap; justify-self: start; }
+.keys span { color: var(--ash); font-size: 13.5px; }
 .plist { display: flex; flex-direction: column; gap: 4px; }
+.dcur { display: flex; align-items: baseline; gap: 12px; padding: 10px 0 12px; }
+.dcur b { font-size: 26px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.dcur span { color: var(--ash); font-size: 13px; }
+.dmsg { padding: 8px 10px; border-radius: var(--r); font-size: 13px; margin: 0 0 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ash); }
+.dmsg.ok { border-left: 2px solid var(--ward); color: var(--ink); } .dmsg.bad { border-left: 2px solid var(--bad); color: var(--ink); }
+.dmsg.busy::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 8px; border: 2px solid var(--line2); border-top-color: var(--ward); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -1px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+button:disabled { opacity: .45; cursor: default; }
+.drow { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); }
+.drow.cur { border-left: 2px solid var(--ward); }
+.drow b { font-variant-numeric: tabular-nums; min-width: 84px; } .drow small { color: var(--ash); flex: 1; }
+.drow .tag { font-size: 11.5px; color: var(--ward-hi); border: 1px solid var(--ward-lo); background: var(--ward-a); padding: 1px 7px; border-radius: 2px; }
+nav button.dot { position: relative; } nav button.dot::after { content: ""; position: absolute; left: 30px; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--ward); }
 .pitem { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); border-left: 2px solid var(--ward); }
 .pitem span { flex: 1; min-width: 0; } .pitem b { display: block; } .pitem small { color: var(--ash); }
 .sysgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 10px; }
@@ -318,6 +373,8 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
       <button data-page="pMods" class="on"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="5" height="5" rx=".6"/><path d="M4.8 7l1 1 1.7-2"/><path d="M11.5 7h9"/><rect x="3.5" y="14.5" width="5" height="5" rx=".6"/><path d="M11.5 17h9"/></svg><span data-i18n="navMods"></span></button>
       <button data-page="pMb"><svg viewBox="0 0 24 24"><path d="M9.5 3h5"/><path d="M10.3 3v5.2L5.4 16.6A3 3 0 0 0 8 21h8a3 3 0 0 0 2.6-4.4L13.7 8.2V3"/><path d="M7.2 14.5h9.6"/></svg><span data-i18n="navMb"></span></button>
       <button data-page="pDv"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><rect x="13" y="4" width="3" height="4" rx=".5" fill="var(--side)"/><rect x="7" y="10" width="3" height="4" rx=".5" fill="var(--side)"/><rect x="15" y="16" width="3" height="4" rx=".5" fill="var(--side)"/></svg><span data-i18n="navDv"></span></button>
+      <button data-page="pUq"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v6c0 4-3 7-7 8-4-1-7-4-7-8V7z"/><path d="M12 8v8M8.5 12h7"/></svg><span data-i18n="navUq"></span></button>
+      <button data-page="pRec"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span data-i18n="navRec"></span></button>
       <button data-page="pStats"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><path d="M6.5 17.5v-5M11 17.5v-11M15.5 17.5v-7M20 17.5v-3"/></svg><span data-i18n="navStats"></span></button>
       <div class="sep"></div>
       <button data-page="pSet"><svg viewBox="0 0 24 24"><path d="M19.20 8.30 L20.89 7.35 L21.70 9.32 L19.84 9.84 L19.84 14.16 L21.70 14.68 L20.89 16.65 L19.20 15.70 L15.70 19.20 L16.65 20.89 L14.68 21.70 L14.16 19.84 L9.84 19.84 L9.32 21.70 L7.35 20.89 L8.30 19.20 L4.80 15.70 L3.11 16.65 L2.30 14.68 L4.16 14.16 L4.16 9.84 L2.30 9.32 L3.11 7.35 L4.80 8.30 L8.30 4.80 L7.35 3.11 L9.32 2.30 L9.84 4.16 L14.16 4.16 L14.68 2.30 L16.65 3.11 L15.70 4.80Z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="navSet"></span></button>
@@ -325,8 +382,6 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
     </nav>
     <div class="guard" id="guard">
       <div class="guard-top"><span class="lamp"></span><b id="gState"></b><kbd id="gKey">F6</kbd></div>
-      <div class="reel" id="gReel"></div>
-      <div class="guard-cap" data-i18n="gCap"></div>
       <button class="guard-btn" id="toggle"></button>
     </div>
   </aside>
@@ -334,7 +389,7 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
   <main class="main">
     <!-- Mods wählen -->
     <section class="page on" id="pMods">
-      <div class="head"><div><h1 data-i18n="navMods"></h1><p data-i18n="hMods"></p></div></div>
+      <div class="head"><div><h1 class="hico"><span data-i18n="navMods"></span><img src="img/items/chaos.webp" alt=""></h1><p data-i18n="hMods"></p></div></div>
       <div class="body">
         <div class="cats scroll"><input id="catSearch"><div id="side"></div></div>
         <div class="mods">
@@ -360,7 +415,7 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
 
     <!-- Mageblood -->
     <section class="page" id="pMb">
-      <div class="head"><div><h1>Mageblood</h1><p id="mbHintL" data-i18n="mbHint"></p></div></div>
+      <div class="head"><div><h1 class="hico">Mageblood<img src="img/items/mageblood.webp" alt=""></h1><p id="mbHintL" data-i18n="mbHint"></p></div></div>
       <div class="body">
         <div class="legs scroll">
           <div class="seg" id="mbSeg"><button data-v="want" class="on" data-i18n="mbWant"></button><button data-v="ban" data-i18n="mbBanTab"></button></div>
@@ -380,7 +435,7 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
 
     <!-- Divine -->
     <section class="page" id="pDv">
-      <div class="head"><div><h1>Divine</h1><p data-i18n="hDv"></p></div></div>
+      <div class="head"><div><h1 class="hico">Divine<img src="img/items/divine.webp" alt=""></h1><p data-i18n="hDv"></p></div></div>
       <div class="body">
         <div class="dvl-wrap scroll" id="dvMain"></div>
         <div class="rside scroll">
@@ -395,6 +450,24 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
     </section>
 
     <!-- Tracker -->
+    <section class="page" id="pUq">
+      <div class="head"><div class="grow"><h1 data-i18n="navUq"></h1><p data-i18n="hUq"></p></div>
+        <div class="uqtools"><select id="uqLeague"></select><button class="chip" id="uqUpdate" data-i18n="uqUpdate"></button></div></div>
+      <div class="body">
+        <div class="uqlist">
+          <div class="uqfilter"><input id="uqSearch" type="search"><select id="uqCats"></select></div>
+          <div class="uqinfo" id="uqInfo"></div>
+          <div class="scroll" id="uqRows"></div>
+        </div>
+        <div class="uqdetail scroll" id="uqDetail"></div>
+      </div>
+    </section>
+
+    <section class="page" id="pRec">
+      <div class="head"><div class="grow"><h1 data-i18n="navRec"></h1><p data-i18n="hRec"></p></div><button class="link" id="recClear" data-i18n="recClear"></button></div>
+      <div class="body"><div class="trk scroll"><div class="reclist" id="recList"></div></div></div>
+    </section>
+
     <section class="page" id="pStats">
       <div class="head"><div><h1 data-i18n="navStats"></h1><p data-i18n="hStats"></p></div></div>
       <div class="body"><div class="trk scroll">
@@ -423,6 +496,8 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           </div>
           <div class="sw" id="pauseRow"><span data-i18n="pauseTitle"></span><div class="chiprow" id="pauses"></div></div>
           <div class="sw"><span data-i18n="oKey"></span><select id="keySel"></select></div>
+          <div class="sw" data-k="keyCopy"><span data-i18n="oKeyCopy"></span><div class="tg"></div></div>
+          <div class="sw" data-k="manualCopy"><span data-i18n="oManualCopy"></span><div class="tg"></div></div>
           <div class="sw" data-k="shiftOnly"><span data-i18n="oShift"></span><div class="tg"></div></div>
           <div class="sw" data-k="unsureRelease"><span data-i18n="oUnsure"></span><div class="tg"></div></div>
         </div>
@@ -441,11 +516,15 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           <div class="sw" data-k="island"><span data-i18n="oIsland"></span><div class="tg"></div></div>
           <div class="sw" data-k="market"><span data-i18n="oMarket"></span><div class="tg"></div></div>
           <div class="sw" data-k="streamVisible"><span data-i18n="oStream"></span><div class="tg"></div></div>
+          <div class="sw wrap"><span data-i18n="oOvSize"></span><div class="chiprow" id="ovSize"></div></div>
+          <div class="sw"><span data-i18n="oOvAlpha"></span><input type="range" id="ovAlpha" min="50" max="100" step="5" style="width:130px"><b id="ovAlphaN" style="width:40px;text-align:right">100%</b></div>
+          <div class="sw"><span data-i18n="oAccent"></span><div class="swatches" id="accent"></div></div>
           <div class="sw"><span data-i18n="oPlace"></span><button class="chip" id="placeStart" data-i18n="placeStart"></button><button class="chip" id="placeReset" data-i18n="placeReset"></button></div>
         </div>
         <div class="panel">
           <h3 class="sec" data-i18n="secProt"></h3>
           <div class="sw" data-k="itemProt"><span data-i18n="oProt"></span><div class="tg"></div></div>
+          <div class="sw" data-k="protKey"><span data-i18n="oProtKey"></span><div class="tg"></div></div>
           <div id="protList" class="plist"></div>
           <div style="height:8px"></div>
         </div>
@@ -462,6 +541,25 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><h3 class="sec" style="margin:0;flex:1" data-i18n="sysTitle"></h3><button class="chip" id="sysRe" data-i18n="sysRe"></button></div>
           <p class="hint" data-i18n="sysHint"></p>
           <div class="sysgrid" id="sysList"></div>
+        </div>
+        <div class="panel" id="dataPanel">
+          <div style="display:flex;align-items:center;gap:10px"><h3 class="sec" style="margin:0;flex:1" data-i18n="secData"></h3><button class="chip on" id="dataCheck" data-i18n="dtCheckBtn"></button></div>
+          <div class="dcur"><b id="dataCur">–</b><span id="dataInfo"></span></div>
+          <div class="dmsg" id="dataMsg" style="display:none"></div>
+          <div class="plist" id="dataList"></div>
+          <div class="sw" data-k="dataAuto" style="margin-top:8px"><span data-i18n="oDataAuto"></span><div class="tg"></div></div>
+        </div>
+        <div class="panel">
+          <h3 class="sec">Exiled Exchange 2</h3>
+          <p class="hint" data-i18n="ee2Hint" style="margin-bottom:10px"></p>
+          <div class="ee2setup" id="ee2Setup"></div>
+          <div class="sw"><span id="ee2State"></span><button class="chip" id="ee2Start" data-i18n="ee2StartBtn"></button><button class="chip" id="ee2Dl" data-i18n="ee2DlBtn"></button><button class="chip" id="ee2Pick" data-i18n="ee2PickBtn"></button></div>
+          <div class="sw" data-k="ee2Auto"><span data-i18n="oEe2Auto"></span><div class="tg"></div></div>
+          <div class="sw" data-k="ee2Link"><span data-i18n="oEe2Link"></span><div class="tg"></div></div>
+        </div>
+        <div class="panel">
+          <h3 class="sec" data-i18n="secApp"></h3>
+          <div class="sw" data-k="autostart"><span data-i18n="oAutostart"></span><div class="tg"></div></div>
         </div>
         <div class="panel">
           <h3 class="sec" data-i18n="langTitle"></h3>
@@ -480,6 +578,7 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
       <div class="body"><div class="help scroll">
         <div class="panel"><h3 class="sec" data-i18n="stepsTitle"></h3><div id="steps"></div></div>
         <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="panel"><h3 class="sec" data-i18n="keysTitle"></h3><div class="keys" id="keys"></div></div>
           <div class="panel"><h3 class="sec" data-i18n="factsTitle"></h3><ul class="facts" id="facts"></ul></div>
           <div class="panel"><h3 class="sec" data-i18n="safeTitle"></h3><p class="hint" style="font-size:13.5px;line-height:1.55" data-i18n="safeText"></p></div>
           <button class="link" id="uninstall" data-i18n="uninstall" style="align-self:flex-start"></button>
@@ -496,7 +595,16 @@ ul.facts { padding-left: 16px; color: var(--ash); } ul.facts li { margin-bottom:
 "use strict";
 const I18N = {
   de: {
-    navMods:"Mods wählen", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Einstellungen", navHelp:"Hilfe",
+    navRec:"Verlauf", hRec:"Deine zuletzt kopierten und geprüften Items, mit Preis-Suche und Sprung in den passenden Reiter.", recClear:"Verlauf leeren",
+    recEmpty:"Noch nichts kopiert. Maus aufs Item und {key}, oder mit Exiled Exchange 2 einen Preis prüfen (Verbindung in den Einstellungen).",
+    recSrc_ee2:"Preis-Check", recSrc_key:"{key}", recSrc_copy:"Strg+C", recTrade:"Trade", recChaos:"In Chaos öffnen", recUq:"In Uniques zeigen", recMods:"Mods", recPrice:"Preis",
+    oEe2Link:"Mit Exiled Exchange 2 verbinden<small>Prüfst du dort einen Preis, merkt sich Chaos Ward das Item im Verlauf (bei Uniques mit Preis und Corruption-Enchants). Chaos Ward liest dazu nur die Zwischenablage mit.</small>",
+    navMods:"Chaos", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Einstellungen", navHelp:"Hilfe", navUq:"Uniques",
+    hUq:"Preise pro Season, mögliche Corruption-Enchants und die passende Trade-Suche.", uqUpdate:"Preise aktualisieren", uqSearch:"Unique suchen …",
+    uqAll:"Alle", uqInfo:"{n} Uniques · Preise vom {d} (poe.ninja) · Liga {l}", uqNone:"Keine Uniques gefunden.", uqPick:"Wähle links ein Unique.",
+    uqFew:"wenige Angebote", uqTrade:"Im Trade suchen", uqCorr:"Corrupted", uqTwice:"Doppelt corrupted", uqEnchT:"Mögliche Corruption-Enchants",
+    uqEnchH:"Hake an, was du willst. Dann Maus aufs Unique und {key}: Kommt beim Corrupten einer davon, sperrt Chaos Ward deinen Klick.", uqTradeOne:"Trade",
+    uqNoData:"Noch keine Preisliste. Klick auf „Preise aktualisieren“.", uqWishN:"{n} gewünscht",
     hMods:"Hake an, was auf dem Item landen soll. Ich stoppe dich, sobald es drauf ist.",
     hDv:"Werte neu würfeln, bis jede eingeschaltete Zahl deine Schwelle erreicht.",
     hStats:"So viele Orbs hat dich das Glück gekostet.", hSet:"Einmal einstellen, dann läuft alles von selbst.", hHelp:"In fünf Schritten zum ersten Treffer.",
@@ -509,7 +617,7 @@ const I18N = {
     stopOne:"Einer reicht", stopMany:"Mehrere", stopTxtOne:"Stopp, sobald <strong>einer</strong> davon drauf ist", stopTxtMany:"Stopp, wenn <strong>{n}</strong> davon gleichzeitig drauf sind",
     tierAll:"alle", tierAny:"jedes Tier", valueMin:"Wert ≥ {v}",
     mSession:"Orbs diese Sitzung", mHits:"Treffer", mAvg:"Ø Orbs je Treffer", mTotal:"Orbs gesamt",
-    modsTip:"Im Spiel: Maus aufs Item, <b>einmal Strg+C</b>, dann mit Shift spammen. Ein Klick auf ein Tier wählt den Mod mit diesem Mindest-Tier.",
+    modsTip:"Im Spiel: Maus aufs Item, <b>{key}</b>, dann mit Shift spammen. Ein Klick auf ein Tier wählt den Mod mit diesem Mindest-Tier.",
     clearAll:"Alle Häkchen bei dieser Item-Art entfernen", clearConfirm:"Alle Häkchen bei dieser Item-Art entfernen?",
     mbHint:"Mageblood hat 4 Legacy-Plätze, Doppelte sind erlaubt. Stell ein, wie oft du jedes Legacy mindestens willst.",
     mbBanHint:"Tippe ein Legacy an, um es zu verbieten. Ist eins davon drauf, gibt es nie einen Treffer.",
@@ -519,8 +627,8 @@ const I18N = {
     mbDupT:"Jedes Duplikat = Treffer", mbDupH:"Stoppt bei irgendeinem doppelten Legacy. Verbotene zählen nicht.",
     mbAnyS:"beliebiges Legacy {n}×", mbDupS:"oder irgendein Duplikat", mbEffS:"Effekt pro Duplikat ≥ {n}%", mbNone:"Noch nichts eingestellt.", mbClear:"Alles zurücksetzen",
     mbRuleAll:"Stopp, wenn <strong>alles</strong> davon passt", mbRuleOr:"Stopp bei den Wünschen <strong>oder</strong> einem Duplikat",
-    dvEmptyT:"Welches Item willst du verbessern?", dvEmptyH:"Maus aufs Item, <b>Strg+C</b>, dann siehst du hier seine Mods.<br>Strg+<b>Alt</b>+C zeigt mir auch die genauen Bereiche, z. B. bei Uniques.",
-    dvTake:"Letztes kopiertes Item übernehmen", dvPasteH:"Oder: im Spiel Strg+C, dann hier Strg+V.", dvItemH:"Neues Item? Einfach Strg+C darauf, solange dieser Reiter offen ist.",
+    dvEmptyT:"Welches Item willst du verbessern?", dvEmptyH:"Maus aufs Item, <b>{key}</b>, dann siehst du hier seine Mods.<br>Strg+<b>Alt</b>+C zeigt mir auch die genauen Bereiche, z. B. bei Uniques.",
+    dvTake:"Letztes kopiertes Item übernehmen", dvPasteH:"Oder: im Spiel Strg+C, dann hier Strg+V.", dvItemH:"Neues Item? Maus drauf und {key}, solange dieser Reiter offen ist.",
     dvMin:"mindestens", dvMax:"höchstens", dvNoRange:"Bereich unbekannt. Strg+Alt+C aufs Item zeigt ihn", dvFixed:"fester Wert", dvCur:"jetzt",
     dvWhen:"Wann ist es ein Treffer?", dvAllBtn:"Alle Schwellen", dvOneBtn:"Eine reicht", dvQuick:"Schnell einstellen", dvTop20:"Obere 20 %", dvTop10:"Obere 10 %", dvAllOff:"Alle aus",
     dvQuickH:"Gilt für die eingeschalteten Zahlen, oder für alle, wenn keine an ist.", dvNone:"Noch keine Schwelle an. Schalte bei einer Zahl den Regler ein.",
@@ -531,8 +639,21 @@ const I18N = {
     sChart:"Orbs je Treffer", sChartH:" · die letzten 30 Treffer, alt → neu", sHistory:"Letzte Treffer", sNoHits:"Noch keine Treffer. Viel Glück!", sResetSession:"Sitzung zurücksetzen", sResetAll:"Alles zurücksetzen",
     sResetConfirm:"Wirklich alle Zähler und die Treffer-Liste löschen?", orbs:"Orbs",
     secGuard:"Schutz", secHit:"Treffer", secOverlay:"Anzeigen im Spiel", secRead:"Erkennung",
+    oOvSize:"Größe der Anzeigen<small>Island, Meldungen, Item-Anzeige und Treffer-Leiste</small>", oOvAlpha:"Deckkraft der Anzeigen<small>Weniger = mehr vom Spiel sichtbar</small>", oAccent:"Treffer-Farbe<small>Leiste, Island und Treffer in der App</small>",
+    secData:"Spieldaten (Patch)", dtCheckBtn:"Nach Updates suchen", dtInfo:"{g} Mods · {c} Item-Arten", dtActive:"aktiv", dtUse:"Verwenden", dtGet:"Laden", dtBundled:"mitgeliefert", dtOnline:"auf GitHub",
+    dtHint:"Hier steht, auf welchen Patch sich die Mod-Liste bezieht. Neue Patches lädst du mit einem Klick, ältere bleiben zum Zurückwechseln da.",
+    oDataAuto:"Beim Start nach neuen Patches suchen<small>Nur ein Blick auf GitHub, geladen wird erst, wenn du auf „Laden“ drückst</small>",
+    oKeyCopy:"{key} kopiert das Item unter der Maus<small>Maus aufs Item, {key}: Chaos Ward kopiert das Item (genau ein Strg+C, keine Spielaktion) und schaltet nur dann ein. Ohne Item unter der Maus bleibt der Schutz aus.</small>",
+    oManualCopy:"Eigenes Strg+C auswerten (alte Art)<small>Wenn du im Spiel selbst Strg+C drückst, liest Chaos Ward das Item auch. Meist nicht nötig, {key} reicht.</small>",
+    oProtKey:"Taste Strg+Shift+P für den Item-Schutz<small>Maus aufs Item, Strg+Shift+P: schützt es (oder hebt den Schutz auf).</small>",
+    ee2Hint:"Preis-Check für alle Items. Läuft neben Chaos Ward, beide stören sich nicht: Chaos Ward schützt beim Craften, Exiled Exchange 2 zeigt Preise. Verbunden startet es mit Chaos Ward, und deine Preis-Checks landen im Verlauf.",
+    ee2Found:"Installiert{r} · Preis prüfen: <b>{p}</b>", ee2Running:" · läuft", ee2Missing:"Nicht installiert", ee2Conflict:"⚠ Deine Schutz-Taste {k} ist auch in Exiled Exchange 2 belegt. Bitte eine von beiden ändern.",
+    ee2Key:"Preis prüfen (Exiled Exchange 2)", ee2S1:"Installiert", ee2S2:"Läuft", ee2S3:"Tasten passen zusammen", ee2S4:"Mit Chaos Ward verbunden",
+    ee2Connect:"Jetzt verbinden", ee2Install:"Installieren und verbinden", ee2Waiting:"Warte auf Installation …", ee2Linked:"✓ Verbunden", ee2StartBtn:"Starten", ee2DlBtn:"Herunterladen", ee2PickBtn:"Ort wählen", oEe2Auto:"Mit Chaos Ward starten<small>Startet Exiled Exchange 2 automatisch mit, wenn es installiert ist</small>",
+    secApp:"App", oAutostart:"Mit Windows starten<small>Chaos Ward wartet dann still unten rechts im Infobereich</small>",
+    keysTitle:"Tasten", keys:[["{k}","Maus aufs Item: kopieren und Schutz an. Nochmal: Schutz aus"],["Strg+C","Item lesen (alte Art)","manualCopy"],["Strg+Shift+P","Item unter der Maus schützen / freigeben","protKey"],["Alt + Klick","Geschütztes Item trotzdem anklicken","itemProt"],["Alt","Im Currency Exchange: Kursliste lesen","market"],["Rechtsklick Island","Schutz an / aus","island"]],
     mode1:"Einfach", mode1d:"Nach jedem Orb-Klick kurz Pause. Kein Strg+C nötig.",
-    mode3:"Automatisch <span class=\"tag\">empfohlen</span>", mode3d:"Einmal Strg+C, dann spammen. Ich lese nach jedem Klick mit und sperre beim Wunsch-Mod.",
+    mode3:"Automatisch <span class=\"tag\">empfohlen</span>", mode3d:"Maus aufs Item, {key}, dann spammen. Ich lese nach jedem Klick mit und sperre beim Wunsch-Mod.",
     mode2:"Schlau", mode2d:"Nach jedem Klick gesperrt, bis du Strg+C drückst. Dann prüfe ich das Item.",
     pauseTitle:"Pause (Einfach)", oKey:"Taste im Spiel", keyRec:"Eigene Taste …", keyRecHint:"Drück jetzt die Taste, z. B. Strg+G oder Maustaste 4. Esc = abbrechen", keyRecCancel:"Abgebrochen", keyRecBad:"Diese Taste geht nicht, bitte eine andere", keyNeedMod:"Buchstaben und Zahlen bitte mit Strg, Alt oder Shift", oShift:"Nur bremsen, wenn ich Shift halte<small>Für Dauer-Craften mit gedrückter Shift-Taste</small>",
     oUnsure:"Bei Unsicherheit freigeben<small>Bequemer, aber ein Treffer könnte durchrutschen. Bei Divine immer gesperrt.</small>",
@@ -540,27 +661,36 @@ const I18N = {
     snd_seal:"Siegel", snd_gong:"Gong", snd_crystal:"Kristall", snd_harp:"Harfe", snd_drum:"Trommel", snd_hit:"Amboss", snd_chime:"Glocke", snd_coin:"Münzen", snd_ping:"Kurzer Ping", snd_windows:"Windows-Ton", snd_custom:"Eigene Datei …",
     oVolume:"Lautstärke<small>Gilt nur für Chaos Ward</small>", oHitAnim:"Treffer-Animation<small>Siegel: das Schloss rastet in einer halben Sekunde ein. Sofort: ohne Bewegung</small>", animSlot:"Siegel", animInstant:"Sofort", oHbSecs:"Treffer-Leiste zeigen<small>Der Klick bleibt immer gesperrt</small>", hbUntil:"bis {k}",
     oTestHits:"Treffer-Leiste ausprobieren", testHitChaos:"Chaos", testHitDv:"Divine",
-    secProt:"Item-Schutz", oProt:"Geschützte Items nicht anklicken<small>Im Spiel: Maus aufs Item, Strg+C, dann Strg+Shift+P. Klicks darauf sind dann gesperrt, kein Orb und kein Verkaufen aus Versehen. Mit gedrückter Alt-Taste geht es trotzdem.</small>", protRemove:"Freigeben", protNone:"Noch keine Items geschützt.", oMarket:"Markt-Leser im Currency Exchange<small>Maus auf die Kursliste: Spanne, wie schnell es geht und welches Verhältnis du setzen solltest</small>", oIsland:"Island oben im Spiel<small>Kleines Siegel als Schnellzugriff. Maus drüber: Chaos Ward öffnen oder Schutz an/aus</small>", oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
+    secProt:"Item-Schutz", oProt:"Geschützte Items nicht anklicken<small>Im Spiel: Maus aufs Item, dann Strg+Shift+P (Taste unten einschalten). Klicks darauf sind dann gesperrt, kein Orb und kein Verkaufen aus Versehen. Mit gedrückter Alt-Taste geht es trotzdem.</small>", protRemove:"Freigeben", protNone:"Noch keine Items geschützt.", oMarket:"Markt-Leser im Currency Exchange <em class=\"beta\">Beta</em><small>Im Exchange die Maus aufs Kursverhältnis, Alt gedrückt halten: Chaos Ward liest beide Listen und zeigt Spanne und den passenden Kurs. Noch in Arbeit, liest nicht jedes Paar.</small>", oIsland:"Island oben im Spiel<small>Kleines Siegel als Schnellzugriff. Maus drüber: Chaos Ward öffnen, Modus wechseln oder Schutz an/aus</small>", oOverlay:"Mods beim Strg+C zeigen<small>Item-Anzeige mit Tiers im Spiel</small>", oStream:"In Discord/OBS sichtbar<small>Beim Streamen den ganzen Bildschirm teilen</small>",
     oPlace:"Fenster im Spiel verschieben<small>Meldungen, Treffer-Leiste, Item-Anzeige und Island</small>", placeStart:"Verschieben", placeReset:"Standard",
-    oDetect:"Item-Art automatisch erkennen<small>Beim Strg+C springe ich zur passenden Liste</small>", oFrac:"Fractured Mods nicht mitzählen",
+    oDetect:"Item-Art automatisch erkennen<small>Beim Kopieren springe ich zur passenden Liste</small>", oFrac:"Fractured Mods nicht mitzählen",
     oOcr:"Texterkennung", ocrReset:"Neu einstellen", ocrFilterMax:"Farbkanal {n}", ocrFilterLum:"Helligkeit {n}",
-    ocrLine:"Filter {f} · letztes Strg+C: {l} erkannt · Sprache {g}", ocrNever:"noch nicht", ocrNoEn:"Englisches Sprachpaket fehlt. Windows-Einstellungen → Zeit und Sprache → Sprache hinzufügen → Englisch (USA), dann neu starten",
+    ocrLine:"Filter {f} · zuletzt kopiert: {l} erkannt · Sprache {g}", ocrNever:"noch nicht", ocrNoEn:"Englisches Sprachpaket fehlt. Windows-Einstellungen → Zeit und Sprache → Sprache hinzufügen → Englisch (USA), dann neu starten",
     oDiag:"Diagnose aufzeichnen<small>Speichert unsichere Lesungen (max. 20)</small>", openDiag:"Ordner", oDiagPack:"Diagnose-Paket für Hilfe<small>Packt Systemcheck, Monitore, Einstellungen und unsichere Lesungen in eine ZIP auf dem Desktop</small>", diagPack:"Erstellen", oLearned:"Gelernte Schreibweisen:", oLearnedHint:"Aus deinen Strg+C nach „unsicher“", resetLearn:"Löschen",
     sysTitle:"Systemcheck", sysRe:"Erneut prüfen", sysHint:"Zeigt, ob auf diesem PC alles passt. Bei Problemen einen Screenshot davon schicken.", sysAdminBtn:"Als Administrator neu starten",
     langTitle:"Sprache", langHint:"Mod-Texte bleiben englisch, so stehen sie in den Spieldaten.",
     rulesTitle:"Eigene Wünsche als Text (für Fortgeschrittene)", rulesHint:"Gelten für alle Items. Eine Zeile = ein Wunsch, z. B. „Movement Speed >= 30“. Zeilen mit # sind aus.",
     stepsTitle:"So geht's", factsTitle:"Gut zu wissen", safeTitle:"Sicherheit",
-    safeText:"Kein Makro: Ich lese nie den Spielspeicher, drücke nie Tasten und klicke nie für dich. Ich lese nur, was du mit Strg+C kopierst, und im Modus „Automatisch“ den Tooltip auf deinem Bildschirm. Ich halte höchstens deine Klicks zurück.",
+    safeText:"Kein Makro: Ich lese nie den Spielspeicher und klicke nie für dich. Drückst du {key}, kopiere ich das Item unter der Maus (genau ein Strg+C, keine Spielaktion). Danach lese ich im Modus „Automatisch“ den Tooltip auf deinem Bildschirm. Ich halte höchstens deine Klicks zurück.",
     uninstall:"Vom PC entfernen", licText:"Kostenlos, nicht für den Verkauf (PolyForm Noncommercial 1.0.0). Fan-Projekt, nicht mit Grinding Gear Games verbunden.", saved:"Gespeichert", times:"×",
     steps:[["Spiel vorbereiten","Spiel auf „Fenster-Vollbild“ stellen und auf Englisch, sonst sehe ich nichts."],
-      ["Wünsche anhaken","Item-Art wählen und Mods anhaken. Tipp: Kopier dein Item mit Strg+C, dann wähle ich die Item-Art selbst."],
-      ["Schutz einschalten","Im Spiel {key} drücken."],
-      ["Craften","Maus aufs Item, einmal Strg+C. Dann Rechtsklick auf den Orb, Shift halten und spammen."],
+      ["Wünsche anhaken","Item-Art wählen und Mods anhaken."],
+      ["Schutz einschalten","Im Spiel Maus aufs Item und {key} drücken. Ich kopiere das Item, wähle die Item-Art und lese ab jetzt mit."],
+      ["Craften","Rechtsklick auf den Orb, Shift halten und spammen."],
       ["Treffer!","Sobald es passt, rastet das Siegel ein und der Klick ist gesperrt. Mit {key} bist du fertig."]],
-    facts:["Fertiges Item schützen: Maus drauf, Strg+C, dann Strg+Shift+P. Klicks darauf sind gesperrt, mit Alt geht es trotzdem.","Steht „Nicht sicher lesbar“ da, drück einmal Strg+C, das prüft und entsperrt.","Strg+Alt+C zeigt im Spiel zusätzlich Präfix, Suffix und genaue Bereiche.","Tiers (T1 = bestes) kommen aus den Spieldaten.","Läuft das Spiel als Administrator, sagt dir der Systemcheck, was zu tun ist.","Probleme? Einstellungen → Diagnose-Paket erstellen und die ZIP-Datei vom Desktop schicken."]
+    facts:["Uniques-Reiter: Preise pro Season, mögliche Corruption-Enchants und ein Klick zur passenden Trade-Suche. Die Preise kommen von poe.ninja, über unsere eigene Liste auf GitHub.","Fertiges Item schützen: Taste Strg+Shift+P in den Einstellungen einschalten, dann Maus aufs Item und Strg+Shift+P. Klicks darauf sind gesperrt, mit Alt geht es trotzdem.","Steht „Nicht sicher lesbar“ da: {key} beendet, nochmal {key} auf dem Item liest es neu.","Tiers (T1 = bestes) kommen aus den Spieldaten.","Läuft das Spiel als Administrator, sagt dir der Systemcheck, was zu tun ist.","Probleme? Einstellungen → Diagnose-Paket erstellen und die ZIP-Datei vom Desktop schicken."]
   },
   en: {
-    navMods:"Pick mods", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Settings", navHelp:"Help",
+    navRec:"Recent", hRec:"Your recently copied and checked items, with price search and a jump to the matching page.", recClear:"Clear history",
+    recEmpty:"Nothing copied yet. Hover an item and press {key}, or check a price with Exiled Exchange 2 (link it in the settings).",
+    recSrc_ee2:"price check", recSrc_key:"{key}", recSrc_copy:"Ctrl+C", recTrade:"Trade", recChaos:"Open in Chaos", recUq:"Show in Uniques", recMods:"Mods", recPrice:"Price",
+    oEe2Link:"Link with Exiled Exchange 2<small>When you check a price there, Chaos Ward keeps the item in its history (uniques with price and corruption enchants). Chaos Ward only reads the clipboard for this.</small>",
+    navMods:"Chaos", navMb:"Mageblood", navDv:"Divine", navStats:"Tracker", navSet:"Settings", navHelp:"Help", navUq:"Uniques",
+    hUq:"Prices per season, possible corruption enchants and the matching trade search.", uqUpdate:"Update prices", uqSearch:"Search uniques …",
+    uqAll:"All", uqInfo:"{n} uniques · prices from {d} (poe.ninja) · league {l}", uqNone:"No uniques found.", uqPick:"Pick a unique on the left.",
+    uqFew:"few listings", uqTrade:"Search trade", uqCorr:"Corrupted", uqTwice:"Twice corrupted", uqEnchT:"Possible corruption enchants",
+    uqEnchH:"Tick what you want. Then hover your unique and press {key}: if one of them appears when you corrupt it, Chaos Ward blocks your click.", uqTradeOne:"Trade",
+    uqNoData:"No price list yet. Click “Update prices”.", uqWishN:"{n} wanted",
     hMods:"Tick what should land on the item. I'll stop you as soon as it does.",
     hDv:"Reroll values until every switched-on number reaches your threshold.",
     hStats:"How many orbs luck has cost you.", hSet:"Set it once, then everything runs by itself.", hHelp:"Five steps to your first hit.",
@@ -573,7 +703,7 @@ const I18N = {
     stopOne:"One is enough", stopMany:"Several", stopTxtOne:"Stop as soon as <strong>one</strong> of them lands", stopTxtMany:"Stop when <strong>{n}</strong> of them are on at once",
     tierAll:"all", tierAny:"any tier", valueMin:"value ≥ {v}",
     mSession:"Orbs this session", mHits:"Hits", mAvg:"Avg orbs per hit", mTotal:"Orbs total",
-    modsTip:"In game: hover the item, <b>Ctrl+C once</b>, then spam with Shift. Clicking a tier picks the mod with that minimum tier.",
+    modsTip:"In game: hover the item, <b>{key}</b>, then spam with Shift. Clicking a tier picks the mod with that minimum tier.",
     clearAll:"Remove all picks for this item type", clearConfirm:"Remove all picks for this item type?",
     mbHint:"Mageblood has 4 legacy slots, duplicates allowed. Set how often you want each legacy at least.",
     mbBanHint:"Tap a legacy to ban it. If one of them rolls, it's never a hit.",
@@ -583,8 +713,8 @@ const I18N = {
     mbDupT:"Any duplicate = hit", mbDupH:"Stops on any doubled legacy. Banned ones don't count.",
     mbAnyS:"any legacy {n}×", mbDupS:"or any duplicate", mbEffS:"effect per duplicate ≥ {n}%", mbNone:"Nothing set yet.", mbClear:"Reset all",
     mbRuleAll:"Stop when <strong>all</strong> of it fits", mbRuleOr:"Stop on your wishes <strong>or</strong> any duplicate",
-    dvEmptyT:"Which item do you want to improve?", dvEmptyH:"Hover the item, <b>Ctrl+C</b>, then you'll see its mods here.<br>Ctrl+<b>Alt</b>+C also gives me exact ranges, e.g. for uniques.",
-    dvTake:"Use last copied item", dvPasteH:"Or: Ctrl+C in game, then Ctrl+V here.", dvItemH:"New item? Just Ctrl+C on it while this tab is open.",
+    dvEmptyT:"Which item do you want to improve?", dvEmptyH:"Hover the item, <b>{key}</b>, then you'll see its mods here.<br>Ctrl+<b>Alt</b>+C also gives me exact ranges, e.g. for uniques.",
+    dvTake:"Use last copied item", dvPasteH:"Or: Ctrl+C in game, then Ctrl+V here.", dvItemH:"New item? Hover it and press {key} while this tab is open.",
     dvMin:"at least", dvMax:"at most", dvNoRange:"Range unknown. Ctrl+Alt+C on the item shows it", dvFixed:"fixed value", dvCur:"now",
     dvWhen:"When is it a hit?", dvAllBtn:"All thresholds", dvOneBtn:"One is enough", dvQuick:"Quick set", dvTop20:"Top 20 %", dvTop10:"Top 10 %", dvAllOff:"All off",
     dvQuickH:"Applies to the switched-on numbers, or to all if none is on.", dvNone:"No threshold yet. Switch on the toggle at a number.",
@@ -595,8 +725,21 @@ const I18N = {
     sChart:"Orbs per hit", sChartH:" · last 30 hits, old → new", sHistory:"Recent hits", sNoHits:"No hits yet. Good luck!", sResetSession:"Reset session", sResetAll:"Reset everything",
     sResetConfirm:"Really clear all counters and the hit list?", orbs:"orbs",
     secGuard:"Guard", secHit:"Hits", secOverlay:"In-game overlays", secRead:"Detection",
+    oOvSize:"Overlay size<small>Island, messages, item display and hit bar</small>", oOvAlpha:"Overlay opacity<small>Lower = more of the game stays visible</small>", oAccent:"Hit colour<small>Hit bar, Island and hits in the app</small>",
+    secData:"Game data (patch)", dtCheckBtn:"Check for updates", dtInfo:"{g} mods · {c} item types", dtActive:"active", dtUse:"Use", dtGet:"Download", dtBundled:"built in", dtOnline:"on GitHub",
+    dtHint:"Shows which patch the mod list is for. Download new patches with one click, older ones stay so you can switch back.",
+    oDataAuto:"Check for new patches on start<small>Only a look at GitHub, nothing is downloaded until you press “Download”</small>",
+    oKeyCopy:"{key} copies the item under the mouse<small>Hover the item, {key}: Chaos Ward copies the item (exactly one Ctrl+C, no game action) and only then turns on. With no item under the mouse the guard stays off.</small>",
+    oManualCopy:"Read your own Ctrl+C (old way)<small>When you press Ctrl+C in game yourself, Chaos Ward reads the item too. Usually not needed, {key} is enough.</small>",
+    oProtKey:"Ctrl+Shift+P key for item protection<small>Hover the item, Ctrl+Shift+P: protects it (or removes the protection).</small>",
+    ee2Hint:"Price check for any item. Runs next to Chaos Ward without getting in the way: Chaos Ward guards your crafting, Exiled Exchange 2 shows prices. Once linked it starts with Chaos Ward and your price checks go to Recent.",
+    ee2Found:"Installed{r} · price check: <b>{p}</b>", ee2Running:" · running", ee2Missing:"Not installed", ee2Conflict:"⚠ Your guard key {k} is also used by Exiled Exchange 2. Please change one of them.",
+    ee2Key:"Price check (Exiled Exchange 2)", ee2S1:"Installed", ee2S2:"Running", ee2S3:"Keys don't clash", ee2S4:"Linked with Chaos Ward",
+    ee2Connect:"Link now", ee2Install:"Install and link", ee2Waiting:"Waiting for install …", ee2Linked:"✓ Linked", ee2StartBtn:"Start", ee2DlBtn:"Download", ee2PickBtn:"Choose location", oEe2Auto:"Start with Chaos Ward<small>Starts Exiled Exchange 2 automatically if it is installed</small>",
+    secApp:"App", oAutostart:"Start with Windows<small>Chaos Ward then waits quietly in the tray at the bottom right</small>",
+    keysTitle:"Keys", keys:[["{k}","Hover the item: copy it and turn the guard on. Again: guard off"],["Ctrl+C","Read item (old way)","manualCopy"],["Ctrl+Shift+P","Protect / unprotect the item under the mouse","protKey"],["Alt + click","Click a protected item anyway","itemProt"],["Alt","In the Currency Exchange: read the rate list","market"],["Right-click Island","Guard on / off","island"]],
     mode1:"Simple", mode1d:"Short pause after every orb click. No Ctrl+C needed.",
-    mode3:"Automatic <span class=\"tag\">recommended</span>", mode3d:"Ctrl+C once, then spam. I read along after every click and lock on a wished mod.",
+    mode3:"Automatic <span class=\"tag\">recommended</span>", mode3d:"Hover the item, {key}, then spam. I read along after every click and lock on a wished mod.",
     mode2:"Smart", mode2d:"Locked after every click until you press Ctrl+C. Then I check the item.",
     pauseTitle:"Pause (Simple)", oKey:"In-game key", keyRec:"Custom key …", keyRecHint:"Press the key now, e.g. Ctrl+G or mouse button 4. Esc = cancel", keyRecCancel:"Cancelled", keyRecBad:"This key can't be used, please pick another", keyNeedMod:"Letters and digits need Ctrl, Alt or Shift", oShift:"Only brake while I hold Shift<small>For spam-crafting with Shift held</small>",
     oUnsure:"Release when unsure<small>Smoother, but a hit could slip through. Divine always stays locked.</small>",
@@ -604,24 +747,24 @@ const I18N = {
     snd_seal:"Seal", snd_gong:"Gong", snd_crystal:"Crystal", snd_harp:"Harp", snd_drum:"Drum", snd_hit:"Anvil", snd_chime:"Bell", snd_coin:"Coins", snd_ping:"Short ping", snd_windows:"Windows sound", snd_custom:"Own file …",
     oVolume:"Volume<small>Only affects Chaos Ward</small>", oHitAnim:"Hit animation<small>Seal: the lock clicks shut in half a second. Instant: no motion</small>", animSlot:"Seal", animInstant:"Instant", oHbSecs:"Show hit bar<small>Clicking always stays locked</small>", hbUntil:"until {k}",
     oTestHits:"Try the hit bar", testHitChaos:"Chaos", testHitDv:"Divine",
-    secProt:"Item protection", oProt:"Block clicks on protected items<small>In game: hover the item, Ctrl+C, then Ctrl+Shift+P. Clicks on it are blocked, so no stray orb and no accidental selling. Hold Alt to click it anyway.</small>", protRemove:"Unprotect", protNone:"No protected items yet.", oMarket:"Market reader in the Currency Exchange<small>Hover the rate list: spread, how fast it trades and which ratio to set</small>", oIsland:"Island at the top of the game<small>Small seal for quick access. Hover it to open Chaos Ward or toggle the guard</small>", oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
+    secProt:"Item protection", oProt:"Block clicks on protected items<small>In game: hover the item, then Ctrl+Shift+P (turn the key on below). Clicks on it are blocked, so no stray orb and no accidental selling. Hold Alt to click it anyway.</small>", protRemove:"Unprotect", protNone:"No protected items yet.", oMarket:"Market reader in the Currency Exchange <em class=\"beta\">Beta</em><small>In the Exchange, hover the ratio and hold Alt: Chaos Ward reads both lists and shows the spread and a good ratio. Still in progress, does not read every pair yet.</small>", oIsland:"Island at the top of the game<small>Small seal for quick access. Hover it to open Chaos Ward, switch the mode or toggle the guard</small>", oOverlay:"Show mods on Ctrl+C<small>Item display with tiers in game</small>", oStream:"Visible in Discord/OBS<small>Share the whole screen when streaming</small>",
     oPlace:"Move in-game windows<small>Messages, hit bar, item display and island</small>", placeStart:"Move", placeReset:"Default",
-    oDetect:"Detect item type automatically<small>Ctrl+C jumps to the matching list</small>", oFrac:"Don't count fractured mods",
+    oDetect:"Detect item type automatically<small>Copying an item jumps to the matching list</small>", oFrac:"Don't count fractured mods",
     oOcr:"Text recognition", ocrReset:"Re-calibrate", ocrFilterMax:"colour channel {n}", ocrFilterLum:"brightness {n}",
-    ocrLine:"Filter {f} · last Ctrl+C: {l} read · language {g}", ocrNever:"not yet", ocrNoEn:"English language pack missing. Windows Settings → Time & language → Add a language → English (US), then restart",
+    ocrLine:"Filter {f} · last copy: {l} read · language {g}", ocrNever:"not yet", ocrNoEn:"English language pack missing. Windows Settings → Time & language → Add a language → English (US), then restart",
     oDiag:"Record diagnostics<small>Saves unsure readings (max. 20)</small>", openDiag:"Folder", oDiagPack:"Diagnostic package for support<small>Puts system check, monitors, settings and unsure readings into a ZIP on your desktop</small>", diagPack:"Create", oLearned:"Learned spellings:", oLearnedHint:"From your Ctrl+C after “unsure”", resetLearn:"Clear",
     sysTitle:"System check", sysRe:"Check again", sysHint:"Shows whether everything fits on this PC. If something's wrong, send a screenshot of this.", sysAdminBtn:"Restart as administrator",
     langTitle:"Language", langHint:"Mod texts stay English, that's how the game data has them.",
     rulesTitle:"Extra wishes as text (advanced)", rulesHint:"Apply to every item. One line = one wish, e.g. “Movement Speed >= 30”. Lines starting with # are off.",
     stepsTitle:"How it works", factsTitle:"Good to know", safeTitle:"Safety",
-    safeText:"No macro: I never read game memory, never press keys and never click for you. I only read what you copy with Ctrl+C and, in Automatic mode, the tooltip on your screen. At most I hold back your clicks.",
+    safeText:"No macro: I never read game memory and never click for you. When you press {key}, I copy the item under the mouse (exactly one Ctrl+C, no game action). After that, in Automatic mode, I read the tooltip on your screen. At most I hold back your clicks.",
     uninstall:"Uninstall from this PC", licText:"Free, not for resale (PolyForm Noncommercial 1.0.0). Fan project, not affiliated with Grinding Gear Games.", saved:"Saved", times:"×",
     steps:[["Prepare the game","Set the game to “Windowed Fullscreen” and English, otherwise I can't see anything."],
-      ["Pick your wishes","Choose the item type and tick mods. Tip: copy your item with Ctrl+C and I pick the item type myself."],
-      ["Turn the guard on","Press {key} in game."],
-      ["Craft","Hover the item, Ctrl+C once. Then right-click the orb, hold Shift and spam."],
+      ["Pick your wishes","Choose the item type and tick mods."],
+      ["Turn the guard on","In game, hover the item and press {key}. I copy the item, pick its type and read along from then on."],
+      ["Craft","Right-click the orb, hold Shift and spam."],
       ["Hit!","As soon as it fits, the seal locks and your click is blocked. Press {key} when you're done."]],
-    facts:["Protect a finished item: hover it, Ctrl+C, then Ctrl+Shift+P. Clicks on it are blocked, hold Alt to click anyway.","If it says “Couldn't read it reliably”, press Ctrl+C once, that checks and unlocks.","Ctrl+Alt+C additionally shows prefix, suffix and exact ranges in game.","Tiers (T1 = best) come from the game data.","If the game runs as administrator, the system check tells you what to do.","Problems? Settings → create diagnostic package and send the ZIP file from your desktop."]
+    facts:["Uniques page: prices per season, possible corruption enchants and one click to the matching trade search. Prices come from poe.ninja, through our own list on GitHub.","Protect a finished item: turn on the Ctrl+Shift+P key in the settings, then hover the item and press Ctrl+Shift+P. Clicks on it are blocked, hold Alt to click anyway.","If it says “Couldn't read it reliably”: {key} ends it, {key} again on the item reads it fresh.","Tiers (T1 = best) come from the game data.","If the game runs as administrator, the system check tells you what to do.","Problems? Settings → create diagnostic package and send the ZIP file from your desktop."]
   }
 };
 const PAUSES = [300, 500, 800, 1000, 1500, 2000];
@@ -629,13 +772,13 @@ const SOUNDS = ["seal", "gong", "crystal", "harp", "drum", "hit", "chime", "coin
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const post = (...a) => { try { window.chrome.webview.postMessage(a.map(x => String(x).replace(/\x1f/g, " ")).join("\x1f")); } catch (e) {} };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
-const t = k => (I18N[ST.lang] || I18N.de)[k] ?? I18N.de[k] ?? k;
+const t = k => { const v = (I18N[ST.lang] || I18N.de)[k] ?? I18N.de[k] ?? k; return typeof v === "string" ? v.replaceAll("{key}", ST.key || "F6") : v; };
 const fmt = (k, o) => Object.entries(o).reduce((s, [a, b]) => s.replaceAll("{" + a + "}", b), t(k));
 
 let ST = { lang:"de", mode:3, pauseMs:800, shiftOnly:1, itemOverlay:1, autoDetect:1, sound:1, ignoreFractured:1, unsureRelease:0, streamVisible:1,
            volume:80, diag:1, learned:0, key:"F6", keys:["F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"],
            activeCat:"", on:0, hit:0, wishes:{}, need:{}, rules:"", ver:"", installed:0 };
-let DB = { groups:{}, cats:[], byId:{}, ver:"" };
+let DB = { groups:{}, cats:[], byId:{}, ver:"" }, MODS_PATH = "../Mods.tsv";
 let STATS = { session:0, total:0, since:0, dvSession:0, dvTotal:0, dvSince:0, cur:"c", history:[] };
 const fmtN = v => (+v || 0).toLocaleString(ST.lang);
 let filter = "all", loaded = false, openGroup = "", SYS = [];
@@ -647,7 +790,7 @@ const GEM = { Amethyst:"#9b5de5", Basalt:"#3d3f45", Bismuth:"linear-gradient(135
 async function loadDB() {
   $("#list").innerHTML = `<div class="empty">${t("loading")}</div>`;
   try {
-    const txt = await (await fetch("../Mods.tsv")).text();
+    const txt = await (await fetch(MODS_PATH)).text();
     for (const line of txt.split(/\r?\n/)) {
       const f = line.split("\t");
       if (f[0] === "V") DB.ver = f[1];
@@ -673,8 +816,6 @@ function renderGuard() {
   $("#gState").textContent = t(ST.hit ? "gHit" : ST.on ? "gOn" : "gOff");
   $("#gKey").textContent = ST.key;
   $("#toggle").textContent = t(ST.hit ? "ctaHit" : ST.on ? "ctaOff" : "ctaOn");
-  const dv = STATS.cur === "d", n = Math.max(0, +(dv ? STATS.dvSince : STATS.since) || 0);
-  $("#gReel").innerHTML = `<b>${fmtN(n)}</b><span>${t(dv ? "gCapDv" : "gCap")}</span>`;
   $("#ver").textContent = `Version ${ST.ver || "?"} · ${ST.lang === "de" ? "Spieldaten" : "game data"} ${DB.ver || "?"}`;
 }
 function applyI18n() {
@@ -682,7 +823,10 @@ function applyI18n() {
   $$("[data-i18n]").forEach(el => el.innerHTML = t(el.dataset.i18n));
   $("#search").placeholder = t("search"); $("#catSearch").placeholder = t("catSearch");
   $("#steps").innerHTML = t("steps").map((s, i) => `<div class="step"><div class="n">${i + 1}</div><div><b>${s[0]}</b><span>${s[1].replaceAll("{key}", ST.key)}</span></div></div>`).join("");
-  $("#facts").innerHTML = t("facts").map(f => `<li>${f}</li>`).join("");
+  $("#facts").innerHTML = t("facts").map(f => `<li>${f.replaceAll("{key}", ST.key || "F6")}</li>`).join("");
+  // nur Tasten zeigen, die gerade an sind (alles außer der Schutz-Taste ist ab Werk aus)
+  const ee2 = ST.ee2 && +ST.ee2.found ? [[ST.ee2.price || "Ctrl + D", t("ee2Key")]] : [];
+  $("#keys").innerHTML = t("keys").filter(([, , need]) => !need || +ST[need]).concat(ee2).map(([k, d]) => `<kbd>${esc(k.replace("{k}", ST.key || "F6"))}</kbd><span>${d}</span>`).join("");
 }
 
 // ---------- Mods wählen ----------
@@ -694,7 +838,7 @@ function renderSide() {
     const open = q || main === openGroup;
     return `<div class="grp${open ? " open" : ""}"><button data-g="${esc(main)}">${esc(main)}<span class="chev">›</span></button><div class="items">` +
       cats.map(c => { const n = Object.keys(wishesOf(c.id)).length;
-        return `<button class="cat${c.id === ST.activeCat ? " on" : ""}" data-cat="${c.id}"><span>${esc(c.sub)}</span>${n ? `<span class="badge">${n}</span>` : ""}</button>`; }).join("") +
+        return `<button class="cat${c.id === ST.activeCat ? " on" : ""}" data-cat="${c.id}"><img class="cimg" src="img/items/${esc(c.id)}.webp" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="cname">${esc(c.sub)}</span>${n ? `<span class="badge">${n}</span>` : ""}</button>`; }).join("") +
       `</div></div>`;
   }).join("") || `<div class="empty">${t("noMods")}</div>`;
 }
@@ -836,6 +980,148 @@ function dvFind(el) { const r = el.closest(".dn"); if (!r) return null; const d 
 
 // ---------- Tracker ----------
 let PROT = [];
+// ---------- Uniques ----------
+let UQ = { files: [], sel: { name: "", base: "", wish: [] }, msg: "", busy: 0 }, UQD = null, uqCat = "", uqPick = "";
+async function uqLoad(path) {
+  UQD = null;
+  if (!path) { renderUq(); return; }
+  try {
+    const txt = await (await fetch(path)).text(), d = { league: "", date: "", cur: "divine", ench: {}, items: [] };
+    for (const line of txt.split(/\r?\n/)) {
+      const f = line.split("\t");
+      if (f[0] === "H") { d.league = f[1]; d.date = f[2]; d.cur = f[3] || "divine"; d.ex = +f[4] || 0; }
+      else if (f[0] === "E") d.ench[f[1]] = { text: f[2], trade: f[3] || "" };
+      else if (f[0] === "U") d.items.push({ name: f[1], base: f[2], cat: f[3], price: +f[4] || 0, listings: +f[5] || 0, ench: f[6] ? f[6].split(",") : [],
+        icon: f[7] && /^[A-Za-z0-9_\-\/.=]+$/.test(f[7]) ? "https://web.poecdn.com/gen/image/" + f[7] : "" });
+    }
+    UQD = d;
+  } catch (e) { UQD = null; }
+  renderUq();
+}
+const curShort = c => c === "divine" ? "div" : c === "exalted" ? "ex" : c === "chaos" ? "c" : c;
+// unter 1 Divine lieber in Exalted (lesbarer als 0,01 div)
+const fmtPrice = v => { if (UQD && UQD.ex && UQD.cur === "divine" && v < 1) { const e = v * UQD.ex; return (e >= 10 ? Math.round(e) : e.toFixed(1)).toLocaleString(ST.lang) + " ex"; }
+  const n = v >= 100 ? Math.round(v).toLocaleString(ST.lang) : v >= 10 ? v.toFixed(1) : v.toFixed(2); return n + " " + curShort(UQD ? UQD.cur : "divine"); };
+const FEW = 10;   // weniger Angebote: Preis ist nicht verlässlich (Ausreißer, Preis-Tricks)
+function tradeUrl(it, opt) {
+  const q = { query: { status: { option: "online" }, name: it.name, type: it.base, stats: [{ type: "and", filters: [] }], filters: {} }, sort: { price: "asc" } };
+  const misc = {};
+  if (opt.corr) misc.corrupted = { option: "true" };
+  if (opt.twice) misc.twice_corrupted = { option: "true" };
+  if (Object.keys(misc).length) q.query.filters.misc_filters = { filters: misc };
+  if (opt.ench) q.query.stats[0].filters.push({ id: opt.ench });
+  return "https://www.pathofexile.com/trade2/search/poe2/" + encodeURIComponent(UQD.league) + "?q=" + encodeURIComponent(JSON.stringify(q));
+}
+function renderUq() {
+  const files = UQ.files || [], sel = $("#uqLeague");
+  sel.innerHTML = files.map(f => `<option value="${esc(f.path)}"${UQD && f.league === UQD.league ? " selected" : ""}>${esc(f.league)}</option>`).join("");
+  $("#uqUpdate").disabled = !!+UQ.busy;
+  $("#uqSearch").placeholder = t("uqSearch");
+  if (!UQD) { $("#uqRows").innerHTML = `<div class="empty">${UQ.msg ? esc(UQ.msg) : t("uqNoData")}</div>`; $("#uqInfo").textContent = ""; $("#uqCats").innerHTML = ""; $("#uqDetail").innerHTML = ""; return; }
+  const cats = [...new Set(UQD.items.map(i => i.cat))].sort();
+  $("#uqCats").innerHTML = [["", t("uqAll")], ...cats.map(c => [c, c])].map(([k, l]) => `<option value="${esc(k)}"${k === uqCat ? " selected" : ""}>${esc(l)}</option>`).join("");
+  const q = $("#uqSearch").value.trim().toLowerCase();
+  const rows = UQD.items.filter(i => (!uqCat || i.cat === uqCat) && (!q || (i.name + " " + i.base).toLowerCase().includes(q)));
+  $("#uqInfo").textContent = (UQ.msg ? UQ.msg + " · " : "") + fmt("uqInfo", { n: rows.length, d: UQD.date, l: UQD.league });
+  const key = i => i.name + "|" + i.base, wishKey = UQ.sel.name + "|" + UQ.sel.base;
+  $("#uqRows").innerHTML = rows.length ? rows.slice(0, 400).map(i => { const few = i.listings < FEW;
+    return `<div class="uqrow${key(i) === uqPick ? " on" : ""}" data-k="${esc(key(i))}"><span class="uqico">${i.icon ? `<img loading="lazy" src="${esc(i.icon)}" alt="" onerror="this.remove()">` : ""}</span><span><b>${esc(i.name)}</b><small>${esc(i.base)}${key(i) === wishKey && UQ.sel.wish.length ? " · " + fmt("uqWishN", { n: UQ.sel.wish.length }) : ""}</small></span>
+      <span class="ct">${esc(i.cat)}</span><span class="pr${few ? " few" : ""}">${few ? t("uqFew") : fmtPrice(i.price)}</span><span class="ls">${i.listings}×</span></div>`; }).join("") : `<div class="empty">${t("uqNone")}</div>`;
+  const it = UQD.items.find(i => key(i) === uqPick);
+  if (!it) { $("#uqDetail").innerHTML = `<div class="empty">${t("uqPick")}</div>`; return; }
+  const wish = key(it) === wishKey ? UQ.sel.wish : [];
+  const ench = it.ench.map(n => UQD.ench[n]).filter(Boolean);
+  $("#uqDetail").innerHTML = `${it.icon ? `<div class="uqbig"><img src="${esc(it.icon)}" alt="" onerror="this.parentNode.remove()"></div>` : ""}<h2>${esc(it.name)}</h2><div class="sub">${esc(it.base)} · ${it.listings < FEW ? t("uqFew") : fmtPrice(it.price)} · ${it.listings}×</div>
+    <div class="uqbtns"><button class="chip on" data-trade="plain">${t("uqTrade")}</button><button class="chip" data-trade="corr">${t("uqCorr")}</button><button class="chip" data-trade="twice">${t("uqTwice")}</button></div>
+    <h3 class="sec">${t("uqEnchT")}</h3><p class="hint" style="margin-bottom:8px">${t("uqEnchH")}</p>
+    ${ench.map(e => `<div class="ench${wish.includes(e.text) ? " on" : ""}" data-e="${esc(e.text)}"><i></i><span>${esc(e.text)}</span>${e.trade ? `<button class="link" data-etrade="${esc(e.trade)}">${t("uqTradeOne")}</button>` : "<span></span>"}</div>`).join("")}`;
+}
+$("#uqLeague").onchange = e => { UQ.cur = e.target.value; post("uqFile", e.target.value); uqLoad(e.target.value); };
+$("#uqUpdate").onclick = () => post("uqUpdate");
+$("#uqSearch").oninput = () => renderUq();
+$("#uqCats").onchange = e => { uqCat = e.target.value; renderUq(); };
+$("#uqRows").onclick = e => { const r = e.target.closest("[data-k]"); if (!r) return; uqPick = r.dataset.k; renderUq(); };
+$("#uqDetail").onclick = e => {
+  const it = UQD && UQD.items.find(i => i.name + "|" + i.base === uqPick); if (!it) return;
+  const tb = e.target.closest("[data-trade]"), et = e.target.closest("[data-etrade]"), en = e.target.closest("[data-e]");
+  if (tb) { const m = tb.dataset.trade; post("open", tradeUrl(it, { corr: m !== "plain", twice: m === "twice" })); return; }
+  if (et) { post("open", tradeUrl(it, { corr: true, ench: et.dataset.etrade })); return; }
+  if (en) { const on = !(UQ.sel.name === it.name && UQ.sel.base === it.base && UQ.sel.wish.includes(en.dataset.e));
+    post("uqWish", it.name, it.base, en.dataset.e, on ? 1 : 0); }
+};
+
+// ---------- Verlauf ----------
+let RECENT = [];
+function uqFind(name, base) { return UQD ? UQD.items.find(i => i.name === name && (!base || i.base === base)) || UQD.items.find(i => i.name === name) : null; }
+function tradeBase(base, unique) {
+  const lg = UQD ? UQD.league : (UQ.files[0] || {}).league || "Standard";
+  const q = { query: { status: { option: "online" }, type: base, stats: [{ type: "and", filters: [] }],
+    filters: { type_filters: { filters: { rarity: { option: unique ? "unique" : "nonunique" } } } } }, sort: { price: "asc" } };
+  return "https://www.pathofexile.com/trade2/search/poe2/" + encodeURIComponent(lg) + "?q=" + encodeURIComponent(JSON.stringify(q));
+}
+function renderRec() {
+  if (!RECENT.length) { $("#recList").innerHTML = `<div class="empty">${t("recEmpty")}</div>`; return; }
+  $("#recList").innerHTML = RECENT.map((e, idx) => {
+    const uq = /unique/i.test(e.rarity), u = uq ? uqFind(e.name, e.base) : null;
+    const img = u && u.icon ? u.icon : e.cat ? `img/items/${e.cat}.webp` : "";
+    const price = u ? (u.listings < FEW ? t("uqFew") : fmtPrice(u.price)) : "";
+    const cls = "r-" + String(e.rarity || "").toLowerCase();
+    return `<div class="rec" data-i="${idx}"><div class="ri">${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ""}</div>
+      <div><b class="${esc(cls)}">${esc(e.name)}</b>${e.name !== e.base ? `<div class="meta">${esc(e.base)}</div>` : ""}
+      <div class="meta"><i>${esc(t("recSrc_" + e.src))}</i> · ${esc(e.t)}${price ? ` · ${t("recPrice")} ${esc(price)}` : ""}</div></div>
+      <div class="acts">${e.mods && e.mods.length ? `<button class="chip" data-act="mods">${t("recMods")}</button>` : ""}
+        <button class="chip" data-act="trade">${t("recTrade")}</button>
+        ${uq && u ? `<button class="chip on" data-act="uq">${t("recUq")}</button>` : ""}${!uq && e.cat && DB.byId[e.cat] ? `<button class="chip on" data-act="chaos">${t("recChaos")}</button>` : ""}</div>
+      <div class="mods">${(e.mods || []).map(m => esc(m)).join("<br>")}</div></div>`; }).join("");
+}
+$("#recList").onclick = e => {
+  const b = e.target.closest("[data-act]"), r = e.target.closest(".rec"); if (!b || !r) return;
+  const it = RECENT[+r.dataset.i], a = b.dataset.act;
+  if (a === "mods") r.classList.toggle("open");
+  else if (a === "trade") { const u = /unique/i.test(it.rarity) ? uqFind(it.name, it.base) : null;
+    post("open", u ? tradeUrl(u, {}) : tradeBase(it.base, /unique/i.test(it.rarity))); }
+  else if (a === "chaos") { selectCat(it.cat); showPage("pMods"); post("tab", "pMods"); }
+  else if (a === "uq") { const u = uqFind(it.name, it.base); uqPick = u.name + "|" + u.base; $("#uqSearch").value = ""; uqCat = ""; showPage("pUq"); post("tab", "pUq"); renderUq();
+    const row = document.querySelector('.uqrow.on'); if (row) row.scrollIntoView({ block: "center" }); }
+};
+$("#recClear").onclick = () => post("recentClear");
+
+let DATA = null;
+function renderData() {
+  const d = DATA || { cur: DB.ver, groups: Object.keys(DB.groups).length, cats: DB.cats.length, local: [], remote: [] };
+  $("#dataCur").textContent = d.cur || "–";
+  $("#dataInfo").textContent = fmt("dtInfo", { g: d.groups, c: d.cats });
+  const m = $("#dataMsg");
+  m.style.display = d.msg || +d.busy ? "" : "none";
+  m.textContent = d.msg || t("dtHint"); m.className = "dmsg" + (+d.busy ? " busy" : d.msg ? (+d.ok ? " ok" : " bad") : "");
+  // Reihenfolge: wie auf GitHub (neueste zuerst, nach Datum), danach nur lokal vorhandene
+  const all = new Map();
+  for (const x of d.remote || []) all.set(x.ver, { ver: x.ver, have: +x.have, date: x.date, online: 1 });
+  for (const x of d.local || []) all.set(x.ver, Object.assign(all.get(x.ver) || { ver: x.ver }, { have: 1, bundled: +x.bundled }));
+  const rows = [...all.values()];
+  $("#dataList").innerHTML = rows.map(r => {
+    const cur = r.ver === d.cur, info = [r.bundled ? t("dtBundled") : "", r.date || "", r.online && !r.have ? t("dtOnline") : ""].filter(Boolean).join(" · ");
+    const act = cur ? `<span class="tag">${t("dtActive")}</span>` : r.have ? `<button class="chip" data-use="${esc(r.ver)}">${t("dtUse")}</button>`
+      : `<button class="chip on" data-get="${esc(r.ver)}"${+d.busy ? " disabled" : ""}>${t("dtGet")}</button>`;
+    return `<div class="drow${cur ? " cur" : ""}"><b>${esc(r.ver)}</b><small>${esc(info)}</small>${act}</div>`;
+  }).join("");
+  $("#dataCheck").disabled = !!+d.busy;
+  const newer = rows.length > 0 && rows[0].online && !rows[0].have;
+  $('nav button[data-page="pSet"]').classList.toggle("dot", newer);
+}
+$("#dataCheck").onclick = () => post("dataCheck");
+$("#ee2Start").onclick = () => post("ee2Start");
+$("#ee2Pick").onclick = () => post("ee2Pick");
+$("#ee2Dl").onclick = () => post("open", "https://kvan7.github.io/Exiled-Exchange-2/download");
+$("#dataList").onclick = e => { const u = e.target.closest("[data-use]"), g = e.target.closest("[data-get]");
+  if (u) post("dataUse", u.dataset.use); else if (g && !g.disabled) post("dataGet", g.dataset.get); };
+// andere Mod-Liste aktiv -> neu laden und alles neu zeichnen (Wünsche bleiben)
+async function reloadDB(path) {
+  DB = { groups:{}, cats:[], byId:{}, ver:"" }; loaded = false; MODS_PATH = path;
+  await loadDB();
+  if (!DB.byId[ST.activeCat] && DB.cats[0]) ST.activeCat = DB.cats[0].id;
+  renderAll();
+}
 function renderProt() {
   $("#protList").innerHTML = PROT.length ? PROT.map(x => `<div class="pitem"><span><b>${esc(x.name)}</b><small>${esc(x.base)}</small></span><button class="link" data-prot="${esc(x.name)}">${t("protRemove")}</button></div>`).join("")
     : `<p class="hint">${t("protNone")}</p>`;
@@ -865,6 +1151,12 @@ function renderStats() {
 }
 
 // ---------- Einstellungen ----------
+const ACCENTS = { gold: ["#D6A640", "#F0CF7A"], ember: ["#DD7A3E", "#F4B183"], crimson: ["#D2505E", "#F18F98"], violet: ["#9A7EEB", "#C9B8FF"], ice: ["#5BB6DD", "#A9DDF4"] };
+function applyAccent() {
+  const c = ACCENTS[ST.accent] || ACCENTS.gold, r = document.documentElement.style, n = parseInt(c[0].slice(1), 16);
+  r.setProperty("--hit", c[0]); r.setProperty("--hit-hi", c[1]);
+  r.setProperty("--hit-a", `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},.12)`);
+}
 function renderSettings() {
   $$(".opt").forEach(o => o.classList.toggle("on", +o.dataset.mode === +ST.mode));
   $("#pauseRow").style.display = +ST.mode === 1 ? "" : "none";
@@ -883,8 +1175,24 @@ function renderSettings() {
   $("#sndSel").innerHTML = SOUNDS.map(k => `<option value="${k}"${k === cur ? " selected" : ""}>${t("snd_" + k)}</option>`).join("");
   $("#sndFile").textContent = cur === "custom" ? (ST.soundCustom || t("sndCustomNone")) : "";
   $$("#hitAnim button").forEach(b => b.classList.toggle("on", b.dataset.v === (ST.hitAnim || "slot")));
+  $("#ovSize").innerHTML = [80, 90, 100, 115, 130, 150].map(n => `<button class="chip${n === +(ST.ovSize || 100) ? " on" : ""}" data-s="${n}">${n}%</button>`).join("");
+  if (document.activeElement !== $("#ovAlpha")) $("#ovAlpha").value = ST.ovAlpha ?? 100;
+  $("#ovAlphaN").textContent = $("#ovAlpha").value + "%";
+  $("#accent").innerHTML = Object.entries(ACCENTS).map(([k, c]) => `<button data-a="${k}" class="${k === (ST.accent || "gold") ? "on" : ""}" style="background:${c[0]}" title="${k}"></button>`).join("");
+  applyAccent();
   $("#hbSecs").innerHTML = [0, 3, 5, 10].map(n => `<button class="chip${n === +(ST.hitBarSecs || 0) ? " on" : ""}" data-s="${n}">${n ? n + " s" : fmt("hbUntil", { k: ST.key })}</button>`).join("");
-  renderOcr(); renderSys();
+  renderOcr(); renderSys(); renderData(); renderEe2();
+}
+function renderEe2() {
+  const e = ST.ee2 || {}, linked = +e.found && +ST.ee2Link && +ST.ee2Auto;
+  const step = (ok, txt, bad) => `<li class="${bad ? "bad" : ok ? "ok" : ""}">${txt}</li>`;
+  $("#ee2Setup").innerHTML = `<ol>${step(+e.found, t("ee2S1"))}${step(+e.running, t("ee2S2"))}${step(+e.found && !e.conflict, t("ee2S3"), e.conflict)}${step(linked, t("ee2S4"))}</ol>`
+    + (linked ? `<span class="done">${t("ee2Linked")}</span>` : `<button class="go" id="ee2Go">${+e.waiting ? t("ee2Waiting") : t(+e.found ? "ee2Connect" : "ee2Install")}</button>`);
+  const go = $("#ee2Go"); if (go) go.onclick = () => post("ee2Setup");
+  $("#ee2State").innerHTML = (+e.found ? fmt("ee2Found", { r: +e.running ? t("ee2Running") : "", p: esc(e.price || "Ctrl + D") }) : t("ee2Missing"))
+    + (e.conflict ? `<small style="color:var(--bad)">${fmt("ee2Conflict", { k: esc(ST.key) })}</small>` : "");
+  $("#ee2Start").style.display = +e.found && !+e.running ? "" : "none";
+  $("#ee2Dl").style.display = +e.found ? "none" : "";
 }
 function renderOcr() {
   const o = ST.ocr || {}, b = +o.best || 1215, f = b >= 1000 ? fmt("ocrFilterMax", { n: b - 1000 }) : fmt("ocrFilterLum", { n: b });
@@ -897,7 +1205,7 @@ function renderSys() {
 }
 
 function renderAll() {
-  applyI18n(); renderGuard(); renderSettings(); renderStats(); renderMb(); renderDv();
+  applyI18n(); renderRec(); if (UQD || UQ.files.length) renderUq(); renderGuard(); renderSettings(); renderStats(); renderMb(); renderDv();
   if (loaded) { renderSide(); renderList(); renderHunt(); }
 }
 let toastT;
@@ -909,7 +1217,9 @@ function showPage(id) {
 
 // ---------- Ereignisse ----------
 // Klick des Spielers = gewählter Reiter (nur dann gilt "Divine-Reiter offen"); Sprung durch die App zählt nicht
-$$("#nav button").forEach(b => b.onclick = () => { showPage(b.dataset.page); post("tab", b.dataset.page); if (b.dataset.page === "pSet") post("sysCheck"); });
+$$("#nav button").forEach(b => b.onclick = () => { const pg = b.dataset.page; showPage(pg); post("tab", pg); if (pg === "pSet") post("sysCheck");
+  // Zähler links folgt dem Reiter: Uniques (Mageblood, Divine) = Divine Orbs, Mods wählen = Chaos Orbs
+  if (pg === "pMb" || pg === "pDv" || pg === "pMods") { STATS.cur = pg === "pMods" ? "c" : "d"; renderGuard(); } });
 $("#toggle").onclick = () => post("toggle");
 $("#catSearch").oninput = () => renderSide();
 $("#side").onclick = e => {
@@ -984,7 +1294,7 @@ $("#resetAll").onclick = () => { if (confirm(t("sResetConfirm"))) post("resetAll
 $$(".opt").forEach(o => o.onclick = () => { ST.mode = +o.dataset.mode; post("set", "Mode", ST.mode); renderSettings(); });
 $("#pauses").onclick = e => { const b = e.target.closest("[data-p]"); if (!b) return; ST.pauseMs = +b.dataset.p; post("set", "PauseMs", ST.pauseMs); renderSettings(); };
 $$(".sw[data-k]").forEach(s => s.onclick = e => { if (e.target.closest("button")) return; const k = s.dataset.k; ST[k] = +ST[k] ? 0 : 1;
-  post("set", k[0].toUpperCase() + k.slice(1), ST[k]); renderSettings(); });
+  post("set", k[0].toUpperCase() + k.slice(1), ST[k]); renderSettings(); applyI18n(); });
 $("#keySel").onchange = e => { const v = e.target.value; if (v === "__rec") { recordKey(); return; } post("set", "Key", v); };
 // eigene Taste aufnehmen: nächste Taste (mit Strg/Alt/Shift) oder Maustaste 3/4/5; Esc bricht ab
 function recordKey() {
@@ -1017,6 +1327,10 @@ $("#sndSel").addEventListener("change", e => { const v = e.target.value; ST.soun
   if (v === "custom") post("soundPick"); else { post("set", "SoundName", v); post("soundTest"); } renderSettings(); });
 $("#sndTest").onclick = () => post("soundTest");
 $("#vol").addEventListener("input", e => { $("#volN").textContent = e.target.value + "%"; });
+$("#ovAlpha").addEventListener("input", e => { $("#ovAlphaN").textContent = e.target.value + "%"; });
+$("#ovAlpha").addEventListener("change", e => { ST.ovAlpha = +e.target.value; post("set", "OvAlpha", ST.ovAlpha); });
+$("#ovSize").onclick = e => { const b = e.target.closest("button[data-s]"); if (!b) return; ST.ovSize = +b.dataset.s; post("set", "OvSize", ST.ovSize); renderSettings(); };
+$("#accent").onclick = e => { const b = e.target.closest("button[data-a]"); if (!b) return; ST.accent = b.dataset.a; post("set", "Accent", ST.accent); renderSettings(); };
 $("#vol").addEventListener("change", e => { ST.volume = +e.target.value; post("set", "Volume", ST.volume); });
 $("#trkSeg").onclick = e => { const b = e.target.closest("button[data-k]"); if (!b) return; trkKind = b.dataset.k; renderStats(); };
 $("#hitAnim").onclick = e => { const b = e.target.closest("button[data-v]"); if (!b) return; ST.hitAnim = b.dataset.v; post("set", "HitAnim", ST.hitAnim); renderSettings(); };
@@ -1040,7 +1354,8 @@ $("#uninstall").onclick = () => post("uninstall");
 try {
   window.chrome.webview.addEventListener("message", e => {
     const m = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-    if (m.type === "state") { Object.assign(ST, m); if (!DB.byId[ST.activeCat] && DB.cats[0]) ST.activeCat = DB.cats[0].id; renderAll(); }
+    if (m.type === "state") { Object.assign(ST, m); if (!DB.byId[ST.activeCat] && DB.cats[0]) ST.activeCat = DB.cats[0].id; renderAll();
+      if (m.modsPath && m.modsPath !== MODS_PATH && loaded) reloadDB(m.modsPath); }
     else if (m.type === "status") { ST.on = m.on; ST.hit = m.hit; renderGuard(); }
     else if (m.type === "cat") selectCat(m.id, true);
     else if (m.type === "saved") toast(t("saved"));
@@ -1049,6 +1364,14 @@ try {
     else if (m.type === "sys") { SYS = m.items || []; renderSys(); }
     else if (m.type === "page") showPage(m.id);
     else if (m.type === "prot") { PROT = m.items || []; renderProt(); }
+    else if (m.type === "uq") { const prevPath = UQ.cur; UQ = m; UQ.sel = m.sel || { name: "", base: "", wish: [] }; UQ.sel.wish = UQ.sel.wish || [];
+      if (m.cur && (m.cur !== prevPath || !UQD)) uqLoad(m.cur); else renderUq(); }
+    else if (m.type === "recent") { RECENT = m.items || []; renderRec(); }
+    else if (m.type === "uqPick") { uqPick = m.name + "|" + m.base; $("#uqSearch").value = ""; uqCat = ""; renderUq();
+      const r = document.querySelector('.uqrow.on'); if (r) r.scrollIntoView({ block: "center" }); }
+    else if (m.type === "data") { const prev = DATA; DATA = m; renderData();
+      if (m.path && m.path !== MODS_PATH) reloadDB(m.path);
+      if (m.msg && (!prev || prev.msg !== m.msg) && !+m.busy) toast(m.msg, true); }
     else if (m.type === "dv") { ST.dv = m.dv; renderDv(); }
     else if (m.type === "toast") toast(m.text, +m.long);
   });

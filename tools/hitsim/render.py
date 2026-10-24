@@ -50,9 +50,18 @@ async def main():
             pg.on('console', lambda m: m.type == 'error' and errors.append(m.text))
             await pg.goto('http://localhost:8771/harness.html?hs=' + os.environ.get('HS', '1.5') + '&lang=' + os.environ.get('LANG_HIT', 'de'))
             await pg.evaluate('window.ready')
-            for name in (['chaos', 'dv'] if WHICH == 'all' else [WHICH]):
+            for name in (['chaos', 'dv', 'multi', 'mb', 'long', 'uq'] if WHICH == 'all' else [WHICH]):
                 if name == 'chaos':
                     await pg.evaluate(f"window.INFO = makeInfo('', 1, 148, {json.dumps(CHAOS['reel'])})")
+                elif name == 'multi':
+                    await pg.evaluate(f"window.INFO = makeInfo('', 2, 61, {json.dumps(CHAOS['reel'])})")
+                elif name == 'long':
+                    r = dict(CHAOS['reel']); r['Lines'] = list(r['Lines']); r['Lines'][2] = 'Gain 29% of Damage as Extra Cold Damage (21-35)%'; r['Sub'] = 'T1  Gain of Damage as Extra Cold Damage'
+                    await pg.evaluate(f"window.INFO = makeInfo('', 1, 1234, {json.dumps(r)})")
+                elif name == 'uq':
+                    await pg.evaluate("window.INFO = makeInfo('uq', 1, 7, {Lines: ['14% increased Rarity of Items found'], Target: 1, Sub: '14% increased Rarity of Items found'})")
+                elif name == 'mb':
+                    await pg.evaluate(f"window.INFO = makeInfo('mb', 1, 340, {json.dumps(CHAOS['reel'])}); INFO.Sub = 'Ruby ×2  ·  Sapphire  ·  Jade'")
                 else:
                     await pg.evaluate(f"""(() => {{ const dv = ({JS_DV})({json.dumps(DV_STATE)}); Dv = dv;
                         const vals = new Map(Object.entries({json.dumps(DV_VALS)}));

@@ -27,7 +27,7 @@ STATE = {"type": "state", "lang": "de", "theme": "obsidian", "mode": 3, "pauseMs
          "key": "F6", "keys": ["F2","F3","F4","F5","F6","F7"], "activeCat": "boots_dex_armour", "on": 1, "hit": 0,
          "wishes": {}, "need": {}, "rules": "# test\nMovement Speed >= 30", "ver": "8.1.0", "installed": 1,
          "mb": {"rules": {"Ruby": 2, "Sapphire": 1}, "any": 0, "eff": 40, "ban": ["Basalt","Granite"], "dup": 1}, "legacies": L,
-         "soundName": "seal", "soundCustom": "", "hitBarSecs": 5, "ocr": {"best": 1215, "last": "6 Zeilen", "lang": "en-US", "en": 1}, "dv": DV}
+         "soundName": "seal", "soundCustom": "", "hitBarSecs": 5, "ee2": {"found": 1, "running": 0, "path": "C:/x/Exiled Exchange 2.exe", "price": "Ctrl + D", "conflict": ""}, "ocr": {"best": 1215, "last": "6 Zeilen", "lang": "en-US", "en": 1}, "dv": DV}
 STATS = {"type": "stats", "session": 137, "total": 4821, "since": 23, "dvSession": 31, "dvTotal": 212, "dvSince": 9, "cur": "c", "history": [
   {"t": "21.10. 15:40", "name": "Eagle Branch  ·  Dueling Wand", "orbs": 58},
   {"t": "21.10. 15:02", "name": "Doom Stride  ·  Velour Shoes", "orbs": 121},
@@ -52,6 +52,10 @@ async def main():
                 pg.on('pageerror', lambda e: errors.append(str(e)))
                 pg.on('console', lambda m: m.type == 'error' and errors.append(m.text))
                 await pg.add_init_script(FAKE)
+                # Item-Bilder kommen im echten Programm vom GGG-Bilder-Server; hier ohne Internet ein Platzhalter
+                from PIL import Image as _I; import io as _io
+                _b = _io.BytesIO(); _I.new('RGBA', (94, 47), (170, 120, 60, 255)).save(_b, 'PNG'); _png = _b.getvalue()
+                await pg.route('https://web.poecdn.com/**', lambda r: r.fulfill(status=200, content_type='image/png', body=_png))
                 await pg.goto('http://localhost:8767/ui/index.html')
                 await pg.wait_for_function("window.__sent.includes('ready')", timeout=10000)
                 gids = await pg.evaluate("DB.byId['boots_dex_armour'].gids")
@@ -82,8 +86,8 @@ async def main():
                 await pg.screenshot(path=str(OUT / '2_mods_interaction.png'))
                 hunt_n = await pg.evaluate("document.querySelectorAll('#hunt li').length")
                 check(hunt_n == 5, f'hunt list 5 entries (got {hunt_n})')
-                reel = await pg.evaluate("document.querySelector('#gReel b').textContent")
-                check(reel == '23', f'guard counter 23 (got {reel})')
+                gone = await pg.evaluate("!document.querySelector('#gReel')")
+                check(gone, 'orb counter removed from the sidebar')
                 await pg.fill('#search', 'life'); await pg.wait_for_timeout(100)
                 n_life = len(await pg.query_selector_all('.mod'))
                 await pg.fill('#search', '')
@@ -167,12 +171,77 @@ async def main():
                 await pg.select_option('#sndSel', 'coin')
                 await pg.click('#hbSecs [data-s="0"]'); await pg.click('#testHit'); await pg.click('#testHitDv2')
                 await pg.click('#placeStart'); await pg.click('#ocrReset'); await pg.click('[data-act=admin]')
+                await pg.click('#ovSize [data-s="130"]'); await pg.click('#accent [data-a="violet"]'); await pg.click('.sw[data-k="autostart"]')
+                await pg.wait_for_timeout(100)
+                sent = await pg.evaluate("JSON.stringify(window.__sent.slice(-3))")
+                check('OvSize' in sent and 'Accent' in sent and 'Autostart' in sent, f'new settings sent (got {sent})')
+                hitc = await pg.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--hit').trim()")
+                check(hitc.lower() == '#9a7eeb', f'accent applied (got {hitc})')
+                await pg.evaluate("document.querySelector('#ovSize').scrollIntoView({block:'center'})"); await pg.wait_for_timeout(80)
+                await pg.screenshot(path=str(OUT / '17_overlay_opts.png'))
                 await pg.click('#langSeg button[data-l="en"]'); await pg.wait_for_timeout(150)
                 await pg.screenshot(path=str(OUT / '13_settings_en.png'))
 
                 # --- Hilfe ---
                 await pg.click('nav button[data-page="pHelp"]'); await pg.wait_for_timeout(150)
                 await pg.screenshot(path=str(OUT / '14_help_en.png'))
+                # --- Spieldaten (Patch) ---
+                await pg.click('nav button[data-page="pSet"]')
+                await pg.evaluate("""window.__host(JSON.stringify({type:'data', cur:'0.5.5.4.2', groups:774, cats:72, busy:0, ok:1, msg:'Neuer Patch 0.6.0.1 verfügbar.', path:'../Mods.tsv',
+                  local:[{ver:'0.5.5.4.2', bundled:1}], remote:[{ver:'0.6.0.1', date:'2026-12-12', groups:801, cats:77, have:0},{ver:'0.5.5.4.2', date:'2026-10-24', groups:774, cats:72, have:1}]}))""")
+                await pg.wait_for_timeout(100)
+                await pg.evaluate("document.querySelector('#dataPanel').scrollIntoView({block:'center'})"); await pg.wait_for_timeout(80)
+                await pg.screenshot(path=str(OUT / '18_data.png'))
+                dot = await pg.evaluate("document.querySelector('nav button[data-page=pSet]').classList.contains('dot')")
+                check(dot, 'update dot on settings')
+                await pg.click('[data-get="0.6.0.1"]'); await pg.wait_for_timeout(50)
+                sent = await pg.evaluate("JSON.stringify(window.__sent.slice(-1))")
+                check('dataGet' in sent and '0.6.0.1' in sent, f'dataGet sent (got {sent})')
+                await pg.evaluate("""window.__host(JSON.stringify({type:'data', cur:'0.5.5.4.2', groups:774, cats:72, busy:0, ok:0, msg:'Download abgebrochen. Du bleibst auf Patch 0.5.5.4.2.', path:'../Mods.tsv',
+                  local:[{ver:'0.5.5.4.2', bundled:1}], remote:[{ver:'0.6.0.1', date:'2026-12-12', groups:801, cats:77, have:0}]}))""")
+                await pg.wait_for_timeout(100)
+                await pg.screenshot(path=str(OUT / '19_data_fail.png'))
+                await pg.click('nav button[data-page="pHelp"]'); await pg.wait_for_timeout(100)
+                # --- Uniques ---
+                await pg.click('nav button[data-page="pUq"]')
+                await pg.evaluate("""window.__host(JSON.stringify({type:'uq', files:[{league:'Forbidden Rites', path:'../Uniques.tsv', date:'2026-10-24'}], cur:'../Uniques.tsv', msg:'', busy:0,
+                  sel:{name:'Andvarius', base:'Gold Ring', wish:['(10-15)% increased Rarity of Items found']}}))""")
+                await pg.wait_for_timeout(500)
+                nrows = await pg.evaluate("document.querySelectorAll('.uqrow').length")
+                check(nrows > 300, f'unique rows (got {nrows})')
+                await pg.fill('#uqSearch', 'andvarius'); await pg.wait_for_timeout(100)
+                await pg.click('.uqrow'); await pg.wait_for_timeout(100)
+                await pg.screenshot(path=str(OUT / '20_uniques.png'))
+                ne = await pg.evaluate("document.querySelectorAll('.ench').length"); non = await pg.evaluate("document.querySelectorAll('.ench.on').length")
+                check(ne >= 8 and non == 1, f'enchants {ne} wished {non}')
+                nimg = await pg.evaluate("document.querySelectorAll('.uqrow img').length"); big = await pg.evaluate("document.querySelectorAll('.uqbig img').length")
+                check(nimg >= 1 and big == 1, f'unique images row {nimg} big {big}')
+                await pg.click('[data-trade="twice"]'); await pg.wait_for_timeout(50)
+                sent = await pg.evaluate("window.__sent.slice(-1)[0]")
+                check('trade2/search/poe2/Forbidden%20Rites' in sent and 'twice_corrupted' in sent.replace('%22','"'), f'trade url (got {sent[:160]})')
+                await pg.click('.ench:not(.on)'); await pg.wait_for_timeout(50)
+                sent = await pg.evaluate("window.__sent.slice(-1)[0]")
+                check(sent.startswith('uqWish'), f'uqWish sent (got {sent[:80]})')
+                await pg.fill('#uqSearch', ''); await pg.select_option('#uqCats', 'Belt'); await pg.wait_for_timeout(100)
+                await pg.screenshot(path=str(OUT / '21_uniques_belts.png'))
+                # --- Verlauf ---
+                await pg.evaluate("""window.__host(JSON.stringify({type:'recent', items:[
+                  {t:'24.10. 21:50', src:'ee2', rarity:'Unique', name:'Mageblood', base:'Utility Belt', cat:'belt_belts', cls:'Belts', mods:['+1 to Maximum Charges','Legacy of Ruby']},
+                  {t:'24.10. 21:41', src:'key', rarity:'Rare', name:'Doom Stride', base:'Velour Shoes', cat:'boots_dex_armour', cls:'Boots', mods:['30% increased Movement Speed','+85 to maximum Life']},
+                  {t:'24.10. 21:30', src:'copy', rarity:'Magic', name:'Hale Gold Ring of the Whelpling', base:'Gold Ring', cat:'jewellery_rings', cls:'Rings', mods:[]}]}))""")
+                await pg.click('nav button[data-page="pRec"]'); await pg.wait_for_timeout(200)
+                await pg.click('.rec[data-i="1"] [data-act="mods"]'); await pg.wait_for_timeout(80)
+                await pg.screenshot(path=str(OUT / '23_recent.png'))
+                nrec = await pg.evaluate("document.querySelectorAll('.rec').length")
+                check(nrec == 3, f'recent entries 3 (got {nrec})')
+                await pg.click('.rec[data-i="0"] [data-act="trade"]'); await pg.wait_for_timeout(50)
+                sent = await pg.evaluate("window.__sent.slice(-1)[0]")
+                check('Mageblood' in sent and 'trade2' in sent, f'recent trade (got {sent[:120]})')
+                await pg.click('.rec[data-i="1"] [data-act="chaos"]'); await pg.wait_for_timeout(100)
+                act = await pg.evaluate("document.querySelector('.cat.on') && document.querySelector('.cat.on').dataset.cat")
+                check(act == 'boots_dex_armour', f'recent opens chaos cat (got {act})')
+                nk = await pg.evaluate("document.querySelectorAll('#keys kbd').length")
+                check(nk == 4, f'key list only active keys + EE2: 4 (got {nk})')
                 await pg.click('nav button[data-page="pMods"]'); await pg.wait_for_timeout(150)
                 await pg.screenshot(path=str(OUT / '15_mods_en.png'))
                 sent = await pg.evaluate("window.__sent")

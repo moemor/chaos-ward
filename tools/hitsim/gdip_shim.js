@@ -3,6 +3,8 @@
 // ---------------- AHK-Laufzeit ----------------
 const A_ScriptDir = "";
 const Cfg = { Lang: "de", Key: "F6", Theme: "obsidian" };
+var Clr = { Gold: "D6A640", Gold2: "F0CF7A" };
+Cfg.Accent = "gold"; Cfg.Mode = 3; Cfg.OvAlpha = 100;
 let Dv = { Any: 0, Lines: [], Rules: new Map(), Item: "" };
 let STR = {};
 function T(k) { return STR[k] ?? k; }
@@ -176,6 +178,10 @@ const GP = {
   GdipCreateFont(fam, size, style, unit, ref) { ref.set({ fam, size, weight: style & 1 ? 700 : fam.w }); },
   GdipCreateStringFormat(flags, lang, ref) { ref.set({ flags, align: 0, line: 0, trim: 0 }); },
   GdipSetStringFormatAlign(f, a) { f.align = a; }, GdipSetStringFormatLineAlign(f, a) { f.line = a; }, GdipSetStringFormatTrimming(f, t) { f.trim = t; },
+  GdipMeasureString(g, str, len, font, rb, fmt, box) {
+    const c = g.ctx; c.font = `${font.weight} ${font.size}px "${font.fam.name}"`;
+    box.v.set(8, c.measureText(String(str)).width + font.size / 3);
+  },
   GdipDrawString(g, str, len, font, rb, fmt, br) {
     const c = g.ctx, [x, y, w, h] = rectOf(rb), fm = font.fam, sz = font.size, pad = sz / 6;
     c.font = `${font.weight} ${sz}px "${fm.name}"`; c.fillStyle = fillStyleOf(c, br);
