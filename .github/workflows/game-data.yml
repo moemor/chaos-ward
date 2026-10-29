@@ -1,0 +1,28 @@
+name: Game data
+
+# Fetch the PoE2 game data from RePoE (github.com/repoe-fork/poe2) and the unique and market prices
+# per league from the poe.ninja economy API, and publish them in data/ for the app.
+# GitHub starts scheduled runs only every few hours, so a scheduled run does 5 rounds one hour apart
+# (tools/run_updates.sh). A manual run (also started by the app's "Update prices") does one round.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: game-data-${{ github.event_name }}   # scheduled runs wait for each other, a manual run starts right away
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262   # v4.4.0, fest auf diesen Stand gepinnt
+      - name: Update game data and prices
+        env:
+          EVENT: ${{ github.event_name }}
+        run: bash tools/run_updates.sh ${{ github.event_name == 'schedule' && '5' || '1' }}
