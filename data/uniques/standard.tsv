@@ -1,5 +1,5 @@
 # Chaos Ward Uniques: Preise von poe.ninja (Economy-API), Enchants aus den Spieldaten
-H	Standard	2026-10-29	divine	932.9
+H	Standard	2026-10-31	divine	932.9
 E	1	(20-10)% reduced Attribute Requirements	
 E	2	(15-25)% increased Physical Damage	enchant.stat_1509134228
 E	3	Adds (9-14) to (15-22) Fire Damage	enchant.stat_709508406
@@ -72,16 +72,16 @@ E	69	Adds (11-17) to (18-26) Cold Damage	enchant.stat_1037193709
 E	70	Adds (1-3) to (41-61) Lightning Damage	enchant.stat_3336890334
 E	71	Adds (10-16) to (17-25) Chaos damage	enchant.stat_2223678961
 E	72	(40-50)% increased Elemental Damage with Attacks	enchant.stat_387439868
-E	73	(15-25)% increased Evasion and Energy Shield	enchant.stat_1999113824
-E	74	(10-15)% increased Block chance	enchant.stat_2481353198
-E	75	+3% to maximum Block chance	enchant.stat_480796730
-E	76	(20-25) Life gained when you Block	enchant.stat_762600725
-E	77	(10-15) Mana gained when you Block	enchant.stat_2122183138
-E	78	+(1-3)% to Maximum Lightning Resistance	enchant.stat_1011760251
-E	79	(3-5)% increased Movement Speed	enchant.stat_2250533757
-E	80	(20-30)% increased Stun Threshold	enchant.stat_680068163
-E	81	(20-30)% increased Freeze Threshold	enchant.stat_3780644166
-E	82	(30-20)% reduced Slowing Potency of Debuffs on You	
+E	73	+(1-3)% to Maximum Lightning Resistance	enchant.stat_1011760251
+E	74	(3-5)% increased Movement Speed	enchant.stat_2250533757
+E	75	(20-30)% increased Stun Threshold	enchant.stat_680068163
+E	76	(20-30)% increased Freeze Threshold	enchant.stat_3780644166
+E	77	(30-20)% reduced Slowing Potency of Debuffs on You	
+E	78	(10-15)% increased Block chance	enchant.stat_2481353198
+E	79	+3% to maximum Block chance	enchant.stat_480796730
+E	80	(20-25) Life gained when you Block	enchant.stat_762600725
+E	81	(10-15) Mana gained when you Block	enchant.stat_2122183138
+E	82	(15-25)% increased Evasion and Energy Shield	enchant.stat_1999113824
 E	83	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
 E	84	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
 E	85	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
