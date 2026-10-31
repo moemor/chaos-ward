@@ -806,3 +806,1544 @@ U	Igniferis	Crimson Amulet	Amulet	0.00025	5111	18,43,44,45,50,51,87,88,89,90,91,
 U	Birthright Buckle	Wide Belt	Belt	0.00025	6426	19,35,36,37,38,39,40,41,42,43,44,45	WzI1LDE0LHsiZiI6IjJESXRlbXMvQmVsdHMvVW5pcXVlcy9CaXJ0aHJpZ2h0QnVja2xlIiwidyI6MiwiaCI6MSwic2NhbGUiOjEsInJlYWxtIjoicG9lMiJ9XQ/5549f2f4ca/BirthrightBuckle.png
 U	Cursecarver	Acrid Wand	Wand	0.00015	4473	1,22,23,24,25,26,27,28,29,30,31,32,33,34	WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9PbmVIYW5kV2VhcG9ucy9XYW5kcy9VbmlxdWVzL0NsYXdtYXJrIiwidyI6MSwiaCI6Mywic2NhbGUiOjEsInJlYWxtIjoicG9lMiJ9XQ/01ce3ef684/Clawmark.png
 U	Hoghunt	Felled Greatclub	Two Hand Mace	0.00015	2005	1,2,7,8,9,10,12,46,68,69,70,71,72	WzI1LDE0LHsiZiI6IjJESXRlbXMvV2VhcG9ucy9Ud29IYW5kV2VhcG9ucy9Ud29IYW5kTWFjZXMvVW5pcXVlcy9Ib2dodW50IiwidyI6MiwiaCI6NCwic2NhbGUiOjEsInJlYWxtIjoicG9lMiJ9XQ/f2611ee9b4/Hoghunt.png
+V	Heart of the Well	P	(10-15)% chance when a Charm is used to use another Charm without consuming Charges	explicit.stat_1949851472	
+V	Heart of the Well	P	(10-15)% increased Skill Effect Duration	explicit.stat_3377888098	
+V	Heart of the Well	P	(10-18)% increased Cooldown Recovery Rate	explicit.stat_1004011302	
+V	Heart of the Well	P	(15-25)% chance for Lightning Damage with Hits to be Lucky	explicit.stat_2466011626	
+V	Heart of the Well	P	(15-25)% increased Culling Strike Threshold	explicit.stat_3563080185	
+V	Heart of the Well	P	(15-25)% increased Damage while your Companion is in your Presence	explicit.stat_693180608	
+V	Heart of the Well	P	(15-25)% increased Exposure Effect	explicit.stat_2074866941	
+V	Heart of the Well	P	(20-30)% increased Mana Regeneration Rate while moving	explicit.stat_1327522346	
+V	Heart of the Well	P	(30-50)% chance to Pierce an Enemy	explicit.stat_2321178454	
+V	Heart of the Well	P	(4-8)% increased Skill Speed	explicit.stat_970213192	
+V	Heart of the Well	P	(40-60)% increased Armour from Equipped Body Armour	explicit.stat_1015576579	
+V	Heart of the Well	P	(40-60)% increased Energy Shield from Equipped Body Armour	explicit.stat_1195319608	
+V	Heart of the Well	P	(40-60)% increased Evasion Rating from Equipped Body Armour	explicit.stat_3509362078	
+V	Heart of the Well	P	(40-60)% increased Ice Crystal Life	explicit.stat_3274422940	
+V	Heart of the Well	P	(5-10)% chance to Aggravate Bleeding on targets you Hit with Attacks	explicit.stat_2705185939	
+V	Heart of the Well	P	(5-10)% of Physical Damage prevented Recouped as Life	explicit.stat_1374654984	
+V	Heart of the Well	P	(5-8)% increased Attack Speed while a Rare or Unique Enemy is in your Presence	explicit.stat_314741699	
+V	Heart of the Well	P	(6-12)% chance for Trigger skills to refund half of Energy Spent	explicit.stat_599320227	
+V	Heart of the Well	P	(8-14)% increased speed of Recoup Effects	explicit.stat_2363593824	
+V	Heart of the Well	P	(8-16)% increased Mana Cost Efficiency	explicit.stat_4101445926	
+V	Heart of the Well	P	+(2-4)% to Thorns Critical Hit Chance	explicit.stat_2715190555	
+V	Heart of the Well	P	+1% to all Maximum Elemental Resistances	explicit.stat_1978899297	
+V	Heart of the Well	P	Charms applied to you have (15-25)% increased Effect	explicit.stat_3480095574	
+V	Heart of the Well	P	Gain (7-13)% of Damage as Extra Chaos Damage	explicit.stat_3398787959	
+V	Heart of the Well	P	Gain (9-15)% of Damage as Extra Cold Damage	explicit.stat_2505884597	
+V	Heart of the Well	P	Gain (9-15)% of Damage as Extra Fire Damage	explicit.stat_3015669065	
+V	Heart of the Well	P	Gain (9-15)% of Damage as Extra Lightning Damage	explicit.stat_3278136794	
+V	Heart of the Well	P	Gain Physical Thorns damage equal to (4-6)% of Item Armour on Equipped Body Armour	explicit.stat_1793740180	
+V	Heart of the Well	P	Minions gain (10-15)% of their maximum Life as Extra maximum Energy Shield	explicit.stat_943702197	
+V	Heart of the Well	P	Minions Regenerate (1-3)% of maximum Life per second	explicit.stat_2479683456	
+V	Heart of the Well	P	Minions Revive (5-10)% faster	explicit.stat_2639966148	
+V	Heart of the Well	P	Recover (2-4)% of maximum Life on Killing a Poisoned Enemy	explicit.stat_1781372024	
+V	Heart of the Well	P	Recover (5-10)% of maximum Mana when a Charm is used	explicit.stat_4121454694	
+V	Heart of the Well	P	Regenerate (1-1.5)% of maximum Life per Second if you've used a Life Flask in the past 10 seconds	explicit.stat_3161573445	
+V	Heart of the Well	S	(1-2)% increased Movement Speed	explicit.stat_2250533757	
+V	Heart of the Well	S	(10-5)% reduced Slowing Potency of Debuffs on You		
+V	Heart of the Well	S	(2-3)% increased Attack Speed	explicit.stat_210067635	
+V	Heart of the Well	S	(2-3)% increased Cast Speed	explicit.stat_2891184298	
+V	Heart of the Well	S	(2-3)% increased Cooldown Recovery Rate	explicit.stat_1004011302	
+V	Heart of the Well	S	(2-3)% of Damage is taken from Mana before Life	explicit.stat_458438597	
+V	Heart of the Well	S	(2-3)% of Damage taken Recouped as Life	explicit.stat_1444556985	
+V	Heart of the Well	S	(2-3)% of Skill Mana Costs Converted to Life Costs	explicit.stat_2480498143	
+V	Heart of the Well	S	(3-8)% increased Skill Effect Duration	explicit.stat_3377888098	
+V	Heart of the Well	S	(4-8)% increased chance to inflict Ailments	explicit.stat_1772247089	
+V	Heart of the Well	S	(4-8)% increased Critical Hit Chance	explicit.stat_587431675	
+V	Heart of the Well	S	(4-8)% increased Critical Hit Chance for Spells	explicit.stat_737908626	
+V	Heart of the Well	S	(4-8)% increased Flask Charges gained	explicit.stat_1836676211	
+V	Heart of the Well	S	(4-8)% increased Flask Effect Duration	explicit.stat_3741323227	
+V	Heart of the Well	S	(4-8)% increased Mana Regeneration Rate	explicit.stat_789117908	
+V	Heart of the Well	S	(5-10)% chance to inflict Bleeding on Hit	explicit.stat_2174054121	
+V	Heart of the Well	S	(5-10)% chance to Poison on Hit	explicit.stat_795138349	
+V	Heart of the Well	S	(5-10)% increased Stun Threshold	explicit.stat_680068163	
+V	Heart of the Well	S	(6-12)% increased Critical Damage Bonus	explicit.stat_3556824919	
+V	Heart of the Well	S	(6-12)% increased Critical Spell Damage Bonus	explicit.stat_274716455	
+V	Heart of the Well	S	(6-12)% increased Elemental Ailment Threshold	explicit.stat_3544800472	
+V	Heart of the Well	S	(6-12)% increased Life Regeneration rate	explicit.stat_44972811	
+V	Heart of the Well	S	(6-12)% increased Stun Buildup	explicit.stat_239367161	
+V	Heart of the Well	S	+1% to Maximum Cold Resistance	explicit.stat_3676141501	
+V	Heart of the Well	S	+1% to Maximum Fire Resistance	explicit.stat_4095671657	
+V	Heart of the Well	S	+1% to Maximum Lightning Resistance	explicit.stat_1011760251	
+V	Heart of the Well	S	Damaging Ailments deal damage (2-4)% faster	explicit.stat_538241406	
+V	Heart of the Well	S	Debuffs on you expire (4-8)% faster	explicit.stat_1238227257	
+V	Heart of the Well	S	Gain (1-2) Rage when Hit by an Enemy	explicit.stat_3292710273	
+V	Heart of the Well	S	Gain 1 Rage on Melee Hit	explicit.stat_2709367754	
+V	Heart of the Well	S	Gain additional Ailment Threshold equal to (4-10)% of maximum Energy Shield	explicit.stat_3398301358	
+V	Heart of the Well	S	Gain additional Stun Threshold equal to (4-10)% of maximum Energy Shield	explicit.stat_416040624	
+V	Heart of the Well	S	Minions have (2-3)% increased Attack and Cast Speed	explicit.stat_3091578504	
+V	Heart of the Well	S	Minions have (3-12)% additional Physical Damage Reduction	explicit.stat_3119612865	
+V	Heart of the Well	S	Minions have (6-12)% increased Critical Hit Chance	explicit.stat_491450213	
+V	Heart of the Well	S	Minions have +(3-4)% to all Elemental Resistances	explicit.stat_1423639565	
+V	Heart of the Well	S	Recover (1-2)% of maximum Life on Kill	explicit.stat_2023107756	
+V	Heart of the Well	S	Recover (1-2)% of maximum Mana on Kill	explicit.stat_1030153674	
+V	From Nothing	X	Passives in Radius of # can be Allocated without being connected to your tree		keystone
+V	Megalomaniac	X	Allocates #		notable
+V	Prism of Belief	X	+(1-3) to Level of all # Skills		skill
+O	keystone	Ancestral Bond	
+O	keystone	Avatar of Fire	
+O	keystone	Blackflame Covenant	
+O	keystone	Blood Magic	
+O	keystone	Bulwark	
+O	keystone	Chaos Inoculation	
+O	keystone	Conduit	
+O	keystone	Crimson Assault	
+O	keystone	Dance with Death	
+O	keystone	Eldritch Battery	
+O	keystone	Elemental Equilibrium	
+O	keystone	Eternal Youth	
+O	keystone	Giant's Blood	
+O	keystone	Glancing Blows	
+O	keystone	Heartstopper	
+O	keystone	Hollow Palm Technique	
+O	keystone	Iron Reflexes	
+O	keystone	Lord of the Wilds	
+O	keystone	Mind Over Matter	
+O	keystone	Necromantic Talisman	
+O	keystone	Oasis	
+O	keystone	Pain Attunement	
+O	keystone	Primal Hunger	
+O	keystone	Resolute Technique	
+O	keystone	Resonance	
+O	keystone	Ritual Cadence	
+O	keystone	Scarred Faith	
+O	keystone	Trusted Kinship	
+O	keystone	Unwavering Stance	
+O	keystone	Vaal Pact	
+O	keystone	Whispers of Doom	
+O	keystone	Wildsurge Incantation	
+O	keystone	Zealot's Oath	
+O	notable	Abasement	
+O	notable	Acceleration	
+O	notable	Adaptable Assault	
+O	notable	Adaptive Skin	
+O	notable	Admonisher	
+O	notable	Adrenaline Rush	
+O	notable	Advanced Munitions	
+O	notable	Adverse Growth	
+O	notable	Affliction Enforcer	
+O	notable	Afterimage	
+O	notable	Aftershocks	
+O	notable	Against the Elements	
+O	notable	Aggravation	
+O	notable	Agile Sprinter	
+O	notable	Agile Succession	
+O	notable	Agonising Calamity	
+O	notable	Alchemical Oil	
+O	notable	All For One	
+O	notable	All Natural	
+O	notable	Altered Brain Chemistry	
+O	notable	Alternating Current	
+O	notable	Among the Hordes	
+O	notable	Ancestral Alacrity	
+O	notable	Ancestral Artifice	
+O	notable	Ancestral Conduits	
+O	notable	Ancestral Mending	
+O	notable	Ancestral Reach	
+O	notable	Ancestral Unity	
+O	notable	Ancient Aegis	
+O	notable	Anger Management	
+O	notable	Anticipation	
+O	notable	Apocalypse	
+O	notable	Arcane Alchemy	
+O	notable	Arcane Blossom	
+O	notable	Arcane Intensity	
+O	notable	Arcane Mixtures	
+O	notable	Arcane Nature	
+O	notable	Arcane Remnants	
+O	notable	Archon of Undeath	
+O	notable	Archon of the Blizzard	
+O	notable	Archon of the Storm	
+O	notable	Arsonist	
+O	notable	Artillery Strike	
+O	notable	Asceticism	
+O	notable	Aspiring Genius	
+O	notable	At your Command	
+O	notable	Augmented Flesh	
+O	notable	Authority	
+O	notable	Avoiding Deflection	
+O	notable	Back in Action	
+O	notable	Backstabbing	
+O	notable	Backup Plan	
+O	notable	Ball and Chain	
+O	notable	Bannerman	
+O	notable	Barbaric Strength	
+O	notable	Barrier of Venarius	
+O	notable	Bashing Beast	
+O	notable	Bastion of Light	
+O	notable	Battle Fever	
+O	notable	Battle Trance	
+O	notable	Battle-hardened	
+O	notable	Bear's Roar	
+O	notable	Beastial Skin	
+O	notable	Beef	
+O	notable	Behemoth	
+O	notable	Bestial Rage	
+O	notable	Bhatair's Storm	
+O	notable	Biting Frost	
+O	notable	Blade Catcher	
+O	notable	Blade Flurry	
+O	notable	Blazing Arms	
+O	notable	Bleeding Out	
+O	notable	Blessing of the Moon	
+O	notable	Blinding Flash	
+O	notable	Blinding Strike	
+O	notable	Blood Rush	
+O	notable	Blood Tearing	
+O	notable	Blood Transfusion	
+O	notable	Blood of Rage	
+O	notable	Blood of the Wolf	
+O	notable	Bloodletting	
+O	notable	Bloodthirsty	
+O	notable	Blur	
+O	notable	Blurred Motion	
+O	notable	Bolstering Presence	
+O	notable	Bolstering Yell	
+O	notable	Bond of the Ape	
+O	notable	Bond of the Cat	
+O	notable	Bond of the Mamba	
+O	notable	Bond of the Owl	
+O	notable	Bond of the Viper	
+O	notable	Bond of the Wolf	
+O	notable	Bonded Precision	
+O	notable	Bone Chains	
+O	notable	Boon of the Beast	
+O	notable	Boundless Growth	
+O	notable	Bounty Hunter	
+O	notable	Brain Freeze	
+O	notable	Brain Storm	
+O	notable	Branching Bolts	
+O	notable	Bravado	
+O	notable	Breakage	
+O	notable	Breaking Blows	
+O	notable	Breaking Point	
+O	notable	Breath of Fire	
+O	notable	Breath of Ice	
+O	notable	Breath of Lightning	
+O	notable	Brinerot Ferocity	
+O	notable	Bringer of Order	
+O	notable	Briny Carapace	
+O	notable	Brush Off	
+O	notable	Brutal	
+O	notable	Brute Strength	
+O	notable	Building Toxins	
+O	notable	Burn Away	
+O	notable	Burning Nature	
+O	notable	Burning Strikes	
+O	notable	Burnout	
+O	notable	Cacophony	
+O	notable	Calculated Hunter	
+O	notable	Call Upon the Deep	
+O	notable	Captivating Companionship	
+O	notable	Careful Aim	
+O	notable	Careful Assassin	
+O	notable	Careful Consideration	
+O	notable	Carved Earth	
+O	notable	Casting Cascade	
+O	notable	Catalysis	
+O	notable	Catapult	
+O	notable	Catlike Agility	
+O	notable	Cautious Concoctions	
+O	notable	Chakra of Breathing	
+O	notable	Chakra of Elements	
+O	notable	Chakra of Impact	
+O	notable	Chakra of Life	
+O	notable	Chakra of Rhythm	
+O	notable	Chakra of Sight	
+O	notable	Chakra of Stability	
+O	notable	Chakra of Thought	
+O	notable	Channelled Heritage	
+O	notable	Chilled to the Bone	
+O	notable	Chillproof	
+O	notable	Chronomancy	
+O	notable	Cirel of Tarth's Light	
+O	notable	Clean Shot	
+O	notable	Clear Space	
+O	notable	Clever Construction	
+O	notable	Climate Change	
+O	notable	Close Confines	
+O	notable	Cluster Bombs	
+O	notable	Coated Arms	
+O	notable	Coated Knife	
+O	notable	Cold Coat	
+O	notable	Cold Nature	
+O	notable	Colossal Weapon	
+O	notable	Combat Alchemy	
+O	notable	Coming Calamity	
+O	notable	Commanding Rage	
+O	notable	Comradery	
+O	notable	Conall the Hunted	
+O	notable	Concussive Attack	
+O	notable	Conductive Embrace	
+O	notable	Conservative Casting	
+O	notable	Consistent Intake	
+O	notable	Constricting	
+O	notable	Controlled Chaos	
+O	notable	Controlling Magic	
+O	notable	Convalescence	
+O	notable	Cooked	
+O	notable	Core of the Guardian	
+O	notable	Corruption Endures	
+O	notable	Counterstancing	
+O	notable	Coursing Energy	
+O	notable	Cower Before the First Ones	
+O	notable	Cranial Impact	
+O	notable	Crashing Wave	
+O	notable	Craving Slaughter	
+O	notable	Cremating Cries	
+O	notable	Cremation	
+O	notable	Crippling Toxins	
+O	notable	Critical Exploit	
+O	notable	Critical Overload	
+O	notable	Cross Strike	
+O	notable	Cruel Fate	
+O	notable	Cruel Methods	
+O	notable	Crushing Judgement	
+O	notable	Crushing Verdict	
+O	notable	Crystal Elixir	
+O	notable	Crystalline Flesh	
+O	notable	Crystalline Resistance	
+O	notable	Crystallised Immunities	
+O	notable	Cull the Hordes	
+O	notable	Curved Weapon	
+O	notable	Cut to the Bone	
+O	notable	Dampening Shield	
+O	notable	Dangerous Blossom	
+O	notable	Dark Entries	
+O	notable	Dark Entropy	
+O	notable	Dazing Blocks	
+O	notable	Dead can Dance	
+O	notable	Deadly Flourish	
+O	notable	Deadly Force	
+O	notable	Deadly Invocations	
+O	notable	Deadly Swarm	
+O	notable	Deadly Thorns	
+O	notable	Deafening Cries	
+O	notable	Death from Afar	
+O	notable	Decisive Retreat	
+O	notable	Decrepifying Curse	
+O	notable	Deep Freeze	
+O	notable	Deep Trance	
+O	notable	Deep Wounds	
+O	notable	Defender's Resolve	
+O	notable	Defensive Reflexes	
+O	notable	Defensive Stance	
+O	notable	Defiance	
+O	notable	Delayed Danger	
+O	notable	Demolitionist	
+O	notable	Dependable Ward	
+O	notable	Desensitisation	
+O	notable	Desert's Scorn	
+O	notable	Desperate Times	
+O	notable	Destructive Apparatus	
+O	notable	Deterioration	
+O	notable	Determined Precision	
+O	notable	Devastating Devices	
+O	notable	Devastation	
+O	notable	Devoted Protector	
+O	notable	Dimensional Weakspot	
+O	notable	Direct Approach	
+O	notable	Disciplined Training	
+O	notable	Disorientation	
+O	notable	Dispatch Foes	
+O	notable	Distant Dreamer	
+O	notable	Distracted Target	
+O	notable	Distracting Presence	
+O	notable	Dizzying Hits	
+O	notable	Dizzying Sweep	
+O	notable	Dominion	
+O	notable	Dominus' Providence	
+O	notable	Doomsayer	
+O	notable	Draiocht Cleansing	
+O	notable	Dread Engineer's Concoction	
+O	notable	Dreamcatcher	
+O	notable	Drenched	
+O	notable	Dynamism	
+O	notable	Eagle Eye	
+O	notable	Easy Going	
+O	notable	Easy Target	
+O	notable	Echoes of Ferocity	
+O	notable	Echoing Flames	
+O	notable	Echoing Frost	
+O	notable	Echoing Pulse	
+O	notable	Echoing Thunder	
+O	notable	Effervescent	
+O	notable	Efficient Alchemy	
+O	notable	Efficient Casting	
+O	notable	Efficient Contraptions	
+O	notable	Efficient Inscriptions	
+O	notable	Efficient Killing	
+O	notable	Efficient Loading	
+O	notable	Eldritch Will	
+O	notable	Electric Amplification	
+O	notable	Electric Blood	
+O	notable	Electrified Claw	
+O	notable	Electrifying Daze	
+O	notable	Electrifying Nature	
+O	notable	Electrocuting Exposure	
+O	notable	Electrocution	
+O	notable	Electrotherapy	
+O	notable	Elemental Force	
+O	notable	Embodiment of Death	
+O	notable	Embodiment of Frost	
+O	notable	Embodiment of Lightning	
+O	notable	Emboldened Avatar	
+O	notable	Emboldening Casts	
+O	notable	Emboldening Lead	
+O	notable	Embracing Frost	
+O	notable	Empowering Infusions	
+O	notable	Empowering Remains	
+O	notable	Empowering Remnants	
+O	notable	Encompassing Domain	
+O	notable	Endless Blizzard	
+O	notable	Endless Circuit	
+O	notable	Endlessly Soaring	
+O	notable	Endurance	
+O	notable	Endured Suffering	
+O	notable	Enduring Archon	
+O	notable	Enduring Deflection	
+O	notable	Energise	
+O	notable	Energising Archon	
+O	notable	Energising Deflection	
+O	notable	Engineered Blaze	
+O	notable	Enhanced Barrier	
+O	notable	Enhanced Reflexes	
+O	notable	Enhancing Attacks	
+O	notable	Enraged Reaver	
+O	notable	Entropic Incarnation	
+O	notable	Enveloping Presence	
+O	notable	Equilibrium	
+O	notable	Eroding Chains	
+O	notable	Erraticism	
+O	notable	Escalating Mayhem	
+O	notable	Escalating Toxins	
+O	notable	Escalation	
+O	notable	Escape Strategy	
+O	notable	Escape Velocity	
+O	notable	Essence Infusion	
+O	notable	Essence of the Mountain	
+O	notable	Essence of the Storm	
+O	notable	Ether Flow	
+O	notable	Event Horizon	
+O	notable	Everlasting Bloom	
+O	notable	Everlasting Glory	
+O	notable	Everlasting Infusions	
+O	notable	Evocational Practitioner	
+O	notable	Exhaust All Power	
+O	notable	Expendable Army	
+O	notable	Exploit	
+O	notable	Exploit the Elements	
+O	notable	Explosive Empowerment	
+O	notable	Explosive Impact	
+O	notable	Exposed Wounds	
+O	notable	Exposed to the Cosmos	
+O	notable	Exposed to the Inferno	
+O	notable	Exposed to the Storm	
+O	notable	Extinguishing Exhalation	
+O	notable	Falcon Dive	
+O	notable	Falcon Technique	
+O	notable	Fan the Flames	
+O	notable	Far Sighted	
+O	notable	Fast Acting Toxins	
+O	notable	Fast Metabolism	
+O	notable	Fate Finding	
+O	notable	Fated End	
+O	notable	Favourable Odds	
+O	notable	Fearful Paralysis	
+O	notable	Feathered Fletching	
+O	notable	Feel no Pain	
+O	notable	Feel the Earth	
+O	notable	Fervour	
+O	notable	Final Barrage	
+O	notable	Finality	
+O	notable	Finesse	
+O	notable	Finish Them	
+O	notable	Finishing Blows	
+O	notable	Firestarter	
+O	notable	First Approach	
+O	notable	First Principle of the Hollow	
+O	notable	First Sting	
+O	notable	First Teachings of the Keeper	
+O	notable	Flamekeeper	
+O	notable	Flamewalker	
+O	notable	Flare	
+O	notable	Flash Storm	
+O	notable	Flashy Parrying	
+O	notable	Flesh Withstands	
+O	notable	Fleshcrafting	
+O	notable	Flip the Script	
+O	notable	Flow Like Water	
+O	notable	Flow State	
+O	notable	Flow of Life	
+O	notable	Flow of Time	
+O	notable	Flurry	
+O	notable	Focused Channel	
+O	notable	Focused Thrust	
+O	notable	For the Jugular	
+O	notable	Forbidden Path	
+O	notable	Forces of Nature	
+O	notable	Forcewave	
+O	notable	Forthcoming	
+O	notable	Fortified Aegis	
+O	notable	Fortified Location	
+O	notable	Fortifying Blood	
+O	notable	Frantic Fighter	
+O	notable	Frantic Reach	
+O	notable	Frantic Swings	
+O	notable	Frazzled	
+O	notable	Freedom of Movement	
+O	notable	Frenetic	
+O	notable	Friend to Many	
+O	notable	Frightening Shield	
+O	notable	Frostwalker	
+O	notable	Frozen Claw	
+O	notable	Frozen Limit	
+O	notable	Full Recovery	
+O	notable	Full Salvo	
+O	notable	Fulmination	
+O	notable	Gem Enthusiast	
+O	notable	General Electric	
+O	notable	General's Bindings	
+O	notable	Giantslayer	
+O	notable	Gift of the Plains	
+O	notable	Gigantic Following	
+O	notable	Give Up Your Essence	
+O	notable	Glaciation	
+O	notable	Glancing Deflection	
+O	notable	Glazed Flesh	
+O	notable	Glorious Anticipation	
+O	notable	Goring	
+O	notable	Grace of the Ancestors	
+O	notable	Gravedigger	
+O	notable	Greatest Defence	
+O	notable	Grenadier	
+O	notable	Grip of Evil	
+O	notable	Grit	
+O	notable	Grounded in the Earth	
+O	notable	Growing Peril	
+O	notable	Growing Swarm	
+O	notable	Guided Hand	
+O	notable	Guts	
+O	notable	Guttural Roar	
+O	notable	Haemorrhaging Cuts	
+O	notable	Hail	
+O	notable	Hale Heart	
+O	notable	Hale Traveller	
+O	notable	Hallowed	
+O	notable	Hard to Kill	
+O	notable	Hardened Wood	
+O	notable	Harmonic Generator	
+O	notable	Harness the Elements	
+O	notable	Harsh Winter	
+O	notable	Hastening Barrier	
+O	notable	Headshot	
+O	notable	Heart Tissue	
+O	notable	Heartbreaking	
+O	notable	Heartstopping	
+O	notable	Heartstopping Presence	
+O	notable	Heatproof	
+O	notable	Heavy Ammunition	
+O	notable	Heavy Armour	
+O	notable	Heavy Blade	
+O	notable	Heavy Buffer	
+O	notable	Heavy Contact	
+O	notable	Heavy Drinker	
+O	notable	Heavy Frost	
+O	notable	Heavy Weaponry	
+O	notable	Hefty Unit	
+O	notable	Her Final Bite	
+O	notable	Hidden Barb	
+O	notable	Hidden Forms	
+O	notable	Hide of the Bear	
+O	notable	High Alert	
+O	notable	Hindered Capabilities	
+O	notable	Hindering Obstacles	
+O	notable	Holy Protector	
+O	notable	Honed Instincts	
+O	notable	Honourless	
+O	notable	Howling Beast	
+O	notable	Hulking Smash	
+O	notable	Hunker Down	
+O	notable	Hunter	
+O	notable	Hunter's Talisman	
+O	notable	Hunting Companion	
+O	notable	Ice Storm	
+O	notable	Ice Walls	
+O	notable	Icebreaker	
+O	notable	Ichlotl's Inferno	
+O	notable	Ignore Pain	
+O	notable	Illuminated Crown	
+O	notable	Imbibed Power	
+O	notable	Immaterial	
+O	notable	Immolation	
+O	notable	Immortal Infamy	
+O	notable	Immortal Thirst	
+O	notable	Impact Area	
+O	notable	Impact Force	
+O	notable	Impair	
+O	notable	Impending Doom	
+O	notable	Impenetrable Shell	
+O	notable	In Your Face	
+O	notable	In the Thick of It	
+O	notable	Incendiary	
+O	notable	Incision	
+O	notable	Inescapable Cold	
+O	notable	Inevitable Rupture	
+O	notable	Infernal Limit	
+O	notable	Infused Flesh	
+O	notable	Infused Limits	
+O	notable	Infusing Power	
+O	notable	Infusion of Power	
+O	notable	Ingenuity	
+O	notable	Inherited Strength 	
+O	notable	Initiative	
+O	notable	Innate Rune	
+O	notable	Inner Faith	
+O	notable	Insightfulness	
+O	notable	Inspiring Ally	
+O	notable	Inspiring Leader	
+O	notable	Instability	
+O	notable	Insulated Treads	
+O	notable	Insulating Hide	
+O	notable	Intense Dose	
+O	notable	Intense Flames	
+O	notable	Internal Bleeding	
+O	notable	Investing Energies	
+O	notable	Invigorating Archon	
+O	notable	Invigorating Grandeur	
+O	notable	Invigorating Hate	
+O	notable	Invocated Echoes	
+O	notable	Invocated Efficiency	
+O	notable	Invocated Limit	
+O	notable	Iron Slippers	
+O	notable	Irreparable	
+O	notable	Jack of all Trades	
+O	notable	Javelin	
+O	notable	Kaom's Blessing	
+O	notable	Kept at Bay	
+O	notable	Killer Instinct	
+O	notable	Kite Runner	
+O	notable	Knight of Chitus	
+O	notable	Knight of Izaro	
+O	notable	Knight of Tarcus	
+O	notable	Known by All	
+O	notable	Last Stand	
+O	notable	Lasting Boons	
+O	notable	Lasting Incantations	
+O	notable	Lasting Toxins	
+O	notable	Lasting Trauma	
+O	notable	Lavianga's Brew	
+O	notable	Lay Siege	
+O	notable	Lead by Example	
+O	notable	Leaping Ambush	
+O	notable	Leather Bound Gauntlets	
+O	notable	Leeching Toxins	
+O	notable	Left Hand of Darkness	
+O	notable	Left Ventricle	
+O	notable	Licking Wounds	
+O	notable	Life from Death	
+O	notable	Lifelong Friend	
+O	notable	Light on your Feet	
+O	notable	Lightning Quick	
+O	notable	Lightning Rod	
+O	notable	Lightning Storm	
+O	notable	Limitless Pursuit	
+O	notable	Lingering Horror	
+O	notable	Lingering Whispers	
+O	notable	Living Death	
+O	notable	Lockdown	
+O	notable	Locked On	
+O	notable	Lone Warrior	
+O	notable	Long Distance Relationship	
+O	notable	Loose Flesh	
+O	notable	Lord of Horrors	
+O	notable	Lord of the Squall	
+O	notable	Low Tolerance	
+O	notable	Lucidity	
+O	notable	Lucky Rabbit Foot	
+O	notable	Lunar Boon	
+O	notable	Lust for Power	
+O	notable	Lust for Sacrifice	
+O	notable	Made to Last	
+O	notable	Madness in the Bones	
+O	notable	Magnum Opus	
+O	notable	Maiming Strike	
+O	notable	Mana Blessing	
+O	notable	Manifold Method	
+O	notable	Marathon Runner	
+O	notable	Marked Agility	
+O	notable	Marked for Death	
+O	notable	Marked for Sickness	
+O	notable	Martial Artistry	
+O	notable	Mass Hysteria	
+O	notable	Mass Rejuvenation	
+O	notable	Master Fletching	
+O	notable	Master of Hexes	
+O	notable	Material Solidification	
+O	notable	Mauling Stuns	
+O	notable	Meat Recycling	
+O	notable	Meditative Focus	
+O	notable	Melding	
+O	notable	Melting Flames	
+O	notable	Mending Deflection	
+O	notable	Mental Alacrity	
+O	notable	Mental Perseverance	
+O	notable	Mental Toughness	
+O	notable	Mentorship	
+O	notable	Mighty Trunk	
+O	notable	Mind Eraser	
+O	notable	Mindful Awareness	
+O	notable	Molten Being	
+O	notable	Molten Carapace	
+O	notable	Molten Claw	
+O	notable	Moment of Truth	
+O	notable	Momentum	
+O	notable	Morgana, the Storm Seer	
+O	notable	Morning Star	
+O	notable	Multi Shot	
+O	notable	Multitasking	
+O	notable	Mutewind Agility	
+O	notable	Mystic Avalanche	
+O	notable	Mystic Stance	
+O	notable	Mystical Rage	
+O	notable	Natural Immunity	
+O	notable	Nature's Bite	
+O	notable	Near Sighted	
+O	notable	Near at Hand	
+O	notable	Necromantic Ward	
+O	notable	Necrotic Touch	
+O	notable	Necrotised Flesh	
+O	notable	Night's Bite	
+O	notable	Nimble Strength	
+O	notable	Nourishing Ally	
+O	notable	Nurturing Guardian	
+O	notable	Nurturing Nature	
+O	notable	Off-Balancing Retort	
+O	notable	One For All	
+O	notable	One With Flame	
+O	notable	One with the River	
+O	notable	One with the Storm	
+O	notable	Open Mind	
+O	notable	Overexposure	
+O	notable	Overflowing Power	
+O	notable	Overheating Blow	
+O	notable	Overload	
+O	notable	Overwhelm	
+O	notable	Overwhelming Strike	
+O	notable	Overzealous	
+O	notable	Pack Encouragement	
+O	notable	Paragon	
+O	notable	Paranoia	
+O	notable	Passthrough Rounds	
+O	notable	Path of the Renegade	
+O	notable	Patient Barrier	
+O	notable	Perfect Opportunity	
+O	notable	Perfectly Placed Knife	
+O	notable	Perforation	
+O	notable	Perpetual Freeze	
+O	notable	Personal Touch	
+O	notable	Pierce the Heart	
+O	notable	Piercing Claw	
+O	notable	Piercing Shot	
+O	notable	Pile On	
+O	notable	Pin and Run	
+O	notable	Pin their Motivation	
+O	notable	Pinpoint Shot	
+O	notable	Pliable Flesh	
+O	notable	Pocket Sand	
+O	notable	Polished Iron	
+O	notable	Polymathy	
+O	notable	Potent Incantation	
+O	notable	Power Conduction	
+O	notable	Power Shots	
+O	notable	Power of the Storm	
+O	notable	Powerful Casting	
+O	notable	Practiced Signs	
+O	notable	Precise Invocations	
+O	notable	Precise Point	
+O	notable	Precise Volatility	
+O	notable	Precision Salvo	
+O	notable	Preemptive Strike	
+O	notable	Presence Present	
+O	notable	Preservation	
+O	notable	Pressure Points	
+O	notable	Price of Freedom	
+O	notable	Primal Growth	
+O	notable	Primal Protection	
+O	notable	Primal Rage	
+O	notable	Primal Sundering	
+O	notable	Primed to Explode	
+O	notable	Principal Infusion	
+O	notable	Prism Guard	
+O	notable	Prize of the Hunt	
+O	notable	Profane Commander	
+O	notable	Proficiency	
+O	notable	Projectile Bulwark	
+O	notable	Proliferating Weeds	
+O	notable	Prolonged Assault	
+O	notable	Prolonged Fury	
+O	notable	Protraction	
+O	notable	Psychic Fragmentation	
+O	notable	Punctured Lung	
+O	notable	Puppet Master chance	
+O	notable	Pure Chaos	
+O	notable	Pure Energy	
+O	notable	Pure Power	
+O	notable	Push the Advantage	
+O	notable	Pyromancer	
+O	notable	Quick Fingers	
+O	notable	Quick Recovery	
+O	notable	Radial Force	
+O	notable	Rallying Form	
+O	notable	Rallying Icon	
+O	notable	Rapid Recharge	
+O	notable	Rapid Reload	
+O	notable	Rapid Strike	
+O	notable	Rattled	
+O	notable	Rattling Ball	
+O	notable	Raw Mana	
+O	notable	Raw Power	
+O	notable	Reaching Strike	
+O	notable	Reaving	
+O	notable	Redblade Discipline	
+O	notable	Refills	
+O	notable	Refocus	
+O	notable	Regenerative Flesh	
+O	notable	Reinforced Rallying	
+O	notable	Reinvigoration	
+O	notable	Relentless	
+O	notable	Relentless Fallen	
+O	notable	Relentless Vindicator	
+O	notable	Relinquish Your Life	
+O	notable	Remnant Attraction	
+O	notable	Remorseless	
+O	notable	Repeating Explosives	
+O	notable	Replenishing Horde	
+O	notable	Reprisal	
+O	notable	Repulsion	
+O	notable	Resilient Soul	
+O	notable	Resolute Reach	
+O	notable	Resolute Reprisal	
+O	notable	Resolution	
+O	notable	Restless Dead	
+O	notable	Resurging Archon	
+O	notable	Retaliation	
+O	notable	Return to Nature	
+O	notable	Reusable Ammunition	
+O	notable	Revenge	
+O	notable	Reverberating Impact	
+O	notable	Reverberating Parry	
+O	notable	Reverberation	
+O	notable	Rhythm of Fire	
+O	notable	Rhythm of Ice	
+O	notable	Ricochet	
+O	notable	Right Hand of Darkness	
+O	notable	Ripping Blade	
+O	notable	Roaring Cries	
+O	notable	Roil	
+O	notable	Roll and Strike	
+O	notable	Rough Carapace	
+O	notable	Ruin	
+O	notable	Ruinic Helm	
+O	notable	Run and Gun	
+O	notable	Rupturing Pins	
+O	notable	Rusted Pins	
+O	notable	Rustle of the Leaves	
+O	notable	Sacrificial Blood	
+O	notable	Sand in the Eyes	
+O	notable	Sanguimantic Rituals	
+O	notable	Sanguine Tolerance	
+O	notable	Saqawal's Guidance	
+O	notable	Saqawal's Hide	
+O	notable	Saqawal's Talon	
+O	notable	Savagery	
+O	notable	Savoured Blood	
+O	notable	Savouring	
+O	notable	Scales of the Wyvern	
+O	notable	Scent of Blood	
+O	notable	Searing Heat	
+O	notable	Secrets of the Orb	
+O	notable	Seeing Stars	
+O	notable	Self Immolation	
+O	notable	Self Mortification	
+O	notable	Self Sacrificing	
+O	notable	Serrated Edges	
+O	notable	Shadow Dancing	
+O	notable	Sharp Sight	
+O	notable	Sharpened Claw	
+O	notable	Shatter Palm	
+O	notable	Shattered Crystal	
+O	notable	Shattering	
+O	notable	Shattering Blow	
+O	notable	Shattering Daze	
+O	notable	Shedding Skin	
+O	notable	Shelter from the Rain	
+O	notable	Shield Expertise	
+O	notable	Shifted Strikes	
+O	notable	Shimmering	
+O	notable	Shimmering Mirage	
+O	notable	Shocking Limit	
+O	notable	Shockproof	
+O	notable	Shockwaves	
+O	notable	Short Shot	
+O	notable	Shrapnel	
+O	notable	Shredding Contraptions	
+O	notable	Shredding Force	
+O	notable	Sic 'Em	
+O	notable	Sigil of Fire	
+O	notable	Sigil of Ice	
+O	notable	Sigil of Lightning	
+O	notable	Silent Guardian	
+O	notable	Silent Shiv	
+O	notable	Singular Purpose	
+O	notable	Siphon	
+O	notable	Sitting Duck	
+O	notable	Skullcrusher	
+O	notable	Sling Shots	
+O	notable	Slippery Ice	
+O	notable	Slow Burn	
+O	notable	Smash	
+O	notable	Smoke Inhalation	
+O	notable	Sniper	
+O	notable	Snowpiercer	
+O	notable	Soul Bloom	
+O	notable	Spaghettification	
+O	notable	Specialised Shots	
+O	notable	Spectral Ward	
+O	notable	Spell Haste	
+O	notable	Spellblade	
+O	notable	Spike Pit	
+O	notable	Spiked Armour	
+O	notable	Spiked Shield	
+O	notable	Spiked Whip	
+O	notable	Spiral into Depression	
+O	notable	Spiral into Insanity	
+O	notable	Spiral into Mania	
+O	notable	Spirit Bond	
+O	notable	Spirit of the Bear	
+O	notable	Spirit of the Wolf	
+O	notable	Spirit of the Wyvern	
+O	notable	Splintering Force	
+O	notable	Splinters	
+O	notable	Split Shot	
+O	notable	Split the Earth	
+O	notable	Splitting Ground	
+O	notable	Spray and Pray	
+O	notable	Spreading Shocks	
+O	notable	Stacking Toxins	
+O	notable	Staggering Palm	
+O	notable	Staggering Wounds	
+O	notable	Stance Breaker	
+O	notable	Stand Ground	
+O	notable	Stand and Deliver	
+O	notable	Stars Aligned	
+O	notable	Staunch Deflection	
+O	notable	Staunching	
+O	notable	Steadfast Resolve	
+O	notable	Steady Footing	
+O	notable	Step Like Mist	
+O	notable	Stigmata	
+O	notable	Stimulants	
+O	notable	Storm Driven	
+O	notable	Storm Surge	
+O	notable	Storm Swell	
+O	notable	Storm's Rebuke	
+O	notable	Stormbreaker	
+O	notable	Stormcharged	
+O	notable	Stormkeeper	
+O	notable	Stormwalker	
+O	notable	Strength of the Deep	
+O	notable	Strike True	
+O	notable	Stripped Defences	
+O	notable	Strong Chin	
+O	notable	Struck Through	
+O	notable	Stupefy	
+O	notable	Sturdy Ally	
+O	notable	Sturdy Metal	
+O	notable	Sturdy Mind	
+O	notable	Stylebender	
+O	notable	Subterfuge Mask	
+O	notable	Succour	
+O	notable	Sudden Escalation	
+O	notable	Sudden Infuriation	
+O	notable	Suffusion	
+O	notable	Sundering	
+O	notable	Supportive Ancestors	
+O	notable	Surging Beast	
+O	notable	Surging Currents	
+O	notable	Swift Blocking	
+O	notable	Swift Claw	
+O	notable	Swift Flight	
+O	notable	Swift Interruption	
+O	notable	Symbol of Defiance	
+O	notable	Tactical Retreat	
+O	notable	Tainted Strike	
+O	notable	Taste for Blood	
+O	notable	Taut Flesh	
+O	notable	Tempered Defences	
+O	notable	Tempered Mind	
+O	notable	Temporal Mastery	
+O	notable	Tenfold Attacks	
+O	notable	Thaumaturgic Generator	
+O	notable	The Ancient Serpent	
+O	notable	The Fabled Stag	
+O	notable	The Frenzied Bear	
+O	notable	The Great Boar	
+O	notable	The Hollowkeeper	
+O	notable	The Howling Primate	
+O	notable	The Molten One's Gift	
+O	notable	The Noble Wolf	
+O	notable	The Power Within	
+O	notable	The Quick Fox	
+O	notable	The Raging Ox	
+O	notable	The Soul Meridian	
+O	notable	The Spring Hare	
+O	notable	The Wild Cat	
+O	notable	The Winter Owl	
+O	notable	Thickened Arteries	
+O	notable	Thicket Warding	
+O	notable	Thin Ice	
+O	notable	Thirst for Endurance	
+O	notable	Thirst for Power	
+O	notable	Thirsting Ally	
+O	notable	Thornhide	
+O	notable	Thousand Cuts	
+O	notable	Thrill of Battle	
+O	notable	Thrill of the Fight	
+O	notable	Throatseeker	
+O	notable	Thunderstruck	
+O	notable	Tides of Change	
+O	notable	Time Manipulation	
+O	notable	Titan's Determination	
+O	notable	Titanic	
+O	notable	Tolerant Equipment	
+O	notable	Total Incineration	
+O	notable	Touch the Arcane	
+O	notable	Towering Shield	
+O	notable	Toxic Sludge	
+O	notable	Toxic Tolerance	
+O	notable	Trained Deflection	
+O	notable	Trained Turrets	
+O	notable	Tribal Fury	
+O	notable	Trick Shot	
+O	notable	True Strike	
+O	notable	Trusted Partner	
+O	notable	Tukohama's Brew	
+O	notable	Turn the Clock Back	
+O	notable	Turn the Clock Forward	
+O	notable	Unbending	
+O	notable	Unbothering Cold	
+O	notable	Unbound Forces	
+O	notable	Unbreakable	
+O	notable	Unbreaking	
+O	notable	Unerring Impact	
+O	notable	Unexpected Finesse	
+O	notable	Unfettered	
+O	notable	Unforgiving	
+O	notable	Unhindered	
+O	notable	Unimpeded	
+O	notable	Unleash Fire	
+O	notable	Unmoving Craiceann	
+O	notable	Unnatural Resilience	
+O	notable	Unquenchable Iron	
+O	notable	Unsight	
+O	notable	Unspoken Bond	
+O	notable	Unstable Bond	
+O	notable	Unstoppable Barrier	
+O	notable	Unyielding	
+O	notable	Urgent Call	
+O	notable	Utility Ordnance	
+O	notable	Utmost Offering	
+O	notable	Vale Dweller	
+O	notable	Vale Shelter	
+O	notable	Vengeance	
+O	notable	Vengeful Fury	
+O	notable	Versatile Arms	
+O	notable	Viciousness	
+O	notable	Vigilance	
+O	notable	Vigorous Remnants	
+O	notable	Vile Mending	
+O	notable	Vile Wounds	
+O	notable	Vocal Empowerment	
+O	notable	Void	
+O	notable	Volatile Catalyst	
+O	notable	Volatile Grenades	
+O	notable	Volcanic Skin	
+O	notable	Voll's Protection	
+O	notable	Voracious	
+O	notable	Vulgar Methods	
+O	notable	Waning Hindrances	
+O	notable	Warding Fetish	
+O	notable	Warding Potions	
+O	notable	Warlord Berserker	
+O	notable	Warlord Leader	
+O	notable	Warm the Heart	
+O	notable	Wary Dodging	
+O	notable	Wasting	
+O	notable	Wasting Casts	
+O	notable	Watchtowers	
+O	notable	Waters of Life	
+O	notable	Well of Power	
+O	notable	Wellspring	
+O	notable	Whirling Assault	
+O	notable	Whirling Onslaught	
+O	notable	Wide Barrier	
+O	notable	Widespread Coverage	
+O	notable	Wild Storm	
+O	notable	Wither Away	
+O	notable	Wolf's Howl	
+O	notable	Woodland Aspect	
+O	notable	Wrapped Quiver	
+O	notable	Wyvern's Breath	
+O	notable	Zone of Control	
+O	skill	Abyssal Apparition	
+O	skill	Abyssal Pact	
+O	skill	Acidic Concoction	
+O	skill	Alchemist's Boon	
+O	skill	Align Fate	
+O	skill	Ancestral Cry	
+O	skill	Ancestral Spirits	
+O	skill	Animus Exchange	
+O	skill	Apocalypse	
+O	skill	Arc	
+O	skill	Archmage	
+O	skill	Archon of Chayula	
+O	skill	Arctic Armour	
+O	skill	Arctic Howl	
+O	skill	Armour Breaker	
+O	skill	Armour Piercing Rounds	
+O	skill	Artillery Ballista	
+O	skill	Attrition	
+O	skill	Axe Slash	
+O	skill	Azmerian Swarms	
+O	skill	Azmerian Wolf	
+O	skill	Ball Lightning	
+O	skill	Barkskin	
+O	skill	Barrage	
+O	skill	Berserk	
+O	skill	Bind Spectre	
+O	skill	Bitter Dead	
+O	skill	Black Powder Blitz	
+O	skill	Bleeding Concoction	
+O	skill	Blink	
+O	skill	Blood Boil	
+O	skill	Blood Hunt	
+O	skill	Bloodhound's Mark	
+O	skill	Bone Blast	
+O	skill	Bone Cage	
+O	skill	Bone Offering	
+O	skill	Boneshatter	
+O	skill	Bonestorm	
+O	skill	Bow Shot	
+O	skill	Briarpatch	
+O	skill	Bursting Fen Toad	
+O	skill	Cackling Companions	
+O	skill	Chaos Bolt	
+O	skill	Chaotic Surge	
+O	skill	Charge Regulation	
+O	skill	Charged Staff	
+O	skill	Claw Stab	
+O	skill	Cluster Grenade	
+O	skill	Coiling Bolts	
+O	skill	Combat Frenzy	
+O	skill	Comet	
+O	skill	Coming Soon	
+O	skill	Companion: {0}	
+O	skill	Conductive Runes	
+O	skill	Conductivity	
+O	skill	Consecrate	
+O	skill	Contagion	
+O	skill	Convalescence	
+O	skill	Crackling Palm	
+O	skill	Cross Slash	
+O	skill	Crossbow Shot	
+O	skill	Crushing Fear	
+O	skill	Cull The Weak	
+O	skill	Dagger Stab	
+O	skill	Dark Effigy	
+O	skill	Dark Pact	
+O	skill	Decompose	
+O	skill	Defiance Banner	
+O	skill	Demon Form	
+O	skill	Despair	
+O	skill	Detonate Dead	
+O	skill	Detonate Living	
+O	skill	Detonate Minion	
+O	skill	Detonating Arrow	
+O	skill	Devour	
+O	skill	Discipline	
+O	skill	Disengage	
+O	skill	Dread Banner	
+O	skill	Earthquake	
+O	skill	Earthshatter	
+O	skill	Electrocuting Arrow	
+O	skill	Elemental Conflux	
+O	skill	Elemental Expression	
+O	skill	Elemental Siphon	
+O	skill	Elemental Storm	
+O	skill	Elemental Sundering	
+O	skill	Elemental Surge	
+O	skill	Elemental Weakness	
+O	skill	Ember Fusillade	
+O	skill	Emergency Reload	
+O	skill	Encase in Jade	
+O	skill	Enervating Nova	
+O	skill	Enfeeble	
+O	skill	Entangle	
+O	skill	Escape Shot	
+O	skill	Essence Drain	
+O	skill	Eternal March	
+O	skill	Eternal Rage	
+O	skill	Explosive Concoction	
+O	skill	Explosive Grenade	
+O	skill	Explosive Shot	
+O	skill	Explosive Spear	
+O	skill	Explosive Transmutation	
+O	skill	Exsanguinate	
+O	skill	Eye of Winter	
+O	skill	Falling Thunder	
+O	skill	Fangs of Frost	
+O	skill	Feast of Flesh	
+O	skill	Fireball	
+O	skill	Firebolt	
+O	skill	Firestorm	
+O	skill	Flail Strike	
+O	skill	Flame Breath	
+O	skill	Flame Wall	
+O	skill	Flameblast	
+O	skill	Flammability	
+O	skill	Flash Grenade	
+O	skill	Flicker Strike	
+O	skill	Forge Hammer	
+O	skill	Fortifying Cry	
+O	skill	Fragmentation Rounds	
+O	skill	Fragments Of The Past	
+O	skill	Freezing Mark	
+O	skill	Freezing Salvo	
+O	skill	Freezing Shards	
+O	skill	Frost Bomb	
+O	skill	Frost Darts	
+O	skill	Frost Wall	
+O	skill	Frostbolt	
+O	skill	Frostflame Nova	
+O	skill	Frozen Locus	
+O	skill	Fulminating Concoction	
+O	skill	Fulmination	
+O	skill	Furious Slam	
+O	skill	Fury of the Mountain	
+O	skill	Future-Past	
+O	skill	Galvanic Field	
+O	skill	Galvanic Shards	
+O	skill	Gas Arrow	
+O	skill	Gas Grenade	
+O	skill	Gathering Storm	
+O	skill	Gelid Palm	
+O	skill	Gemini Surge	
+O	skill	Ghost Dance	
+O	skill	Glacial Bolt	
+O	skill	Glacial Cascade	
+O	skill	Glacial Lance	
+O	skill	Grenade	
+O	skill	Grim Feast	
+O	skill	Grim Pillars	
+O	skill	Hailstorm Rounds	
+O	skill	Hammer of the Gods	
+O	skill	Harbinger of Madness	
+O	skill	Heart of Ice	
+O	skill	Herald of Ash	
+O	skill	Herald of Blood	
+O	skill	Herald of Ice	
+O	skill	Herald of Plague	
+O	skill	Herald of Thunder	
+O	skill	Herald of the Royal Queen	
+O	skill	Hexblast	
+O	skill	High Velocity Rounds	
+O	skill	His Dark Horizon	
+O	skill	His Foul Emergence	
+O	skill	His Grave Command	
+O	skill	His Scattering Calamity	
+O	skill	His Vile Intrusion	
+O	skill	His Winnowing Flame	
+O	skill	Hollow Focus	
+O	skill	Hollow Resonance	
+O	skill	Hollow Shell	
+O	skill	Hypothermia	
+O	skill	Ice Fragments	
+O	skill	Ice Nova	
+O	skill	Ice Shards	
+O	skill	Ice Shot	
+O	skill	Ice Strike	
+O	skill	Ice-Tipped Arrows	
+O	skill	Icestorm	
+O	skill	Impurity	
+O	skill	Incendiary Shot	
+O	skill	Incinerate	
+O	skill	Inevitable Agony	
+O	skill	Infernal Cry	
+O	skill	Into the Breach	
+O	skill	Iron Ward	
+O	skill	Kelari's Deception	
+O	skill	Kelari's Judgment	
+O	skill	Kelari's Malediction	
+O	skill	Kelari, the Tainted Sands	
+O	skill	Killing Palm	
+O	skill	Kinetic Bash	
+O	skill	Leap Slam	
+O	skill	Leylines	
+O	skill	Life Remnants	
+O	skill	Lightning Arrow	
+O	skill	Lightning Bolt	
+O	skill	Lightning Conduit	
+O	skill	Lightning Rod	
+O	skill	Lightning Spear	
+O	skill	Lightning Warp	
+O	skill	Lingering Illusion	
+O	skill	Living Bomb	
+O	skill	Lunar Assault	
+O	skill	Lunar Blessing	
+O	skill	Mace Strike	
+O	skill	Magma Barrier	
+O	skill	Magnetic Salvo	
+O	skill	Malice	
+O	skill	Mana Drain	
+O	skill	Mana Remnants	
+O	skill	Mana Tempest	
+O	skill	Manifest Weapon	
+O	skill	Mantra of Destruction	
+O	skill	Maul	
+O	skill	Meditate	
+O	skill	Midnight Zenith	
+O	skill	Mirror of Refraction	
+O	skill	Mist Raven	
+O	skill	Molten Blast	
+O	skill	Molten Crash	
+O	skill	Molten Shower	
+O	skill	Moment of Vulnerability	
+O	skill	Navira's Fracturing	
+O	skill	Navira's Oasis	
+O	skill	Navira's Well	
+O	skill	Navira, the Last Mirage	
+O	skill	Oil Barrage	
+O	skill	Oil Grenade	
+O	skill	Orb of Storms	
+O	skill	Overwhelming Presence	
+O	skill	Pain Offering	
+O	skill	Parry	
+O	skill	Perfect Strike	
+O	skill	Permafrost Bolts	
+O	skill	Phantasmal Arrow	
+O	skill	Pinnacle of Power	
+O	skill	Plague Bearer	
+O	skill	Plasma Blast	
+O	skill	Playtest Attack	
+O	skill	Playtest Slam	
+O	skill	Playtest Spell	
+O	skill	Poisonburst Arrow	
+O	skill	Power Siphon	
+O	skill	Powered by Verisium	
+O	skill	Primal Avatar	
+O	skill	Primal Bounty	
+O	skill	Primal Strikes	
+O	skill	Profane Ritual	
+O	skill	Punch	
+O	skill	Purity of Fire	
+O	skill	Purity of Ice	
+O	skill	Purity of Lightning	
+O	skill	Quarterstaff Strike	
+O	skill	Queen's Procession	
+O	skill	Raging Spirits	
+O	skill	Rain of Arrows	
+O	skill	Rain of Blades	
+O	skill	Raise Shield	
+O	skill	Raise Zombie	
+O	skill	Rake	
+O	skill	Rampage	
+O	skill	Rapid Assault	
+O	skill	Rapid Shot	
+O	skill	Ravenous Swarm	
+O	skill	Reap	
+O	skill	Refutation	
+O	skill	Remnants of Kalguur	
+O	skill	Removed Skill	
+O	skill	Rend	
+O	skill	Repulsion	
+O	skill	Requiem	
+O	skill	Resonating Shield	
+O	skill	Rhoa Mount	
+O	skill	Righteous Descent	
+O	skill	Rite of Restoration	
+O	skill	Ritual Sacrifice	
+O	skill	Rolling Magma	
+O	skill	Rolling Slam	
+O	skill	Runic Reprieve	
+O	skill	Runic Tempering	
+O	skill	Ruzhan's Fury	
+O	skill	Ruzhan's Reckoning	
+O	skill	Ruzhan's Trap	
+O	skill	Ruzhan, the Blazing Sword	
+O	skill	Sacrifice	
+O	skill	Sanguine Revelry	
+O	skill	Savage Fury	
+O	skill	Scavenged Plating	
+O	skill	Seismic Cry	
+O	skill	Shard Scavenger	
+O	skill	Shattering Concoction	
+O	skill	Shattering Palm	
+O	skill	Shattering Spite	
+O	skill	Shield Charge	
+O	skill	Shield Wall	
+O	skill	Shockburst Rounds	
+O	skill	Shockchain Arrow	
+O	skill	Shockwave Totem	
+O	skill	Shred	
+O	skill	Shroud	
+O	skill	Siege Ballista	
+O	skill	Siege Cascade	
+O	skill	Sigil of Power	
+O	skill	Siphon Elements	
+O	skill	Siphoning Strike	
+O	skill	Skeletal Arsonist	
+O	skill	Skeletal Brute	
+O	skill	Skeletal Cleric	
+O	skill	Skeletal Frost Mage	
+O	skill	Skeletal Reaver	
+O	skill	Skeletal Sniper	
+O	skill	Skeletal Storm Mage	
+O	skill	Skeletal Warrior	
+O	skill	Skyfall	
+O	skill	Smash to Smithereens	
+O	skill	Snap	
+O	skill	Snipe	
+O	skill	Sniper's Mark	
+O	skill	Soaring Midnight	
+O	skill	Solar Orb	
+O	skill	Sorcery Ward	
+O	skill	Soul Crystal: {0}	
+O	skill	Soul Offering	
+O	skill	Soulrend	
+O	skill	Spark	
+O	skill	Spear Stab	
+O	skill	Spear Throw	
+O	skill	Spear of Solaris	
+O	skill	Spearfield	
+O	skill	Spectre: {0}	
+O	skill	Spinning Inferno	
+O	skill	Spiral Volley	
+O	skill	Spiraling Conspiracy	
+O	skill	Staggering Palm	
+O	skill	Stampede	
+O	skill	Starborn Onslaught	
+O	skill	Storm Lance	
+O	skill	Storm Wave	
+O	skill	Stormblast Bolts	
+O	skill	Stormcaller Arrow	
+O	skill	Summon Infernal Hound	
+O	skill	Sunder	
+O	skill	Supercharged Slam	
+O	skill	Supporting Fire	
+O	skill	Sword Slash	
+O	skill	Tame Beast	
+O	skill	Temper Weapon	
+O	skill	Tempest Bell	
+O	skill	Tempest Flurry	
+O	skill	Temporal Chains	
+O	skill	Temporal Rift	
+O	skill	The Stars Answer	
+O	skill	Thrashing Vines	
+O	skill	Thunderous Leap	
+O	skill	Thunderstorm	
+O	skill	Time Freeze	
+O	skill	Time Snap	
+O	skill	Time of Need	
+O	skill	Tornado	
+O	skill	Tornado Shot	
+O	skill	Toxic Domain	
+O	skill	Toxic Growth	
+O	skill	Trail of Caltrops	
+O	skill	Trinity	
+O	skill	Triskelion Cascade	
+O	skill	Twister	
+O	skill	Unbound Avatar	
+O	skill	Unearth	
+O	skill	Unleash	
+O	skill	Untether	
+O	skill	Valako's Charge	
+O	skill	Vaulting Impact	
+O	skill	Verisium Manifestations	
+O	skill	Vine Arrow	
+O	skill	Virtuous Barrier	
+O	skill	Vivid Stampede	
+O	skill	Void Illusion	
+O	skill	Volatile Dead	
+O	skill	Volcanic Fissure	
+O	skill	Volcano	
+O	skill	Voltaic Barrier	
+O	skill	Voltaic Grenade	
+O	skill	Voltaic Mark	
+O	skill	Vulnerability	
+O	skill	Walking Calamity	
+O	skill	War Banner	
+O	skill	Wardbound Minions	
+O	skill	Wave of Frost	
+O	skill	Whirling Assault	
+O	skill	Whirling Slash	
+O	skill	Whirlwind Lance	
+O	skill	Wild Protector	
+O	skill	Wildwood's Gifts	
+O	skill	Wind Blast	
+O	skill	Wind Dancer	
+O	skill	Wind Serpent's Fury	
+O	skill	Wing Blast	
+O	skill	Wither	
+O	skill	Withering Presence	
+O	skill	Wolf Pack	
+O	skill	[DNT-UNUSED] Axe Chop	
+O	skill	[DNT-UNUSED] Axe Execute	
+O	skill	[DNT-UNUSED] Axe Heavy Cleave	
+O	skill	[DNT-UNUSED] Axe Leaping Chop	
+O	skill	[DNT-UNUSED] Axe Raised Chop	
+O	skill	[DNT-UNUSED] Axe Slash	
+O	skill	[DNT-UNUSED] Axe Whirling Slash	
+O	skill	[DNT-UNUSED] Blade Dance	
+O	skill	[DNT-UNUSED] Blade Nova	
+O	skill	[DNT-UNUSED] Claw Rake	
+O	skill	[DNT-UNUSED] Combo Knife Throw	
+O	skill	[DNT-UNUSED] Detonation	
+O	skill	[DNT-UNUSED] Dodge Roll	
+O	skill	[DNT-UNUSED] Dominating Aura	
+O	skill	[DNT-UNUSED] Evasive Strike	
+O	skill	[DNT-UNUSED] Flame Slice	
+O	skill	[DNT-UNUSED] Gas Cloud	
+O	skill	[DNT-UNUSED] Howl	
+O	skill	[DNT-UNUSED] Hyper Slash	
+O	skill	[DNT-UNUSED] Knife Flip	
+O	skill	[DNT-UNUSED] Leaping Axe Catch	
+O	skill	[DNT-UNUSED] Plunging Blade	
+O	skill	[DNT-UNUSED] RingOfBlades	
+O	skill	[DNT-UNUSED] Shadow Ambush	
+O	skill	[DNT-UNUSED] Shadow Dash	
+O	skill	[DNT-UNUSED] Shadow Thief Slash	
+O	skill	[DNT-UNUSED] Spear Vortex	
+O	skill	[DNT-UNUSED] Spinning Flail	
+O	skill	[DNT-UNUSED] Spinning Throw	
+O	skill	[DNT-UNUSED] Spiral Throw	
+O	skill	[DNT-UNUSED] Storm Blade	
+O	skill	[DNT-UNUSED] Sword Leap Slash	
+O	skill	[DNT-UNUSED] Sword Lunge	
+O	skill	[DNT-UNUSED] The Flawed Edict	
+O	skill	[DNT-UNUSED] Triple Slash Combo	
+O	skill	[DNT] Caustic Cloud	
+O	skill	[DNT] Crushing Earth	
+O	skill	[DNT] Flame Link	
+O	skill	[DNT] Fungal Terrain	
+O	skill	[DNT] Hammer of Ngamahu	
+O	skill	[DNT] Internecine Draw	
+O	skill	[DNT] Landslide	
+O	skill	[DNT] Lightless Stalker	
+O	skill	[DNT] MistRavenCompanionSwoop	
+O	skill	[DNT] Primal Quadrilla Slam	
+O	skill	[DNT] Red Queen's Visage	
+O	skill	[DNT] Soul Link	
+O	skill	[DNT] UNUSED	
+O	skill	[DNT] Whip	
