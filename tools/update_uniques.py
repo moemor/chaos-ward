@@ -13,6 +13,9 @@ Datei-Format (Tab-getrennt):
   H  <Liga> <Datum> <Währung der Preise> <Exalted je Einheit>
   E  <Enchant-Nr> <Text mit Bereichen> <Trade-ID oder leer>
   U  <Name> <Grundtyp> <Kategorie> <Preis> <Angebote> <Enchant-Nrn mit Komma> <Bild-Pfad hinter web.poecdn.com/gen/image/>
+  V  <Name> <Art: P Präfix | S Suffix | X Auswahl> <Text mit Bereichen, # = Auswahl> <Trade-ID oder leer> <Auswahl-Liste oder leer>
+     (Uniques mit zufälligen Zeilen, z.B. Heart of the Well, Megalomaniac, Prism of Belief, From Nothing)
+  O  <Auswahl-Liste> <Text> <Trade-Options-ID oder leer>
 index.tsv:  L <Liga> <Datei> <Datum> <Anzahl Uniques>"""
 import datetime, json, pathlib, re, sys, time, urllib.request
 
@@ -64,7 +67,7 @@ def applies(m, tags):
 
 
 # --- Trade-IDs ---
-trade = {}
+trade, explicit = {}, []
 if 'trade' in opt:
     lines = [l.split('|', 1) for l in pathlib.Path(opt['trade']).read_text(encoding='utf-8').splitlines() if '|' in l]
     entries = [('enchant.stat_' + a, b) for a, b in lines]
@@ -72,6 +75,7 @@ else:
     try:
         st = get('https://www.pathofexile.com/api/trade2/data/stats')
         entries = [(e['id'], e['text']) for g in st['result'] if g['id'] == 'enchant' for e in g['entries']]
+        explicit = [e for g in st['result'] if g['id'] == 'explicit' for e in g['entries']]
     except Exception as e:
         print('trade stats unavailable:', e)
         entries = []
@@ -96,6 +100,58 @@ def ench_id(m, mid):
     ench_rows.append((n, text, tid))
     return n
 
+
+# --- Uniques mit zufälligen Zeilen: was sie rollen können (Spieldaten), Trade-IDs wenn die Trade-Seite erreichbar ist ---
+# Auswahl-Listen aus den Spieldaten (Notables, Keystones, aktive Skills); die Trade-Seite ersetzt sie, wenn sie Optionen liefert
+TREE = json.load(open(D / 'passive_skill_trees' / 'Default.json'))['passives'].values()
+SETS = {
+    'notable': sorted({clean(p['name']) for p in TREE if p.get('is_notable') and not p.get('ascendancy') and p.get('name')}),
+    'keystone': sorted({clean(p['name']) for p in TREE if p.get('is_keystone') and p.get('name')}),
+    'skill': sorted({g['base_item']['display_name'] for g in json.load(open(D / 'skill_gems.json')).values()
+                     if g.get('gem_type') == 'active' and (g.get('base_item') or {}).get('release_state') == 'released'
+                     and (g.get('base_item') or {}).get('display_name')}),
+}
+SET_IDS = {k: {} for k in SETS}
+VARIANTS = {                     # Unique -> Pools (Spawn-Tags der Spieldaten) oder Auswahl-Zeilen (# = Auswahl)
+    'Heart of the Well': {'pool': {'heart_unique_jewel_prefix': 'P', 'heart_unique_jewel_suffix': 'S'}},
+    'Megalomaniac': {'pick': [('Allocates #', 'notable')]},
+    'Prism of Belief': {'pick': [('+(1-3) to Level of all # Skills', 'skill')]},
+    'From Nothing': {'pick': [('Passives in Radius of # can be Allocated without being connected to your tree', 'keystone')]},
+}
+ex_by_skel = {}
+for e in explicit:
+    ex_by_skel.setdefault(skel(e['text']), e)
+
+
+def trade_pick(template, setname):
+    """Trade-Eintrag zur Auswahl-Zeile: Text mit # an der Stelle der Auswahl; Optionen übernehmen."""
+    e = ex_by_skel.get(skel(template).replace('(#)', '#'))
+    if not e:
+        return ''
+    opts = ((e.get('option') or {}).get('options')) or []
+    if opts:
+        SETS[setname] = sorted({clean(str(o['text'])) for o in opts})
+        SET_IDS[setname] = {clean(str(o['text'])): str(o['id']) for o in opts}
+    return e['id']
+
+
+var_rows = {}
+for uname, v in VARIANTS.items():
+    rows = []
+    for tag, kind in (v.get('pool') or {}).items():
+        seen_t = set()
+        for mid, m in M.items():
+            if m.get('generation_type') == 'unique' and m.get('text') and any(sw['tag'] == tag and sw['weight'] > 0 for sw in m.get('spawn_weights', [])):
+                t = clean(m['text']).replace('\n', ' / ')
+                if t in seen_t:
+                    continue
+                seen_t.add(t)
+                e = ex_by_skel.get(skel(m['text'])) or {}
+                rows.append(['V', uname, kind, t, e.get('id', ''), ''])
+    for template, setname in v.get('pick') or []:
+        rows.append(['V', uname, 'X', template, trade_pick(template, setname), setname])
+    var_rows[uname] = sorted(rows, key=lambda r: (r[2], r[3].lower()))
+print('variants:', {k: len(v) for k, v in var_rows.items()}, {k: len(v) for k, v in SETS.items()})
 
 # --- Preise pro Liga ---
 if 'ninja' in opt:
@@ -143,6 +199,18 @@ for lg in leagues:
             out.write('\t'.join(['E', str(n), text, tid]) + '\n')
         for row in urows:
             out.write('\t'.join(row) + '\n')
+        used, done = set(), set()
+        for row in urows:
+            if row[1] in done:
+                continue
+            done.add(row[1])
+            for vr in var_rows.get(row[1], []):
+                out.write('\t'.join(vr) + '\n')
+                if vr[5]:
+                    used.add(vr[5])
+        for sname in sorted(used):
+            for o in SETS[sname]:
+                out.write('\t'.join(['O', sname, o, SET_IDS[sname].get(o, '')]) + '\n')
     index.append(['L', name, f.name, today, str(len(urows))])
     print(name, len(urows), 'uniques', len(ench_rows), 'enchants', sum(1 for _, _, t in ench_rows if t), 'with trade id')
 (OUT / 'index.tsv').write_text('# Chaos Ward Uniques pro Liga (aktuelle Season zuerst)\n' + '\n'.join('\t'.join(r) for r in index) + '\n', encoding='utf-8')
