@@ -121,28 +121,25 @@ VARIANTS = {                     # Unique -> Pools (Spawn-Tags der Spieldaten) o
 ex_by_skel = {}
 for e in explicit:
     ex_by_skel.setdefault(skel(e['text']), e)
-def _short(e):
-    e = dict(e)
-    if isinstance(e.get('option'), dict) and isinstance(e['option'].get('options'), list):
-        e['option'] = dict(e['option'], options=e['option']['options'][:3], n=len(e['option']['options']))
-    return json.dumps(e, ensure_ascii=False)
-
-
-opt_log = [_short(e) for e in explicit if e.get('option') or re.search(r'Allocates|Level of all|Radius of', e.get('text', ''))]
-if opt_log:                       # Übersicht der Trade-Einträge mit Auswahl-Optionen (zum Abgleich der Auswahl-Zeilen)
-    (OUT / 'trade-option-stats.tsv').write_text('# Trade-Einträge mit Auswahl (ID, Text, Anzahl Optionen)\n' + '\n'.join(opt_log) + '\n', encoding='utf-8')
 
 
 def trade_pick(template, setname):
-    """Trade-Eintrag zur Auswahl-Zeile: Text mit # an der Stelle der Auswahl; Optionen übernehmen."""
-    e = ex_by_skel.get(skel(template).replace('(#)', '#'))
-    if not e:
+    """Auswahl-Zeile mit der Trade-Seite abgleichen. Die Trade-Seite führt jede Auswahl als eigenen Eintrag
+    ("explicit.stat_X|Option", Text mit dem Namen statt #). Gefunden: Liste und IDs von dort übernehmen."""
+    pre, post = (re.sub(r'\(\s*-?[\d.]+\s*-\s*-?[\d.]+\s*\)', '#', x).lower() for x in template.split('#', 1))
+    found = {}
+    for e in explicit:
+        if '|' not in e['id']:
+            continue
+        txt = re.sub(r'\s+', ' ', e['text']).strip()
+        low = txt.lower()
+        if low.startswith(pre) and low.endswith(post) and len(txt) > len(pre) + len(post):
+            found[clean(txt[len(pre):len(txt) - len(post)])] = e['id']
+    if not found:
         return ''
-    opts = ((e.get('option') or {}).get('options')) or []
-    if opts:
-        SETS[setname] = sorted({clean(str(o['text'])) for o in opts})
-        SET_IDS[setname] = {clean(str(o['text'])): str(o['id']) for o in opts}
-    return e['id']
+    SETS[setname] = sorted(found)
+    SET_IDS[setname] = found
+    return next(iter(found.values())).split('|')[0]
 
 
 var_rows = {}
