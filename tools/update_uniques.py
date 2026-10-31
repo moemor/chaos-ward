@@ -121,7 +121,14 @@ VARIANTS = {                     # Unique -> Pools (Spawn-Tags der Spieldaten) o
 ex_by_skel = {}
 for e in explicit:
     ex_by_skel.setdefault(skel(e['text']), e)
-opt_log = [f"{e['id']}\t{e['text']}\t{len(e['option']['options'])}" for e in explicit if (e.get('option') or {}).get('options')]
+def _short(e):
+    e = dict(e)
+    if isinstance(e.get('option'), dict) and isinstance(e['option'].get('options'), list):
+        e['option'] = dict(e['option'], options=e['option']['options'][:3], n=len(e['option']['options']))
+    return json.dumps(e, ensure_ascii=False)
+
+
+opt_log = [_short(e) for e in explicit if e.get('option') or re.search(r'Allocates|Level of all|Radius of', e.get('text', ''))]
 if opt_log:                       # Übersicht der Trade-Einträge mit Auswahl-Optionen (zum Abgleich der Auswahl-Zeilen)
     (OUT / 'trade-option-stats.tsv').write_text('# Trade-Einträge mit Auswahl (ID, Text, Anzahl Optionen)\n' + '\n'.join(opt_log) + '\n', encoding='utf-8')
 
