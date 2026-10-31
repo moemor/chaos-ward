@@ -878,1472 +878,1154 @@ V	Heart of the Well	S	Minions have (6-12)% increased Critical Hit Chance	explici
 V	Heart of the Well	S	Minions have +(3-4)% to all Elemental Resistances	explicit.stat_1423639565	
 V	Heart of the Well	S	Recover (1-2)% of maximum Life on Kill	explicit.stat_2023107756	
 V	Heart of the Well	S	Recover (1-2)% of maximum Mana on Kill	explicit.stat_1030153674	
-V	From Nothing	X	Passives in Radius of # can be Allocated without being connected to your tree		keystone
-V	Megalomaniac	X	Allocates #		notable
-V	Prism of Belief	X	+(1-3) to Level of all # Skills		skill
-O	keystone	Ancestral Bond	
-O	keystone	Avatar of Fire	
-O	keystone	Blackflame Covenant	
-O	keystone	Blood Magic	
-O	keystone	Bulwark	
-O	keystone	Chaos Inoculation	
-O	keystone	Conduit	
-O	keystone	Crimson Assault	
-O	keystone	Dance with Death	
-O	keystone	Eldritch Battery	
-O	keystone	Elemental Equilibrium	
-O	keystone	Eternal Youth	
-O	keystone	Giant's Blood	
-O	keystone	Glancing Blows	
-O	keystone	Heartstopper	
-O	keystone	Hollow Palm Technique	
-O	keystone	Iron Reflexes	
-O	keystone	Lord of the Wilds	
-O	keystone	Mind Over Matter	
-O	keystone	Necromantic Talisman	
-O	keystone	Oasis	
-O	keystone	Pain Attunement	
-O	keystone	Primal Hunger	
-O	keystone	Resolute Technique	
-O	keystone	Resonance	
-O	keystone	Ritual Cadence	
-O	keystone	Scarred Faith	
-O	keystone	Trusted Kinship	
-O	keystone	Unwavering Stance	
-O	keystone	Vaal Pact	
-O	keystone	Whispers of Doom	
-O	keystone	Wildsurge Incantation	
-O	keystone	Zealot's Oath	
-O	notable	Abasement	
-O	notable	Acceleration	
-O	notable	Adaptable Assault	
-O	notable	Adaptive Skin	
-O	notable	Admonisher	
-O	notable	Adrenaline Rush	
-O	notable	Advanced Munitions	
-O	notable	Adverse Growth	
-O	notable	Affliction Enforcer	
-O	notable	Afterimage	
-O	notable	Aftershocks	
-O	notable	Against the Elements	
-O	notable	Aggravation	
-O	notable	Agile Sprinter	
-O	notable	Agile Succession	
-O	notable	Agonising Calamity	
-O	notable	Alchemical Oil	
-O	notable	All For One	
-O	notable	All Natural	
-O	notable	Altered Brain Chemistry	
-O	notable	Alternating Current	
-O	notable	Among the Hordes	
-O	notable	Ancestral Alacrity	
-O	notable	Ancestral Artifice	
-O	notable	Ancestral Conduits	
-O	notable	Ancestral Mending	
-O	notable	Ancestral Reach	
-O	notable	Ancestral Unity	
-O	notable	Ancient Aegis	
-O	notable	Anger Management	
-O	notable	Anticipation	
-O	notable	Apocalypse	
-O	notable	Arcane Alchemy	
-O	notable	Arcane Blossom	
-O	notable	Arcane Intensity	
-O	notable	Arcane Mixtures	
-O	notable	Arcane Nature	
-O	notable	Arcane Remnants	
-O	notable	Archon of Undeath	
-O	notable	Archon of the Blizzard	
-O	notable	Archon of the Storm	
-O	notable	Arsonist	
-O	notable	Artillery Strike	
-O	notable	Asceticism	
-O	notable	Aspiring Genius	
-O	notable	At your Command	
-O	notable	Augmented Flesh	
-O	notable	Authority	
-O	notable	Avoiding Deflection	
-O	notable	Back in Action	
-O	notable	Backstabbing	
-O	notable	Backup Plan	
-O	notable	Ball and Chain	
-O	notable	Bannerman	
-O	notable	Barbaric Strength	
-O	notable	Barrier of Venarius	
-O	notable	Bashing Beast	
-O	notable	Bastion of Light	
-O	notable	Battle Fever	
-O	notable	Battle Trance	
-O	notable	Battle-hardened	
-O	notable	Bear's Roar	
-O	notable	Beastial Skin	
-O	notable	Beef	
-O	notable	Behemoth	
-O	notable	Bestial Rage	
-O	notable	Bhatair's Storm	
-O	notable	Biting Frost	
-O	notable	Blade Catcher	
-O	notable	Blade Flurry	
-O	notable	Blazing Arms	
-O	notable	Bleeding Out	
-O	notable	Blessing of the Moon	
-O	notable	Blinding Flash	
-O	notable	Blinding Strike	
-O	notable	Blood Rush	
-O	notable	Blood Tearing	
-O	notable	Blood Transfusion	
-O	notable	Blood of Rage	
-O	notable	Blood of the Wolf	
-O	notable	Bloodletting	
-O	notable	Bloodthirsty	
-O	notable	Blur	
-O	notable	Blurred Motion	
-O	notable	Bolstering Presence	
-O	notable	Bolstering Yell	
-O	notable	Bond of the Ape	
-O	notable	Bond of the Cat	
-O	notable	Bond of the Mamba	
-O	notable	Bond of the Owl	
-O	notable	Bond of the Viper	
-O	notable	Bond of the Wolf	
-O	notable	Bonded Precision	
-O	notable	Bone Chains	
-O	notable	Boon of the Beast	
-O	notable	Boundless Growth	
-O	notable	Bounty Hunter	
-O	notable	Brain Freeze	
-O	notable	Brain Storm	
-O	notable	Branching Bolts	
-O	notable	Bravado	
-O	notable	Breakage	
-O	notable	Breaking Blows	
-O	notable	Breaking Point	
-O	notable	Breath of Fire	
-O	notable	Breath of Ice	
-O	notable	Breath of Lightning	
-O	notable	Brinerot Ferocity	
-O	notable	Bringer of Order	
-O	notable	Briny Carapace	
-O	notable	Brush Off	
-O	notable	Brutal	
-O	notable	Brute Strength	
-O	notable	Building Toxins	
-O	notable	Burn Away	
-O	notable	Burning Nature	
-O	notable	Burning Strikes	
-O	notable	Burnout	
-O	notable	Cacophony	
-O	notable	Calculated Hunter	
-O	notable	Call Upon the Deep	
-O	notable	Captivating Companionship	
-O	notable	Careful Aim	
-O	notable	Careful Assassin	
-O	notable	Careful Consideration	
-O	notable	Carved Earth	
-O	notable	Casting Cascade	
-O	notable	Catalysis	
-O	notable	Catapult	
-O	notable	Catlike Agility	
-O	notable	Cautious Concoctions	
-O	notable	Chakra of Breathing	
-O	notable	Chakra of Elements	
-O	notable	Chakra of Impact	
-O	notable	Chakra of Life	
-O	notable	Chakra of Rhythm	
-O	notable	Chakra of Sight	
-O	notable	Chakra of Stability	
-O	notable	Chakra of Thought	
-O	notable	Channelled Heritage	
-O	notable	Chilled to the Bone	
-O	notable	Chillproof	
-O	notable	Chronomancy	
-O	notable	Cirel of Tarth's Light	
-O	notable	Clean Shot	
-O	notable	Clear Space	
-O	notable	Clever Construction	
-O	notable	Climate Change	
-O	notable	Close Confines	
-O	notable	Cluster Bombs	
-O	notable	Coated Arms	
-O	notable	Coated Knife	
-O	notable	Cold Coat	
-O	notable	Cold Nature	
-O	notable	Colossal Weapon	
-O	notable	Combat Alchemy	
-O	notable	Coming Calamity	
-O	notable	Commanding Rage	
-O	notable	Comradery	
-O	notable	Conall the Hunted	
-O	notable	Concussive Attack	
-O	notable	Conductive Embrace	
-O	notable	Conservative Casting	
-O	notable	Consistent Intake	
-O	notable	Constricting	
-O	notable	Controlled Chaos	
-O	notable	Controlling Magic	
-O	notable	Convalescence	
-O	notable	Cooked	
-O	notable	Core of the Guardian	
-O	notable	Corruption Endures	
-O	notable	Counterstancing	
-O	notable	Coursing Energy	
-O	notable	Cower Before the First Ones	
-O	notable	Cranial Impact	
-O	notable	Crashing Wave	
-O	notable	Craving Slaughter	
-O	notable	Cremating Cries	
-O	notable	Cremation	
-O	notable	Crippling Toxins	
-O	notable	Critical Exploit	
-O	notable	Critical Overload	
-O	notable	Cross Strike	
-O	notable	Cruel Fate	
-O	notable	Cruel Methods	
-O	notable	Crushing Judgement	
-O	notable	Crushing Verdict	
-O	notable	Crystal Elixir	
-O	notable	Crystalline Flesh	
-O	notable	Crystalline Resistance	
-O	notable	Crystallised Immunities	
-O	notable	Cull the Hordes	
-O	notable	Curved Weapon	
-O	notable	Cut to the Bone	
-O	notable	Dampening Shield	
-O	notable	Dangerous Blossom	
-O	notable	Dark Entries	
-O	notable	Dark Entropy	
-O	notable	Dazing Blocks	
-O	notable	Dead can Dance	
-O	notable	Deadly Flourish	
-O	notable	Deadly Force	
-O	notable	Deadly Invocations	
-O	notable	Deadly Swarm	
-O	notable	Deadly Thorns	
-O	notable	Deafening Cries	
-O	notable	Death from Afar	
-O	notable	Decisive Retreat	
-O	notable	Decrepifying Curse	
-O	notable	Deep Freeze	
-O	notable	Deep Trance	
-O	notable	Deep Wounds	
-O	notable	Defender's Resolve	
-O	notable	Defensive Reflexes	
-O	notable	Defensive Stance	
-O	notable	Defiance	
-O	notable	Delayed Danger	
-O	notable	Demolitionist	
-O	notable	Dependable Ward	
-O	notable	Desensitisation	
-O	notable	Desert's Scorn	
-O	notable	Desperate Times	
-O	notable	Destructive Apparatus	
-O	notable	Deterioration	
-O	notable	Determined Precision	
-O	notable	Devastating Devices	
-O	notable	Devastation	
-O	notable	Devoted Protector	
-O	notable	Dimensional Weakspot	
-O	notable	Direct Approach	
-O	notable	Disciplined Training	
-O	notable	Disorientation	
-O	notable	Dispatch Foes	
-O	notable	Distant Dreamer	
-O	notable	Distracted Target	
-O	notable	Distracting Presence	
-O	notable	Dizzying Hits	
-O	notable	Dizzying Sweep	
-O	notable	Dominion	
-O	notable	Dominus' Providence	
-O	notable	Doomsayer	
-O	notable	Draiocht Cleansing	
-O	notable	Dread Engineer's Concoction	
-O	notable	Dreamcatcher	
-O	notable	Drenched	
-O	notable	Dynamism	
-O	notable	Eagle Eye	
-O	notable	Easy Going	
-O	notable	Easy Target	
-O	notable	Echoes of Ferocity	
-O	notable	Echoing Flames	
-O	notable	Echoing Frost	
-O	notable	Echoing Pulse	
-O	notable	Echoing Thunder	
-O	notable	Effervescent	
-O	notable	Efficient Alchemy	
-O	notable	Efficient Casting	
-O	notable	Efficient Contraptions	
-O	notable	Efficient Inscriptions	
-O	notable	Efficient Killing	
-O	notable	Efficient Loading	
-O	notable	Eldritch Will	
-O	notable	Electric Amplification	
-O	notable	Electric Blood	
-O	notable	Electrified Claw	
-O	notable	Electrifying Daze	
-O	notable	Electrifying Nature	
-O	notable	Electrocuting Exposure	
-O	notable	Electrocution	
-O	notable	Electrotherapy	
-O	notable	Elemental Force	
-O	notable	Embodiment of Death	
-O	notable	Embodiment of Frost	
-O	notable	Embodiment of Lightning	
-O	notable	Emboldened Avatar	
-O	notable	Emboldening Casts	
-O	notable	Emboldening Lead	
-O	notable	Embracing Frost	
-O	notable	Empowering Infusions	
-O	notable	Empowering Remains	
-O	notable	Empowering Remnants	
-O	notable	Encompassing Domain	
-O	notable	Endless Blizzard	
-O	notable	Endless Circuit	
-O	notable	Endlessly Soaring	
-O	notable	Endurance	
-O	notable	Endured Suffering	
-O	notable	Enduring Archon	
-O	notable	Enduring Deflection	
-O	notable	Energise	
-O	notable	Energising Archon	
-O	notable	Energising Deflection	
-O	notable	Engineered Blaze	
-O	notable	Enhanced Barrier	
-O	notable	Enhanced Reflexes	
-O	notable	Enhancing Attacks	
-O	notable	Enraged Reaver	
-O	notable	Entropic Incarnation	
-O	notable	Enveloping Presence	
-O	notable	Equilibrium	
-O	notable	Eroding Chains	
-O	notable	Erraticism	
-O	notable	Escalating Mayhem	
-O	notable	Escalating Toxins	
-O	notable	Escalation	
-O	notable	Escape Strategy	
-O	notable	Escape Velocity	
-O	notable	Essence Infusion	
-O	notable	Essence of the Mountain	
-O	notable	Essence of the Storm	
-O	notable	Ether Flow	
-O	notable	Event Horizon	
-O	notable	Everlasting Bloom	
-O	notable	Everlasting Glory	
-O	notable	Everlasting Infusions	
-O	notable	Evocational Practitioner	
-O	notable	Exhaust All Power	
-O	notable	Expendable Army	
-O	notable	Exploit	
-O	notable	Exploit the Elements	
-O	notable	Explosive Empowerment	
-O	notable	Explosive Impact	
-O	notable	Exposed Wounds	
-O	notable	Exposed to the Cosmos	
-O	notable	Exposed to the Inferno	
-O	notable	Exposed to the Storm	
-O	notable	Extinguishing Exhalation	
-O	notable	Falcon Dive	
-O	notable	Falcon Technique	
-O	notable	Fan the Flames	
-O	notable	Far Sighted	
-O	notable	Fast Acting Toxins	
-O	notable	Fast Metabolism	
-O	notable	Fate Finding	
-O	notable	Fated End	
-O	notable	Favourable Odds	
-O	notable	Fearful Paralysis	
-O	notable	Feathered Fletching	
-O	notable	Feel no Pain	
-O	notable	Feel the Earth	
-O	notable	Fervour	
-O	notable	Final Barrage	
-O	notable	Finality	
-O	notable	Finesse	
-O	notable	Finish Them	
-O	notable	Finishing Blows	
-O	notable	Firestarter	
-O	notable	First Approach	
-O	notable	First Principle of the Hollow	
-O	notable	First Sting	
-O	notable	First Teachings of the Keeper	
-O	notable	Flamekeeper	
-O	notable	Flamewalker	
-O	notable	Flare	
-O	notable	Flash Storm	
-O	notable	Flashy Parrying	
-O	notable	Flesh Withstands	
-O	notable	Fleshcrafting	
-O	notable	Flip the Script	
-O	notable	Flow Like Water	
-O	notable	Flow State	
-O	notable	Flow of Life	
-O	notable	Flow of Time	
-O	notable	Flurry	
-O	notable	Focused Channel	
-O	notable	Focused Thrust	
-O	notable	For the Jugular	
-O	notable	Forbidden Path	
-O	notable	Forces of Nature	
-O	notable	Forcewave	
-O	notable	Forthcoming	
-O	notable	Fortified Aegis	
-O	notable	Fortified Location	
-O	notable	Fortifying Blood	
-O	notable	Frantic Fighter	
-O	notable	Frantic Reach	
-O	notable	Frantic Swings	
-O	notable	Frazzled	
-O	notable	Freedom of Movement	
-O	notable	Frenetic	
-O	notable	Friend to Many	
-O	notable	Frightening Shield	
-O	notable	Frostwalker	
-O	notable	Frozen Claw	
-O	notable	Frozen Limit	
-O	notable	Full Recovery	
-O	notable	Full Salvo	
-O	notable	Fulmination	
-O	notable	Gem Enthusiast	
-O	notable	General Electric	
-O	notable	General's Bindings	
-O	notable	Giantslayer	
-O	notable	Gift of the Plains	
-O	notable	Gigantic Following	
-O	notable	Give Up Your Essence	
-O	notable	Glaciation	
-O	notable	Glancing Deflection	
-O	notable	Glazed Flesh	
-O	notable	Glorious Anticipation	
-O	notable	Goring	
-O	notable	Grace of the Ancestors	
-O	notable	Gravedigger	
-O	notable	Greatest Defence	
-O	notable	Grenadier	
-O	notable	Grip of Evil	
-O	notable	Grit	
-O	notable	Grounded in the Earth	
-O	notable	Growing Peril	
-O	notable	Growing Swarm	
-O	notable	Guided Hand	
-O	notable	Guts	
-O	notable	Guttural Roar	
-O	notable	Haemorrhaging Cuts	
-O	notable	Hail	
-O	notable	Hale Heart	
-O	notable	Hale Traveller	
-O	notable	Hallowed	
-O	notable	Hard to Kill	
-O	notable	Hardened Wood	
-O	notable	Harmonic Generator	
-O	notable	Harness the Elements	
-O	notable	Harsh Winter	
-O	notable	Hastening Barrier	
-O	notable	Headshot	
-O	notable	Heart Tissue	
-O	notable	Heartbreaking	
-O	notable	Heartstopping	
-O	notable	Heartstopping Presence	
-O	notable	Heatproof	
-O	notable	Heavy Ammunition	
-O	notable	Heavy Armour	
-O	notable	Heavy Blade	
-O	notable	Heavy Buffer	
-O	notable	Heavy Contact	
-O	notable	Heavy Drinker	
-O	notable	Heavy Frost	
-O	notable	Heavy Weaponry	
-O	notable	Hefty Unit	
-O	notable	Her Final Bite	
-O	notable	Hidden Barb	
-O	notable	Hidden Forms	
-O	notable	Hide of the Bear	
-O	notable	High Alert	
-O	notable	Hindered Capabilities	
-O	notable	Hindering Obstacles	
-O	notable	Holy Protector	
-O	notable	Honed Instincts	
-O	notable	Honourless	
-O	notable	Howling Beast	
-O	notable	Hulking Smash	
-O	notable	Hunker Down	
-O	notable	Hunter	
-O	notable	Hunter's Talisman	
-O	notable	Hunting Companion	
-O	notable	Ice Storm	
-O	notable	Ice Walls	
-O	notable	Icebreaker	
-O	notable	Ichlotl's Inferno	
-O	notable	Ignore Pain	
-O	notable	Illuminated Crown	
-O	notable	Imbibed Power	
-O	notable	Immaterial	
-O	notable	Immolation	
-O	notable	Immortal Infamy	
-O	notable	Immortal Thirst	
-O	notable	Impact Area	
-O	notable	Impact Force	
-O	notable	Impair	
-O	notable	Impending Doom	
-O	notable	Impenetrable Shell	
-O	notable	In Your Face	
-O	notable	In the Thick of It	
-O	notable	Incendiary	
-O	notable	Incision	
-O	notable	Inescapable Cold	
-O	notable	Inevitable Rupture	
-O	notable	Infernal Limit	
-O	notable	Infused Flesh	
-O	notable	Infused Limits	
-O	notable	Infusing Power	
-O	notable	Infusion of Power	
-O	notable	Ingenuity	
-O	notable	Inherited Strength 	
-O	notable	Initiative	
-O	notable	Innate Rune	
-O	notable	Inner Faith	
-O	notable	Insightfulness	
-O	notable	Inspiring Ally	
-O	notable	Inspiring Leader	
-O	notable	Instability	
-O	notable	Insulated Treads	
-O	notable	Insulating Hide	
-O	notable	Intense Dose	
-O	notable	Intense Flames	
-O	notable	Internal Bleeding	
-O	notable	Investing Energies	
-O	notable	Invigorating Archon	
-O	notable	Invigorating Grandeur	
-O	notable	Invigorating Hate	
-O	notable	Invocated Echoes	
-O	notable	Invocated Efficiency	
-O	notable	Invocated Limit	
-O	notable	Iron Slippers	
-O	notable	Irreparable	
-O	notable	Jack of all Trades	
-O	notable	Javelin	
-O	notable	Kaom's Blessing	
-O	notable	Kept at Bay	
-O	notable	Killer Instinct	
-O	notable	Kite Runner	
-O	notable	Knight of Chitus	
-O	notable	Knight of Izaro	
-O	notable	Knight of Tarcus	
-O	notable	Known by All	
-O	notable	Last Stand	
-O	notable	Lasting Boons	
-O	notable	Lasting Incantations	
-O	notable	Lasting Toxins	
-O	notable	Lasting Trauma	
-O	notable	Lavianga's Brew	
-O	notable	Lay Siege	
-O	notable	Lead by Example	
-O	notable	Leaping Ambush	
-O	notable	Leather Bound Gauntlets	
-O	notable	Leeching Toxins	
-O	notable	Left Hand of Darkness	
-O	notable	Left Ventricle	
-O	notable	Licking Wounds	
-O	notable	Life from Death	
-O	notable	Lifelong Friend	
-O	notable	Light on your Feet	
-O	notable	Lightning Quick	
-O	notable	Lightning Rod	
-O	notable	Lightning Storm	
-O	notable	Limitless Pursuit	
-O	notable	Lingering Horror	
-O	notable	Lingering Whispers	
-O	notable	Living Death	
-O	notable	Lockdown	
-O	notable	Locked On	
-O	notable	Lone Warrior	
-O	notable	Long Distance Relationship	
-O	notable	Loose Flesh	
-O	notable	Lord of Horrors	
-O	notable	Lord of the Squall	
-O	notable	Low Tolerance	
-O	notable	Lucidity	
-O	notable	Lucky Rabbit Foot	
-O	notable	Lunar Boon	
-O	notable	Lust for Power	
-O	notable	Lust for Sacrifice	
-O	notable	Made to Last	
-O	notable	Madness in the Bones	
-O	notable	Magnum Opus	
-O	notable	Maiming Strike	
-O	notable	Mana Blessing	
-O	notable	Manifold Method	
-O	notable	Marathon Runner	
-O	notable	Marked Agility	
-O	notable	Marked for Death	
-O	notable	Marked for Sickness	
-O	notable	Martial Artistry	
-O	notable	Mass Hysteria	
-O	notable	Mass Rejuvenation	
-O	notable	Master Fletching	
-O	notable	Master of Hexes	
-O	notable	Material Solidification	
-O	notable	Mauling Stuns	
-O	notable	Meat Recycling	
-O	notable	Meditative Focus	
-O	notable	Melding	
-O	notable	Melting Flames	
-O	notable	Mending Deflection	
-O	notable	Mental Alacrity	
-O	notable	Mental Perseverance	
-O	notable	Mental Toughness	
-O	notable	Mentorship	
-O	notable	Mighty Trunk	
-O	notable	Mind Eraser	
-O	notable	Mindful Awareness	
-O	notable	Molten Being	
-O	notable	Molten Carapace	
-O	notable	Molten Claw	
-O	notable	Moment of Truth	
-O	notable	Momentum	
-O	notable	Morgana, the Storm Seer	
-O	notable	Morning Star	
-O	notable	Multi Shot	
-O	notable	Multitasking	
-O	notable	Mutewind Agility	
-O	notable	Mystic Avalanche	
-O	notable	Mystic Stance	
-O	notable	Mystical Rage	
-O	notable	Natural Immunity	
-O	notable	Nature's Bite	
-O	notable	Near Sighted	
-O	notable	Near at Hand	
-O	notable	Necromantic Ward	
-O	notable	Necrotic Touch	
-O	notable	Necrotised Flesh	
-O	notable	Night's Bite	
-O	notable	Nimble Strength	
-O	notable	Nourishing Ally	
-O	notable	Nurturing Guardian	
-O	notable	Nurturing Nature	
-O	notable	Off-Balancing Retort	
-O	notable	One For All	
-O	notable	One With Flame	
-O	notable	One with the River	
-O	notable	One with the Storm	
-O	notable	Open Mind	
-O	notable	Overexposure	
-O	notable	Overflowing Power	
-O	notable	Overheating Blow	
-O	notable	Overload	
-O	notable	Overwhelm	
-O	notable	Overwhelming Strike	
-O	notable	Overzealous	
-O	notable	Pack Encouragement	
-O	notable	Paragon	
-O	notable	Paranoia	
-O	notable	Passthrough Rounds	
-O	notable	Path of the Renegade	
-O	notable	Patient Barrier	
-O	notable	Perfect Opportunity	
-O	notable	Perfectly Placed Knife	
-O	notable	Perforation	
-O	notable	Perpetual Freeze	
-O	notable	Personal Touch	
-O	notable	Pierce the Heart	
-O	notable	Piercing Claw	
-O	notable	Piercing Shot	
-O	notable	Pile On	
-O	notable	Pin and Run	
-O	notable	Pin their Motivation	
-O	notable	Pinpoint Shot	
-O	notable	Pliable Flesh	
-O	notable	Pocket Sand	
-O	notable	Polished Iron	
-O	notable	Polymathy	
-O	notable	Potent Incantation	
-O	notable	Power Conduction	
-O	notable	Power Shots	
-O	notable	Power of the Storm	
-O	notable	Powerful Casting	
-O	notable	Practiced Signs	
-O	notable	Precise Invocations	
-O	notable	Precise Point	
-O	notable	Precise Volatility	
-O	notable	Precision Salvo	
-O	notable	Preemptive Strike	
-O	notable	Presence Present	
-O	notable	Preservation	
-O	notable	Pressure Points	
-O	notable	Price of Freedom	
-O	notable	Primal Growth	
-O	notable	Primal Protection	
-O	notable	Primal Rage	
-O	notable	Primal Sundering	
-O	notable	Primed to Explode	
-O	notable	Principal Infusion	
-O	notable	Prism Guard	
-O	notable	Prize of the Hunt	
-O	notable	Profane Commander	
-O	notable	Proficiency	
-O	notable	Projectile Bulwark	
-O	notable	Proliferating Weeds	
-O	notable	Prolonged Assault	
-O	notable	Prolonged Fury	
-O	notable	Protraction	
-O	notable	Psychic Fragmentation	
-O	notable	Punctured Lung	
-O	notable	Puppet Master chance	
-O	notable	Pure Chaos	
-O	notable	Pure Energy	
-O	notable	Pure Power	
-O	notable	Push the Advantage	
-O	notable	Pyromancer	
-O	notable	Quick Fingers	
-O	notable	Quick Recovery	
-O	notable	Radial Force	
-O	notable	Rallying Form	
-O	notable	Rallying Icon	
-O	notable	Rapid Recharge	
-O	notable	Rapid Reload	
-O	notable	Rapid Strike	
-O	notable	Rattled	
-O	notable	Rattling Ball	
-O	notable	Raw Mana	
-O	notable	Raw Power	
-O	notable	Reaching Strike	
-O	notable	Reaving	
-O	notable	Redblade Discipline	
-O	notable	Refills	
-O	notable	Refocus	
-O	notable	Regenerative Flesh	
-O	notable	Reinforced Rallying	
-O	notable	Reinvigoration	
-O	notable	Relentless	
-O	notable	Relentless Fallen	
-O	notable	Relentless Vindicator	
-O	notable	Relinquish Your Life	
-O	notable	Remnant Attraction	
-O	notable	Remorseless	
-O	notable	Repeating Explosives	
-O	notable	Replenishing Horde	
-O	notable	Reprisal	
-O	notable	Repulsion	
-O	notable	Resilient Soul	
-O	notable	Resolute Reach	
-O	notable	Resolute Reprisal	
-O	notable	Resolution	
-O	notable	Restless Dead	
-O	notable	Resurging Archon	
-O	notable	Retaliation	
-O	notable	Return to Nature	
-O	notable	Reusable Ammunition	
-O	notable	Revenge	
-O	notable	Reverberating Impact	
-O	notable	Reverberating Parry	
-O	notable	Reverberation	
-O	notable	Rhythm of Fire	
-O	notable	Rhythm of Ice	
-O	notable	Ricochet	
-O	notable	Right Hand of Darkness	
-O	notable	Ripping Blade	
-O	notable	Roaring Cries	
-O	notable	Roil	
-O	notable	Roll and Strike	
-O	notable	Rough Carapace	
-O	notable	Ruin	
-O	notable	Ruinic Helm	
-O	notable	Run and Gun	
-O	notable	Rupturing Pins	
-O	notable	Rusted Pins	
-O	notable	Rustle of the Leaves	
-O	notable	Sacrificial Blood	
-O	notable	Sand in the Eyes	
-O	notable	Sanguimantic Rituals	
-O	notable	Sanguine Tolerance	
-O	notable	Saqawal's Guidance	
-O	notable	Saqawal's Hide	
-O	notable	Saqawal's Talon	
-O	notable	Savagery	
-O	notable	Savoured Blood	
-O	notable	Savouring	
-O	notable	Scales of the Wyvern	
-O	notable	Scent of Blood	
-O	notable	Searing Heat	
-O	notable	Secrets of the Orb	
-O	notable	Seeing Stars	
-O	notable	Self Immolation	
-O	notable	Self Mortification	
-O	notable	Self Sacrificing	
-O	notable	Serrated Edges	
-O	notable	Shadow Dancing	
-O	notable	Sharp Sight	
-O	notable	Sharpened Claw	
-O	notable	Shatter Palm	
-O	notable	Shattered Crystal	
-O	notable	Shattering	
-O	notable	Shattering Blow	
-O	notable	Shattering Daze	
-O	notable	Shedding Skin	
-O	notable	Shelter from the Rain	
-O	notable	Shield Expertise	
-O	notable	Shifted Strikes	
-O	notable	Shimmering	
-O	notable	Shimmering Mirage	
-O	notable	Shocking Limit	
-O	notable	Shockproof	
-O	notable	Shockwaves	
-O	notable	Short Shot	
-O	notable	Shrapnel	
-O	notable	Shredding Contraptions	
-O	notable	Shredding Force	
-O	notable	Sic 'Em	
-O	notable	Sigil of Fire	
-O	notable	Sigil of Ice	
-O	notable	Sigil of Lightning	
-O	notable	Silent Guardian	
-O	notable	Silent Shiv	
-O	notable	Singular Purpose	
-O	notable	Siphon	
-O	notable	Sitting Duck	
-O	notable	Skullcrusher	
-O	notable	Sling Shots	
-O	notable	Slippery Ice	
-O	notable	Slow Burn	
-O	notable	Smash	
-O	notable	Smoke Inhalation	
-O	notable	Sniper	
-O	notable	Snowpiercer	
-O	notable	Soul Bloom	
-O	notable	Spaghettification	
-O	notable	Specialised Shots	
-O	notable	Spectral Ward	
-O	notable	Spell Haste	
-O	notable	Spellblade	
-O	notable	Spike Pit	
-O	notable	Spiked Armour	
-O	notable	Spiked Shield	
-O	notable	Spiked Whip	
-O	notable	Spiral into Depression	
-O	notable	Spiral into Insanity	
-O	notable	Spiral into Mania	
-O	notable	Spirit Bond	
-O	notable	Spirit of the Bear	
-O	notable	Spirit of the Wolf	
-O	notable	Spirit of the Wyvern	
-O	notable	Splintering Force	
-O	notable	Splinters	
-O	notable	Split Shot	
-O	notable	Split the Earth	
-O	notable	Splitting Ground	
-O	notable	Spray and Pray	
-O	notable	Spreading Shocks	
-O	notable	Stacking Toxins	
-O	notable	Staggering Palm	
-O	notable	Staggering Wounds	
-O	notable	Stance Breaker	
-O	notable	Stand Ground	
-O	notable	Stand and Deliver	
-O	notable	Stars Aligned	
-O	notable	Staunch Deflection	
-O	notable	Staunching	
-O	notable	Steadfast Resolve	
-O	notable	Steady Footing	
-O	notable	Step Like Mist	
-O	notable	Stigmata	
-O	notable	Stimulants	
-O	notable	Storm Driven	
-O	notable	Storm Surge	
-O	notable	Storm Swell	
-O	notable	Storm's Rebuke	
-O	notable	Stormbreaker	
-O	notable	Stormcharged	
-O	notable	Stormkeeper	
-O	notable	Stormwalker	
-O	notable	Strength of the Deep	
-O	notable	Strike True	
-O	notable	Stripped Defences	
-O	notable	Strong Chin	
-O	notable	Struck Through	
-O	notable	Stupefy	
-O	notable	Sturdy Ally	
-O	notable	Sturdy Metal	
-O	notable	Sturdy Mind	
-O	notable	Stylebender	
-O	notable	Subterfuge Mask	
-O	notable	Succour	
-O	notable	Sudden Escalation	
-O	notable	Sudden Infuriation	
-O	notable	Suffusion	
-O	notable	Sundering	
-O	notable	Supportive Ancestors	
-O	notable	Surging Beast	
-O	notable	Surging Currents	
-O	notable	Swift Blocking	
-O	notable	Swift Claw	
-O	notable	Swift Flight	
-O	notable	Swift Interruption	
-O	notable	Symbol of Defiance	
-O	notable	Tactical Retreat	
-O	notable	Tainted Strike	
-O	notable	Taste for Blood	
-O	notable	Taut Flesh	
-O	notable	Tempered Defences	
-O	notable	Tempered Mind	
-O	notable	Temporal Mastery	
-O	notable	Tenfold Attacks	
-O	notable	Thaumaturgic Generator	
-O	notable	The Ancient Serpent	
-O	notable	The Fabled Stag	
-O	notable	The Frenzied Bear	
-O	notable	The Great Boar	
-O	notable	The Hollowkeeper	
-O	notable	The Howling Primate	
-O	notable	The Molten One's Gift	
-O	notable	The Noble Wolf	
-O	notable	The Power Within	
-O	notable	The Quick Fox	
-O	notable	The Raging Ox	
-O	notable	The Soul Meridian	
-O	notable	The Spring Hare	
-O	notable	The Wild Cat	
-O	notable	The Winter Owl	
-O	notable	Thickened Arteries	
-O	notable	Thicket Warding	
-O	notable	Thin Ice	
-O	notable	Thirst for Endurance	
-O	notable	Thirst for Power	
-O	notable	Thirsting Ally	
-O	notable	Thornhide	
-O	notable	Thousand Cuts	
-O	notable	Thrill of Battle	
-O	notable	Thrill of the Fight	
-O	notable	Throatseeker	
-O	notable	Thunderstruck	
-O	notable	Tides of Change	
-O	notable	Time Manipulation	
-O	notable	Titan's Determination	
-O	notable	Titanic	
-O	notable	Tolerant Equipment	
-O	notable	Total Incineration	
-O	notable	Touch the Arcane	
-O	notable	Towering Shield	
-O	notable	Toxic Sludge	
-O	notable	Toxic Tolerance	
-O	notable	Trained Deflection	
-O	notable	Trained Turrets	
-O	notable	Tribal Fury	
-O	notable	Trick Shot	
-O	notable	True Strike	
-O	notable	Trusted Partner	
-O	notable	Tukohama's Brew	
-O	notable	Turn the Clock Back	
-O	notable	Turn the Clock Forward	
-O	notable	Unbending	
-O	notable	Unbothering Cold	
-O	notable	Unbound Forces	
-O	notable	Unbreakable	
-O	notable	Unbreaking	
-O	notable	Unerring Impact	
-O	notable	Unexpected Finesse	
-O	notable	Unfettered	
-O	notable	Unforgiving	
-O	notable	Unhindered	
-O	notable	Unimpeded	
-O	notable	Unleash Fire	
-O	notable	Unmoving Craiceann	
-O	notable	Unnatural Resilience	
-O	notable	Unquenchable Iron	
-O	notable	Unsight	
-O	notable	Unspoken Bond	
-O	notable	Unstable Bond	
-O	notable	Unstoppable Barrier	
-O	notable	Unyielding	
-O	notable	Urgent Call	
-O	notable	Utility Ordnance	
-O	notable	Utmost Offering	
-O	notable	Vale Dweller	
-O	notable	Vale Shelter	
-O	notable	Vengeance	
-O	notable	Vengeful Fury	
-O	notable	Versatile Arms	
-O	notable	Viciousness	
-O	notable	Vigilance	
-O	notable	Vigorous Remnants	
-O	notable	Vile Mending	
-O	notable	Vile Wounds	
-O	notable	Vocal Empowerment	
-O	notable	Void	
-O	notable	Volatile Catalyst	
-O	notable	Volatile Grenades	
-O	notable	Volcanic Skin	
-O	notable	Voll's Protection	
-O	notable	Voracious	
-O	notable	Vulgar Methods	
-O	notable	Waning Hindrances	
-O	notable	Warding Fetish	
-O	notable	Warding Potions	
-O	notable	Warlord Berserker	
-O	notable	Warlord Leader	
-O	notable	Warm the Heart	
-O	notable	Wary Dodging	
-O	notable	Wasting	
-O	notable	Wasting Casts	
-O	notable	Watchtowers	
-O	notable	Waters of Life	
-O	notable	Well of Power	
-O	notable	Wellspring	
-O	notable	Whirling Assault	
-O	notable	Whirling Onslaught	
-O	notable	Wide Barrier	
-O	notable	Widespread Coverage	
-O	notable	Wild Storm	
-O	notable	Wither Away	
-O	notable	Wolf's Howl	
-O	notable	Woodland Aspect	
-O	notable	Wrapped Quiver	
-O	notable	Wyvern's Breath	
-O	notable	Zone of Control	
-O	skill	Abyssal Apparition	
-O	skill	Abyssal Pact	
-O	skill	Acidic Concoction	
-O	skill	Alchemist's Boon	
-O	skill	Align Fate	
-O	skill	Ancestral Cry	
-O	skill	Ancestral Spirits	
-O	skill	Animus Exchange	
-O	skill	Apocalypse	
-O	skill	Arc	
-O	skill	Archmage	
-O	skill	Archon of Chayula	
-O	skill	Arctic Armour	
-O	skill	Arctic Howl	
-O	skill	Armour Breaker	
-O	skill	Armour Piercing Rounds	
-O	skill	Artillery Ballista	
-O	skill	Attrition	
-O	skill	Axe Slash	
-O	skill	Azmerian Swarms	
-O	skill	Azmerian Wolf	
-O	skill	Ball Lightning	
-O	skill	Barkskin	
-O	skill	Barrage	
-O	skill	Berserk	
-O	skill	Bind Spectre	
-O	skill	Bitter Dead	
-O	skill	Black Powder Blitz	
-O	skill	Bleeding Concoction	
-O	skill	Blink	
-O	skill	Blood Boil	
-O	skill	Blood Hunt	
-O	skill	Bloodhound's Mark	
-O	skill	Bone Blast	
-O	skill	Bone Cage	
-O	skill	Bone Offering	
-O	skill	Boneshatter	
-O	skill	Bonestorm	
-O	skill	Bow Shot	
-O	skill	Briarpatch	
-O	skill	Bursting Fen Toad	
-O	skill	Cackling Companions	
-O	skill	Chaos Bolt	
-O	skill	Chaotic Surge	
-O	skill	Charge Regulation	
-O	skill	Charged Staff	
-O	skill	Claw Stab	
-O	skill	Cluster Grenade	
-O	skill	Coiling Bolts	
-O	skill	Combat Frenzy	
-O	skill	Comet	
-O	skill	Coming Soon	
-O	skill	Companion: {0}	
-O	skill	Conductive Runes	
-O	skill	Conductivity	
-O	skill	Consecrate	
-O	skill	Contagion	
-O	skill	Convalescence	
-O	skill	Crackling Palm	
-O	skill	Cross Slash	
-O	skill	Crossbow Shot	
-O	skill	Crushing Fear	
-O	skill	Cull The Weak	
-O	skill	Dagger Stab	
-O	skill	Dark Effigy	
-O	skill	Dark Pact	
-O	skill	Decompose	
-O	skill	Defiance Banner	
-O	skill	Demon Form	
-O	skill	Despair	
-O	skill	Detonate Dead	
-O	skill	Detonate Living	
-O	skill	Detonate Minion	
-O	skill	Detonating Arrow	
-O	skill	Devour	
-O	skill	Discipline	
-O	skill	Disengage	
-O	skill	Dread Banner	
-O	skill	Earthquake	
-O	skill	Earthshatter	
-O	skill	Electrocuting Arrow	
-O	skill	Elemental Conflux	
-O	skill	Elemental Expression	
-O	skill	Elemental Siphon	
-O	skill	Elemental Storm	
-O	skill	Elemental Sundering	
-O	skill	Elemental Surge	
-O	skill	Elemental Weakness	
-O	skill	Ember Fusillade	
-O	skill	Emergency Reload	
-O	skill	Encase in Jade	
-O	skill	Enervating Nova	
-O	skill	Enfeeble	
-O	skill	Entangle	
-O	skill	Escape Shot	
-O	skill	Essence Drain	
-O	skill	Eternal March	
-O	skill	Eternal Rage	
-O	skill	Explosive Concoction	
-O	skill	Explosive Grenade	
-O	skill	Explosive Shot	
-O	skill	Explosive Spear	
-O	skill	Explosive Transmutation	
-O	skill	Exsanguinate	
-O	skill	Eye of Winter	
-O	skill	Falling Thunder	
-O	skill	Fangs of Frost	
-O	skill	Feast of Flesh	
-O	skill	Fireball	
-O	skill	Firebolt	
-O	skill	Firestorm	
-O	skill	Flail Strike	
-O	skill	Flame Breath	
-O	skill	Flame Wall	
-O	skill	Flameblast	
-O	skill	Flammability	
-O	skill	Flash Grenade	
-O	skill	Flicker Strike	
-O	skill	Forge Hammer	
-O	skill	Fortifying Cry	
-O	skill	Fragmentation Rounds	
-O	skill	Fragments Of The Past	
-O	skill	Freezing Mark	
-O	skill	Freezing Salvo	
-O	skill	Freezing Shards	
-O	skill	Frost Bomb	
-O	skill	Frost Darts	
-O	skill	Frost Wall	
-O	skill	Frostbolt	
-O	skill	Frostflame Nova	
-O	skill	Frozen Locus	
-O	skill	Fulminating Concoction	
-O	skill	Fulmination	
-O	skill	Furious Slam	
-O	skill	Fury of the Mountain	
-O	skill	Future-Past	
-O	skill	Galvanic Field	
-O	skill	Galvanic Shards	
-O	skill	Gas Arrow	
-O	skill	Gas Grenade	
-O	skill	Gathering Storm	
-O	skill	Gelid Palm	
-O	skill	Gemini Surge	
-O	skill	Ghost Dance	
-O	skill	Glacial Bolt	
-O	skill	Glacial Cascade	
-O	skill	Glacial Lance	
-O	skill	Grenade	
-O	skill	Grim Feast	
-O	skill	Grim Pillars	
-O	skill	Hailstorm Rounds	
-O	skill	Hammer of the Gods	
-O	skill	Harbinger of Madness	
-O	skill	Heart of Ice	
-O	skill	Herald of Ash	
-O	skill	Herald of Blood	
-O	skill	Herald of Ice	
-O	skill	Herald of Plague	
-O	skill	Herald of Thunder	
-O	skill	Herald of the Royal Queen	
-O	skill	Hexblast	
-O	skill	High Velocity Rounds	
-O	skill	His Dark Horizon	
-O	skill	His Foul Emergence	
-O	skill	His Grave Command	
-O	skill	His Scattering Calamity	
-O	skill	His Vile Intrusion	
-O	skill	His Winnowing Flame	
-O	skill	Hollow Focus	
-O	skill	Hollow Resonance	
-O	skill	Hollow Shell	
-O	skill	Hypothermia	
-O	skill	Ice Fragments	
-O	skill	Ice Nova	
-O	skill	Ice Shards	
-O	skill	Ice Shot	
-O	skill	Ice Strike	
-O	skill	Ice-Tipped Arrows	
-O	skill	Icestorm	
-O	skill	Impurity	
-O	skill	Incendiary Shot	
-O	skill	Incinerate	
-O	skill	Inevitable Agony	
-O	skill	Infernal Cry	
-O	skill	Into the Breach	
-O	skill	Iron Ward	
-O	skill	Kelari's Deception	
-O	skill	Kelari's Judgment	
-O	skill	Kelari's Malediction	
-O	skill	Kelari, the Tainted Sands	
-O	skill	Killing Palm	
-O	skill	Kinetic Bash	
-O	skill	Leap Slam	
-O	skill	Leylines	
-O	skill	Life Remnants	
-O	skill	Lightning Arrow	
-O	skill	Lightning Bolt	
-O	skill	Lightning Conduit	
-O	skill	Lightning Rod	
-O	skill	Lightning Spear	
-O	skill	Lightning Warp	
-O	skill	Lingering Illusion	
-O	skill	Living Bomb	
-O	skill	Lunar Assault	
-O	skill	Lunar Blessing	
-O	skill	Mace Strike	
-O	skill	Magma Barrier	
-O	skill	Magnetic Salvo	
-O	skill	Malice	
-O	skill	Mana Drain	
-O	skill	Mana Remnants	
-O	skill	Mana Tempest	
-O	skill	Manifest Weapon	
-O	skill	Mantra of Destruction	
-O	skill	Maul	
-O	skill	Meditate	
-O	skill	Midnight Zenith	
-O	skill	Mirror of Refraction	
-O	skill	Mist Raven	
-O	skill	Molten Blast	
-O	skill	Molten Crash	
-O	skill	Molten Shower	
-O	skill	Moment of Vulnerability	
-O	skill	Navira's Fracturing	
-O	skill	Navira's Oasis	
-O	skill	Navira's Well	
-O	skill	Navira, the Last Mirage	
-O	skill	Oil Barrage	
-O	skill	Oil Grenade	
-O	skill	Orb of Storms	
-O	skill	Overwhelming Presence	
-O	skill	Pain Offering	
-O	skill	Parry	
-O	skill	Perfect Strike	
-O	skill	Permafrost Bolts	
-O	skill	Phantasmal Arrow	
-O	skill	Pinnacle of Power	
-O	skill	Plague Bearer	
-O	skill	Plasma Blast	
-O	skill	Playtest Attack	
-O	skill	Playtest Slam	
-O	skill	Playtest Spell	
-O	skill	Poisonburst Arrow	
-O	skill	Power Siphon	
-O	skill	Powered by Verisium	
-O	skill	Primal Avatar	
-O	skill	Primal Bounty	
-O	skill	Primal Strikes	
-O	skill	Profane Ritual	
-O	skill	Punch	
-O	skill	Purity of Fire	
-O	skill	Purity of Ice	
-O	skill	Purity of Lightning	
-O	skill	Quarterstaff Strike	
-O	skill	Queen's Procession	
-O	skill	Raging Spirits	
-O	skill	Rain of Arrows	
-O	skill	Rain of Blades	
-O	skill	Raise Shield	
-O	skill	Raise Zombie	
-O	skill	Rake	
-O	skill	Rampage	
-O	skill	Rapid Assault	
-O	skill	Rapid Shot	
-O	skill	Ravenous Swarm	
-O	skill	Reap	
-O	skill	Refutation	
-O	skill	Remnants of Kalguur	
-O	skill	Removed Skill	
-O	skill	Rend	
-O	skill	Repulsion	
-O	skill	Requiem	
-O	skill	Resonating Shield	
-O	skill	Rhoa Mount	
-O	skill	Righteous Descent	
-O	skill	Rite of Restoration	
-O	skill	Ritual Sacrifice	
-O	skill	Rolling Magma	
-O	skill	Rolling Slam	
-O	skill	Runic Reprieve	
-O	skill	Runic Tempering	
-O	skill	Ruzhan's Fury	
-O	skill	Ruzhan's Reckoning	
-O	skill	Ruzhan's Trap	
-O	skill	Ruzhan, the Blazing Sword	
-O	skill	Sacrifice	
-O	skill	Sanguine Revelry	
-O	skill	Savage Fury	
-O	skill	Scavenged Plating	
-O	skill	Seismic Cry	
-O	skill	Shard Scavenger	
-O	skill	Shattering Concoction	
-O	skill	Shattering Palm	
-O	skill	Shattering Spite	
-O	skill	Shield Charge	
-O	skill	Shield Wall	
-O	skill	Shockburst Rounds	
-O	skill	Shockchain Arrow	
-O	skill	Shockwave Totem	
-O	skill	Shred	
-O	skill	Shroud	
-O	skill	Siege Ballista	
-O	skill	Siege Cascade	
-O	skill	Sigil of Power	
-O	skill	Siphon Elements	
-O	skill	Siphoning Strike	
-O	skill	Skeletal Arsonist	
-O	skill	Skeletal Brute	
-O	skill	Skeletal Cleric	
-O	skill	Skeletal Frost Mage	
-O	skill	Skeletal Reaver	
-O	skill	Skeletal Sniper	
-O	skill	Skeletal Storm Mage	
-O	skill	Skeletal Warrior	
-O	skill	Skyfall	
-O	skill	Smash to Smithereens	
-O	skill	Snap	
-O	skill	Snipe	
-O	skill	Sniper's Mark	
-O	skill	Soaring Midnight	
-O	skill	Solar Orb	
-O	skill	Sorcery Ward	
-O	skill	Soul Crystal: {0}	
-O	skill	Soul Offering	
-O	skill	Soulrend	
-O	skill	Spark	
-O	skill	Spear Stab	
-O	skill	Spear Throw	
-O	skill	Spear of Solaris	
-O	skill	Spearfield	
-O	skill	Spectre: {0}	
-O	skill	Spinning Inferno	
-O	skill	Spiral Volley	
-O	skill	Spiraling Conspiracy	
-O	skill	Staggering Palm	
-O	skill	Stampede	
-O	skill	Starborn Onslaught	
-O	skill	Storm Lance	
-O	skill	Storm Wave	
-O	skill	Stormblast Bolts	
-O	skill	Stormcaller Arrow	
-O	skill	Summon Infernal Hound	
-O	skill	Sunder	
-O	skill	Supercharged Slam	
-O	skill	Supporting Fire	
-O	skill	Sword Slash	
-O	skill	Tame Beast	
-O	skill	Temper Weapon	
-O	skill	Tempest Bell	
-O	skill	Tempest Flurry	
-O	skill	Temporal Chains	
-O	skill	Temporal Rift	
-O	skill	The Stars Answer	
-O	skill	Thrashing Vines	
-O	skill	Thunderous Leap	
-O	skill	Thunderstorm	
-O	skill	Time Freeze	
-O	skill	Time Snap	
-O	skill	Time of Need	
-O	skill	Tornado	
-O	skill	Tornado Shot	
-O	skill	Toxic Domain	
-O	skill	Toxic Growth	
-O	skill	Trail of Caltrops	
-O	skill	Trinity	
-O	skill	Triskelion Cascade	
-O	skill	Twister	
-O	skill	Unbound Avatar	
-O	skill	Unearth	
-O	skill	Unleash	
-O	skill	Untether	
-O	skill	Valako's Charge	
-O	skill	Vaulting Impact	
-O	skill	Verisium Manifestations	
-O	skill	Vine Arrow	
-O	skill	Virtuous Barrier	
-O	skill	Vivid Stampede	
-O	skill	Void Illusion	
-O	skill	Volatile Dead	
-O	skill	Volcanic Fissure	
-O	skill	Volcano	
-O	skill	Voltaic Barrier	
-O	skill	Voltaic Grenade	
-O	skill	Voltaic Mark	
-O	skill	Vulnerability	
-O	skill	Walking Calamity	
-O	skill	War Banner	
-O	skill	Wardbound Minions	
-O	skill	Wave of Frost	
-O	skill	Whirling Assault	
-O	skill	Whirling Slash	
-O	skill	Whirlwind Lance	
-O	skill	Wild Protector	
-O	skill	Wildwood's Gifts	
-O	skill	Wind Blast	
-O	skill	Wind Dancer	
-O	skill	Wind Serpent's Fury	
-O	skill	Wing Blast	
-O	skill	Wither	
-O	skill	Withering Presence	
-O	skill	Wolf Pack	
-O	skill	[DNT-UNUSED] Axe Chop	
-O	skill	[DNT-UNUSED] Axe Execute	
-O	skill	[DNT-UNUSED] Axe Heavy Cleave	
-O	skill	[DNT-UNUSED] Axe Leaping Chop	
-O	skill	[DNT-UNUSED] Axe Raised Chop	
-O	skill	[DNT-UNUSED] Axe Slash	
-O	skill	[DNT-UNUSED] Axe Whirling Slash	
-O	skill	[DNT-UNUSED] Blade Dance	
-O	skill	[DNT-UNUSED] Blade Nova	
-O	skill	[DNT-UNUSED] Claw Rake	
-O	skill	[DNT-UNUSED] Combo Knife Throw	
-O	skill	[DNT-UNUSED] Detonation	
-O	skill	[DNT-UNUSED] Dodge Roll	
-O	skill	[DNT-UNUSED] Dominating Aura	
-O	skill	[DNT-UNUSED] Evasive Strike	
-O	skill	[DNT-UNUSED] Flame Slice	
-O	skill	[DNT-UNUSED] Gas Cloud	
-O	skill	[DNT-UNUSED] Howl	
-O	skill	[DNT-UNUSED] Hyper Slash	
-O	skill	[DNT-UNUSED] Knife Flip	
-O	skill	[DNT-UNUSED] Leaping Axe Catch	
-O	skill	[DNT-UNUSED] Plunging Blade	
-O	skill	[DNT-UNUSED] RingOfBlades	
-O	skill	[DNT-UNUSED] Shadow Ambush	
-O	skill	[DNT-UNUSED] Shadow Dash	
-O	skill	[DNT-UNUSED] Shadow Thief Slash	
-O	skill	[DNT-UNUSED] Spear Vortex	
-O	skill	[DNT-UNUSED] Spinning Flail	
-O	skill	[DNT-UNUSED] Spinning Throw	
-O	skill	[DNT-UNUSED] Spiral Throw	
-O	skill	[DNT-UNUSED] Storm Blade	
-O	skill	[DNT-UNUSED] Sword Leap Slash	
-O	skill	[DNT-UNUSED] Sword Lunge	
-O	skill	[DNT-UNUSED] The Flawed Edict	
-O	skill	[DNT-UNUSED] Triple Slash Combo	
-O	skill	[DNT] Caustic Cloud	
-O	skill	[DNT] Crushing Earth	
-O	skill	[DNT] Flame Link	
-O	skill	[DNT] Fungal Terrain	
-O	skill	[DNT] Hammer of Ngamahu	
-O	skill	[DNT] Internecine Draw	
-O	skill	[DNT] Landslide	
-O	skill	[DNT] Lightless Stalker	
-O	skill	[DNT] MistRavenCompanionSwoop	
-O	skill	[DNT] Primal Quadrilla Slam	
-O	skill	[DNT] Red Queen's Visage	
-O	skill	[DNT] Soul Link	
-O	skill	[DNT] UNUSED	
-O	skill	[DNT] Whip	
+V	From Nothing	X	Passives in Radius of # can be Allocated without being connected to your tree	explicit.stat_2422708892	keystone
+V	Megalomaniac	X	Allocates #	explicit.stat_2954116742	notable
+V	Prism of Belief	X	+(1-3) to Level of all # Skills	explicit.stat_448592698	skill
+O	keystone	Ancestral Bond	explicit.stat_2422708892|45202
+O	keystone	Avatar of Fire	explicit.stat_2422708892|18684
+O	keystone	Blackflame Covenant	explicit.stat_2422708892|42680
+O	keystone	Blood Magic	explicit.stat_2422708892|51749
+O	keystone	Bulwark	explicit.stat_2422708892|56605
+O	keystone	Chaos Inoculation	explicit.stat_2422708892|56349
+O	keystone	Conduit	explicit.stat_2422708892|33979
+O	keystone	Crimson Assault	explicit.stat_2422708892|9085
+O	keystone	Dance with Death	explicit.stat_2422708892|14226
+O	keystone	Eldritch Battery	explicit.stat_2422708892|57513
+O	keystone	Elemental Equilibrium	explicit.stat_2422708892|46742
+O	keystone	Eternal Youth	explicit.stat_2422708892|33404
+O	keystone	Giant's Blood	explicit.stat_2422708892|32349
+O	keystone	Glancing Blows	explicit.stat_2422708892|19288
+O	keystone	Heartstopper	explicit.stat_2422708892|34497
+O	keystone	Hollow Palm Technique	explicit.stat_2422708892|64601
+O	keystone	Iron Reflexes	explicit.stat_2422708892|28492
+O	keystone	Lord of the Wilds	explicit.stat_2422708892|61942
+O	keystone	Mind Over Matter	explicit.stat_2422708892|45918
+O	keystone	Necromantic Talisman	explicit.stat_2422708892|39935
+O	keystone	Oasis	explicit.stat_2422708892|25100
+O	keystone	Pain Attunement	explicit.stat_2422708892|55048
+O	keystone	Primal Hunger	explicit.stat_2422708892|37484
+O	keystone	Resolute Technique	explicit.stat_2422708892|44017
+O	keystone	Resonance	explicit.stat_2422708892|25520
+O	keystone	Ritual Cadence	explicit.stat_2422708892|11230
+O	keystone	Scarred Faith	explicit.stat_2422708892|49547
+O	keystone	Trusted Kinship	explicit.stat_2422708892|41861
+O	keystone	Unwavering Stance	explicit.stat_2422708892|14540
+O	keystone	Vaal Pact	explicit.stat_2422708892|33369
+O	keystone	Whispers of Doom	explicit.stat_2422708892|47759
+O	keystone	Wildsurge Incantation	explicit.stat_2422708892|49363
+O	keystone	Zealot's Oath	explicit.stat_2422708892|52
+O	notable	Abasement	explicit.stat_2954116742|7338
+O	notable	Acceleration	explicit.stat_2954116742|43082
+O	notable	Adaptable Assault	explicit.stat_2954116742|12822
+O	notable	Adaptive Skin	explicit.stat_2954116742|43250
+O	notable	Admonisher	explicit.stat_2954116742|35876
+O	notable	Adrenaline Rush	explicit.stat_2954116742|17340
+O	notable	Advanced Munitions	explicit.stat_2954116742|43829
+O	notable	Adverse Growth	explicit.stat_2954116742|4295
+O	notable	Afterimage	explicit.stat_2954116742|4716
+O	notable	Aftershocks	explicit.stat_2954116742|50253
+O	notable	Against the Elements	explicit.stat_2954116742|59938
+O	notable	Aggravation	explicit.stat_2954116742|6655
+O	notable	Agile Sprinter	explicit.stat_2954116742|8896
+O	notable	Agile Succession	explicit.stat_2954116742|56493
+O	notable	Agonising Calamity	explicit.stat_2954116742|43088
+O	notable	Alchemical Oil	explicit.stat_2954116742|55817
+O	notable	All For One	explicit.stat_2954116742|43854
+O	notable	All Natural	explicit.stat_2954116742|58016
+O	notable	Altered Brain Chemistry	explicit.stat_2954116742|48974
+O	notable	Alternating Current	explicit.stat_2954116742|23764
+O	notable	Among the Hordes	explicit.stat_2954116742|20558
+O	notable	Ancestral Alacrity	explicit.stat_2954116742|2575
+O	notable	Ancestral Artifice	explicit.stat_2954116742|26339
+O	notable	Ancestral Conduits	explicit.stat_2954116742|51820
+O	notable	Ancestral Mending	explicit.stat_2954116742|18419
+O	notable	Ancestral Reach	explicit.stat_2954116742|43396
+O	notable	Ancestral Unity	explicit.stat_2954116742|62609
+O	notable	Ancient Aegis	explicit.stat_2954116742|5728
+O	notable	Anticipation	explicit.stat_2954116742|62431
+O	notable	Apocalypse	explicit.stat_2954116742|38398
+O	notable	Arcane Alchemy	explicit.stat_2954116742|46224
+O	notable	Arcane Blossom	explicit.stat_2954116742|14324
+O	notable	Arcane Intensity	explicit.stat_2954116742|19044
+O	notable	Arcane Mixtures	explicit.stat_2954116742|46972
+O	notable	Arcane Nature	explicit.stat_2954116742|16940
+O	notable	Arcane Remnants	explicit.stat_2954116742|46124
+O	notable	Archon of Undeath	explicit.stat_2954116742|26926
+O	notable	Archon of the Blizzard	explicit.stat_2954116742|42045
+O	notable	Archon of the Storm	explicit.stat_2954116742|27434
+O	notable	Arsonist	explicit.stat_2954116742|12245
+O	notable	Artillery Strike	explicit.stat_2954116742|58817
+O	notable	Asceticism	explicit.stat_2954116742|12661
+O	notable	Aspiring Genius	explicit.stat_2954116742|27388
+O	notable	At your Command	explicit.stat_2954116742|35560
+O	notable	Augmented Flesh	explicit.stat_2954116742|17696
+O	notable	Authority	explicit.stat_2954116742|20397
+O	notable	Avoiding Deflection	explicit.stat_2954116742|50673
+O	notable	Back in Action	explicit.stat_2954116742|33059
+O	notable	Backup Plan	explicit.stat_2954116742|53853
+O	notable	Bannerman	explicit.stat_2954116742|62455
+O	notable	Barbaric Strength	explicit.stat_2954116742|50562
+O	notable	Barrier of Venarius	explicit.stat_2954116742|50062
+O	notable	Bashing Beast	explicit.stat_2954116742|8916
+O	notable	Bastion of Light	explicit.stat_2954116742|37846
+O	notable	Battle Fever	explicit.stat_2954116742|64240
+O	notable	Battle Trance	explicit.stat_2954116742|37276
+O	notable	Bear's Roar	explicit.stat_2954116742|41620
+O	notable	Beastial Skin	explicit.stat_2954116742|59720
+O	notable	Beef	explicit.stat_2954116742|25482
+O	notable	Behemoth	explicit.stat_2954116742|5642
+O	notable	Bestial Rage	explicit.stat_2954116742|10873
+O	notable	Bhatair's Storm	explicit.stat_2954116742|15825
+O	notable	Biting Frost	explicit.stat_2954116742|38329
+O	notable	Blade Catcher	explicit.stat_2954116742|17029
+O	notable	Blade Flurry	explicit.stat_2954116742|2394
+O	notable	Blazing Arms	explicit.stat_2954116742|25753
+O	notable	Bleeding Out	explicit.stat_2954116742|18308
+O	notable	Blessing of the Moon	explicit.stat_2954116742|48925
+O	notable	Blinding Flash	explicit.stat_2954116742|42354
+O	notable	Blinding Strike	explicit.stat_2954116742|20916
+O	notable	Blood Rush	explicit.stat_2954116742|39083
+O	notable	Blood Tearing	explicit.stat_2954116742|58183
+O	notable	Blood Transfusion	explicit.stat_2954116742|48524
+O	notable	Blood of Rage	explicit.stat_2954116742|35792
+O	notable	Blood of the Wolf	explicit.stat_2954116742|49214
+O	notable	Bloodletting	explicit.stat_2954116742|54990
+O	notable	Bloodthirsty	explicit.stat_2954116742|10772
+O	notable	Blurred Motion	explicit.stat_2954116742|42177
+O	notable	Bolstering Yell	explicit.stat_2954116742|26070
+O	notable	Bond of the Ape	explicit.stat_2954116742|712
+O	notable	Bond of the Cat	explicit.stat_2954116742|1448
+O	notable	Bond of the Mamba	explicit.stat_2954116742|47853
+O	notable	Bond of the Owl	explicit.stat_2954116742|52568
+O	notable	Bond of the Viper	explicit.stat_2954116742|34478
+O	notable	Bond of the Wolf	explicit.stat_2954116742|5191
+O	notable	Bonded Precision	explicit.stat_2954116742|17725
+O	notable	Bone Chains	explicit.stat_2954116742|26563
+O	notable	Boon of the Beast	explicit.stat_2954116742|52618
+O	notable	Boundless Growth	explicit.stat_2954116742|15114
+O	notable	Bounty Hunter	explicit.stat_2954116742|23244
+O	notable	Brain Freeze	explicit.stat_2954116742|24721
+O	notable	Brain Storm	explicit.stat_2954116742|50498
+O	notable	Branching Bolts	explicit.stat_2954116742|37806
+O	notable	Bravado	explicit.stat_2954116742|14777
+O	notable	Breakage	explicit.stat_2954116742|21453
+O	notable	Breaking Blows	explicit.stat_2954116742|39347
+O	notable	Breaking Point	explicit.stat_2954116742|7777
+O	notable	Breath of Fire	explicit.stat_2954116742|24655
+O	notable	Breath of Ice	explicit.stat_2954116742|18086
+O	notable	Breath of Lightning	explicit.stat_2954116742|61338
+O	notable	Brinerot Ferocity	explicit.stat_2954116742|9535
+O	notable	Bringer of Order	explicit.stat_2954116742|48565
+O	notable	Briny Carapace	explicit.stat_2954116742|53935
+O	notable	Brush Off	explicit.stat_2954116742|63541
+O	notable	Brute Strength	explicit.stat_2954116742|50392
+O	notable	Building Toxins	explicit.stat_2954116742|15986
+O	notable	Burn Away	explicit.stat_2954116742|53294
+O	notable	Burning Nature	explicit.stat_2954116742|8554
+O	notable	Burning Strikes	explicit.stat_2954116742|6544
+O	notable	Burnout	explicit.stat_2954116742|35324
+O	notable	Cacophony	explicit.stat_2954116742|6514
+O	notable	Captivating Companionship	explicit.stat_2954116742|32799
+O	notable	Careful Aim	explicit.stat_2954116742|50795
+O	notable	Careful Assassin	explicit.stat_2954116742|46197
+O	notable	Careful Consideration	explicit.stat_2954116742|17955
+O	notable	Carved Earth	explicit.stat_2954116742|52348
+O	notable	Casting Cascade	explicit.stat_2954116742|44005
+O	notable	Catalysis	explicit.stat_2954116742|31433
+O	notable	Catapult	explicit.stat_2954116742|9472
+O	notable	Chakra of Breathing	explicit.stat_2954116742|32664
+O	notable	Chakra of Elements	explicit.stat_2954116742|63400
+O	notable	Chakra of Impact	explicit.stat_2954116742|25362
+O	notable	Chakra of Life	explicit.stat_2954116742|35031
+O	notable	Chakra of Rhythm	explicit.stat_2954116742|28963
+O	notable	Chakra of Sight	explicit.stat_2954116742|42347
+O	notable	Chakra of Stability	explicit.stat_2954116742|42760
+O	notable	Chakra of Thought	explicit.stat_2954116742|29306
+O	notable	Channelled Heritage	explicit.stat_2954116742|5410
+O	notable	Chilled to the Bone	explicit.stat_2954116742|23427
+O	notable	Chillproof	explicit.stat_2954116742|5686
+O	notable	Chronomancy	explicit.stat_2954116742|39990
+O	notable	Cirel of Tarth's Light	explicit.stat_2954116742|21213
+O	notable	Clear Space	explicit.stat_2954116742|57805
+O	notable	Climate Change	explicit.stat_2954116742|4627
+O	notable	Close Confines	explicit.stat_2954116742|38479
+O	notable	Cluster Bombs	explicit.stat_2954116742|29514
+O	notable	Coated Arms	explicit.stat_2954116742|44330
+O	notable	Cold Coat	explicit.stat_2954116742|35618
+O	notable	Cold Nature	explicit.stat_2954116742|26518
+O	notable	Colossal Weapon	explicit.stat_2954116742|47363
+O	notable	Coming Calamity	explicit.stat_2954116742|28044
+O	notable	Commanding Rage	explicit.stat_2954116742|42660
+O	notable	Conall the Hunted	explicit.stat_2954116742|34617
+O	notable	Concussive Attack	explicit.stat_2954116742|36931
+O	notable	Conductive Embrace	explicit.stat_2954116742|52257
+O	notable	Conservative Casting	explicit.stat_2954116742|34300
+O	notable	Consistent Intake	explicit.stat_2954116742|15030
+O	notable	Constricting	explicit.stat_2954116742|54640
+O	notable	Controlled Chaos	explicit.stat_2954116742|30748
+O	notable	Controlling Magic	explicit.stat_2954116742|13823
+O	notable	Convalescence	explicit.stat_2954116742|36623
+O	notable	Cooked	explicit.stat_2954116742|56776
+O	notable	Core of the Guardian	explicit.stat_2954116742|6133
+O	notable	Counterstancing	explicit.stat_2954116742|27761
+O	notable	Coursing Energy	explicit.stat_2954116742|50687
+O	notable	Cranial Impact	explicit.stat_2954116742|63451
+O	notable	Craving Slaughter	explicit.stat_2954116742|9323
+O	notable	Cremating Cries	explicit.stat_2954116742|20511
+O	notable	Cremation	explicit.stat_2954116742|19715
+O	notable	Crippling Toxins	explicit.stat_2954116742|43677
+O	notable	Critical Exploit	explicit.stat_2954116742|57204
+O	notable	Cross Strike	explicit.stat_2954116742|45488
+O	notable	Cruel Methods	explicit.stat_2954116742|42981
+O	notable	Crushing Judgement	explicit.stat_2954116742|35739
+O	notable	Crushing Verdict	explicit.stat_2954116742|18505
+O	notable	Crystal Elixir	explicit.stat_2954116742|38895
+O	notable	Crystalline Flesh	explicit.stat_2954116742|61026
+O	notable	Crystalline Resistance	explicit.stat_2954116742|32151
+O	notable	Crystallised Immunities	explicit.stat_2954116742|5332
+O	notable	Cull the Hordes	explicit.stat_2954116742|36341
+O	notable	Curved Weapon	explicit.stat_2954116742|13708
+O	notable	Cut to the Bone	explicit.stat_2954116742|32507
+O	notable	Dangerous Blossom	explicit.stat_2954116742|7128
+O	notable	Dark Entries	explicit.stat_2954116742|63074
+O	notable	Dark Entropy	explicit.stat_2954116742|20495
+O	notable	Dazing Blocks	explicit.stat_2954116742|10500
+O	notable	Dead can Dance	explicit.stat_2954116742|30523
+O	notable	Deadly Flourish	explicit.stat_2954116742|49618
+O	notable	Deadly Force	explicit.stat_2954116742|13724
+O	notable	Deadly Invocations	explicit.stat_2954116742|29288
+O	notable	Deafening Cries	explicit.stat_2954116742|38053
+O	notable	Death from Afar	explicit.stat_2954116742|8904
+O	notable	Decisive Retreat	explicit.stat_2954116742|17664
+O	notable	Decrepifying Curse	explicit.stat_2954116742|5594
+O	notable	Deep Freeze	explicit.stat_2954116742|16142
+O	notable	Deep Trance	explicit.stat_2954116742|40166
+O	notable	Deep Wounds	explicit.stat_2954116742|33216
+O	notable	Defensive Reflexes	explicit.stat_2954116742|45612
+O	notable	Defensive Stance	explicit.stat_2954116742|10681
+O	notable	Defiance	explicit.stat_2954116742|32354
+O	notable	Delayed Danger	explicit.stat_2954116742|45329
+O	notable	Demolitionist	explicit.stat_2954116742|38570
+O	notable	Dependable Ward	explicit.stat_2954116742|4931
+O	notable	Desensitisation	explicit.stat_2954116742|28267
+O	notable	Desert's Scorn	explicit.stat_2954116742|37967
+O	notable	Desperate Times	explicit.stat_2954116742|56616
+O	notable	Deterioration	explicit.stat_2954116742|14343
+O	notable	Determined Precision	explicit.stat_2954116742|24753
+O	notable	Devastation	explicit.stat_2954116742|48006
+O	notable	Dimensional Weakspot	explicit.stat_2954116742|2344
+O	notable	Direct Approach	explicit.stat_2954116742|24483
+O	notable	Disciplined Training	explicit.stat_2954116742|44573
+O	notable	Disorientation	explicit.stat_2954116742|38459
+O	notable	Dispatch Foes	explicit.stat_2954116742|58939
+O	notable	Distant Dreamer	explicit.stat_2954116742|52245
+O	notable	Distracted Target	explicit.stat_2954116742|32721
+O	notable	Distracting Presence	explicit.stat_2954116742|44765
+O	notable	Dizzying Hits	explicit.stat_2954116742|47514
+O	notable	Dizzying Sweep	explicit.stat_2954116742|1420
+O	notable	Dominion	explicit.stat_2954116742|26214
+O	notable	Dominus' Providence	explicit.stat_2954116742|58894
+O	notable	Doomsayer	explicit.stat_2954116742|57190
+O	notable	Draiocht Cleansing	explicit.stat_2954116742|1502
+O	notable	Dread Engineer's Concoction	explicit.stat_2954116742|32858
+O	notable	Dreamcatcher	explicit.stat_2954116742|11838
+O	notable	Drenched	explicit.stat_2954116742|40073
+O	notable	Dynamism	explicit.stat_2954116742|3688
+O	notable	Easy Going	explicit.stat_2954116742|10315
+O	notable	Easy Target	explicit.stat_2954116742|64525
+O	notable	Echoing Flames	explicit.stat_2954116742|60692
+O	notable	Echoing Frost	explicit.stat_2954116742|5257
+O	notable	Echoing Pulse	explicit.stat_2954116742|7302
+O	notable	Echoing Thunder	explicit.stat_2954116742|5703
+O	notable	Effervescent	explicit.stat_2954116742|33093
+O	notable	Efficient Alchemy	explicit.stat_2954116742|46692
+O	notable	Efficient Casting	explicit.stat_2954116742|16790
+O	notable	Efficient Contraptions	explicit.stat_2954116742|30408
+O	notable	Efficient Inscriptions	explicit.stat_2954116742|42245
+O	notable	Efficient Killing	explicit.stat_2954116742|94
+O	notable	Efficient Loading	explicit.stat_2954116742|53683
+O	notable	Eldritch Will	explicit.stat_2954116742|3894
+O	notable	Electric Amplification	explicit.stat_2954116742|55708
+O	notable	Electric Blood	explicit.stat_2954116742|56988
+O	notable	Electrified Claw	explicit.stat_2954116742|30546
+O	notable	Electrifying Daze	explicit.stat_2954116742|56767
+O	notable	Electrifying Nature	explicit.stat_2954116742|26291
+O	notable	Electrocuting Exposure	explicit.stat_2954116742|7275
+O	notable	Electrocution	explicit.stat_2954116742|36364
+O	notable	Electrotherapy	explicit.stat_2954116742|43090
+O	notable	Embodiment of Death	explicit.stat_2954116742|59781
+O	notable	Embodiment of Frost	explicit.stat_2954116742|10612
+O	notable	Embodiment of Lightning	explicit.stat_2954116742|15991
+O	notable	Emboldened Avatar	explicit.stat_2954116742|43423
+O	notable	Emboldening Casts	explicit.stat_2954116742|10727
+O	notable	Emboldening Lead	explicit.stat_2954116742|34553
+O	notable	Embracing Frost	explicit.stat_2954116742|9928
+O	notable	Empowering Infusions	explicit.stat_2954116742|8782
+O	notable	Empowering Remains	explicit.stat_2954116742|8397
+O	notable	Empowering Remnants	explicit.stat_2954116742|40985
+O	notable	Encompassing Domain	explicit.stat_2954116742|7542
+O	notable	Endless Blizzard	explicit.stat_2954116742|19955
+O	notable	Endless Circuit	explicit.stat_2954116742|8273
+O	notable	Endurance	explicit.stat_2954116742|5663
+O	notable	Endured Suffering	explicit.stat_2954116742|15443
+O	notable	Enduring Archon	explicit.stat_2954116742|59070
+O	notable	Enduring Deflection	explicit.stat_2954116742|42103
+O	notable	Energise	explicit.stat_2954116742|40399
+O	notable	Energising Archon	explicit.stat_2954116742|43633
+O	notable	Energising Deflection	explicit.stat_2954116742|34541
+O	notable	Engineered Blaze	explicit.stat_2954116742|2814
+O	notable	Enhanced Barrier	explicit.stat_2954116742|44299
+O	notable	Enhanced Reflexes	explicit.stat_2954116742|51707
+O	notable	Enhancing Attacks	explicit.stat_2954116742|56237
+O	notable	Entropic Incarnation	explicit.stat_2954116742|30720
+O	notable	Enveloping Presence	explicit.stat_2954116742|65243
+O	notable	Equilibrium	explicit.stat_2954116742|61404
+O	notable	Eroding Chains	explicit.stat_2954116742|52684
+O	notable	Erraticism	explicit.stat_2954116742|20032
+O	notable	Escalating Mayhem	explicit.stat_2954116742|42032
+O	notable	Escalating Toxins	explicit.stat_2954116742|38628
+O	notable	Escalation	explicit.stat_2954116742|9187
+O	notable	Escape Strategy	explicit.stat_2954116742|5227
+O	notable	Escape Velocity	explicit.stat_2954116742|17854
+O	notable	Essence Infusion	explicit.stat_2954116742|42077
+O	notable	Ether Flow	explicit.stat_2954116742|16256
+O	notable	Event Horizon	explicit.stat_2954116742|52191
+O	notable	Everlasting Glory	explicit.stat_2954116742|13524
+O	notable	Everlasting Infusions	explicit.stat_2954116742|24087
+O	notable	Evocational Practitioner	explicit.stat_2954116742|41753
+O	notable	Expendable Army	explicit.stat_2954116742|47420
+O	notable	Exploit	explicit.stat_2954116742|39050
+O	notable	Exploit the Elements	explicit.stat_2954116742|48581
+O	notable	Explosive Empowerment	explicit.stat_2954116742|36333
+O	notable	Explosive Impact	explicit.stat_2954116742|21206
+O	notable	Exposed to the Cosmos	explicit.stat_2954116742|55835
+O	notable	Exposed to the Inferno	explicit.stat_2954116742|10423
+O	notable	Exposed to the Storm	explicit.stat_2954116742|40990
+O	notable	Extinguishing Exhalation	explicit.stat_2954116742|56112
+O	notable	Falcon Dive	explicit.stat_2954116742|60034
+O	notable	Falcon Technique	explicit.stat_2954116742|31172
+O	notable	Fan the Flames	explicit.stat_2954116742|60464
+O	notable	Far Sighted	explicit.stat_2954116742|35477
+O	notable	Fast Acting Toxins	explicit.stat_2954116742|55
+O	notable	Fast Metabolism	explicit.stat_2954116742|8827
+O	notable	Fate Finding	explicit.stat_2954116742|3921
+O	notable	Fated End	explicit.stat_2954116742|59214
+O	notable	Favourable Odds	explicit.stat_2954116742|19546
+O	notable	Fearful Paralysis	explicit.stat_2954116742|22532
+O	notable	Feathered Fletching	explicit.stat_2954116742|60764
+O	notable	Feel the Earth	explicit.stat_2954116742|9968
+O	notable	Fervour	explicit.stat_2954116742|21537
+O	notable	Final Barrage	explicit.stat_2954116742|2999
+O	notable	Finality	explicit.stat_2954116742|51867
+O	notable	Finesse	explicit.stat_2954116742|38969
+O	notable	Finish Them	explicit.stat_2954116742|29899
+O	notable	Finishing Blows	explicit.stat_2954116742|45013
+O	notable	Firestarter	explicit.stat_2954116742|54911
+O	notable	First Approach	explicit.stat_2954116742|29527
+O	notable	First Principle of the Hollow	explicit.stat_2954116742|49356
+O	notable	First Teachings of the Keeper	explicit.stat_2954116742|59657
+O	notable	Flamekeeper	explicit.stat_2954116742|52669
+O	notable	Flamewalker	explicit.stat_2954116742|62963
+O	notable	Flare	explicit.stat_2954116742|43584
+O	notable	Flash Storm	explicit.stat_2954116742|12337
+O	notable	Flashy Parrying	explicit.stat_2954116742|64851
+O	notable	Fleshcrafting	explicit.stat_2954116742|21164
+O	notable	Flip the Script	explicit.stat_2954116742|4985
+O	notable	Flow of Life	explicit.stat_2954116742|59438
+O	notable	Flow of Time	explicit.stat_2954116742|32128
+O	notable	Flurry	explicit.stat_2954116742|33852
+O	notable	Focused Channel	explicit.stat_2954116742|33730
+O	notable	Focused Thrust	explicit.stat_2954116742|9227
+O	notable	For the Jugular	explicit.stat_2954116742|20677
+O	notable	Forces of Nature	explicit.stat_2954116742|3985
+O	notable	Forcewave	explicit.stat_2954116742|48103
+O	notable	Forthcoming	explicit.stat_2954116742|55568
+O	notable	Fortified Aegis	explicit.stat_2954116742|23940
+O	notable	Fortified Location	explicit.stat_2954116742|53607
+O	notable	Fortifying Blood	explicit.stat_2954116742|35855
+O	notable	Frantic Fighter	explicit.stat_2954116742|59208
+O	notable	Frantic Reach	explicit.stat_2954116742|39911
+O	notable	Frantic Swings	explicit.stat_2954116742|28441
+O	notable	Frazzled	explicit.stat_2954116742|32301
+O	notable	Freedom of Movement	explicit.stat_2954116742|51606
+O	notable	Frenetic	explicit.stat_2954116742|40270
+O	notable	Frightening Shield	explicit.stat_2954116742|45751
+O	notable	Frostwalker	explicit.stat_2954116742|48699
+O	notable	Frozen Claw	explicit.stat_2954116742|20289
+O	notable	Frozen Limit	explicit.stat_2954116742|50715
+O	notable	Full Recovery	explicit.stat_2954116742|37543
+O	notable	Full Salvo	explicit.stat_2954116742|33887
+O	notable	Fulmination	explicit.stat_2954116742|24630
+O	notable	Gem Enthusiast	explicit.stat_2954116742|32976
+O	notable	General Electric	explicit.stat_2954116742|27875
+O	notable	General's Bindings	explicit.stat_2954116742|17150
+O	notable	Giantslayer	explicit.stat_2954116742|9020
+O	notable	Gigantic Following	explicit.stat_2954116742|46365
+O	notable	Glaciation	explicit.stat_2954116742|41972
+O	notable	Glancing Deflection	explicit.stat_2954116742|56488
+O	notable	Glazed Flesh	explicit.stat_2954116742|23939
+O	notable	Glorious Anticipation	explicit.stat_2954116742|63031
+O	notable	Goring	explicit.stat_2954116742|47316
+O	notable	Grace of the Ancestors	explicit.stat_2954116742|27704
+O	notable	Gravedigger	explicit.stat_2954116742|41905
+O	notable	Greatest Defence	explicit.stat_2954116742|27687
+O	notable	Grenadier	explicit.stat_2954116742|58714
+O	notable	Grip of Evil	explicit.stat_2954116742|31175
+O	notable	Grit	explicit.stat_2954116742|20416
+O	notable	Growing Peril	explicit.stat_2954116742|13844
+O	notable	Growing Swarm	explicit.stat_2954116742|14945
+O	notable	Guided Hand	explicit.stat_2954116742|4331
+O	notable	Guts	explicit.stat_2954116742|46499
+O	notable	Guttural Roar	explicit.stat_2954116742|29762
+O	notable	Haemorrhaging Cuts	explicit.stat_2954116742|33229
+O	notable	Hail	explicit.stat_2954116742|44974
+O	notable	Hale Heart	explicit.stat_2954116742|15374
+O	notable	Hale Traveller	explicit.stat_2954116742|52803
+O	notable	Hallowed	explicit.stat_2954116742|34531
+O	notable	Hardened Wood	explicit.stat_2954116742|24438
+O	notable	Harmonic Generator	explicit.stat_2954116742|40480
+O	notable	Harness the Elements	explicit.stat_2954116742|12611
+O	notable	Harsh Winter	explicit.stat_2954116742|26331
+O	notable	Hastening Barrier	explicit.stat_2954116742|44293
+O	notable	Headshot	explicit.stat_2954116742|48215
+O	notable	Heart Tissue	explicit.stat_2954116742|35966
+O	notable	Heartbreaking	explicit.stat_2954116742|13407
+O	notable	Heartstopping	explicit.stat_2954116742|38537
+O	notable	Heartstopping Presence	explicit.stat_2954116742|9896
+O	notable	Heatproof	explicit.stat_2954116742|372
+O	notable	Heavy Ammunition	explicit.stat_2954116742|11826
+O	notable	Heavy Armour	explicit.stat_2954116742|59589
+O	notable	Heavy Buffer	explicit.stat_2954116742|27491
+O	notable	Heavy Contact	explicit.stat_2954116742|56997
+O	notable	Heavy Drinker	explicit.stat_2954116742|15617
+O	notable	Heavy Frost	explicit.stat_2954116742|4959
+O	notable	Heavy Weaponry	explicit.stat_2954116742|41512
+O	notable	Hefty Unit	explicit.stat_2954116742|48418
+O	notable	Hidden Barb	explicit.stat_2954116742|45777
+O	notable	Hide of the Bear	explicit.stat_2954116742|41935
+O	notable	High Alert	explicit.stat_2954116742|30456
+O	notable	Hindered Capabilities	explicit.stat_2954116742|54805
+O	notable	Hindering Obstacles	explicit.stat_2954116742|60273
+O	notable	Holy Protector	explicit.stat_2954116742|23078
+O	notable	Honourless	explicit.stat_2954116742|48014
+O	notable	Howling Beast	explicit.stat_2954116742|30395
+O	notable	Hulking Smash	explicit.stat_2954116742|4673
+O	notable	Hunker Down	explicit.stat_2954116742|57471
+O	notable	Hunter	explicit.stat_2954116742|48617
+O	notable	Hunter's Talisman	explicit.stat_2954116742|33099
+O	notable	Hunting Companion	explicit.stat_2954116742|32655
+O	notable	Ice Storm	explicit.stat_2954116742|23907
+O	notable	Ice Walls	explicit.stat_2954116742|55847
+O	notable	Icebreaker	explicit.stat_2954116742|4031
+O	notable	Ichlotl's Inferno	explicit.stat_2954116742|32932
+O	notable	Ignore Pain	explicit.stat_2954116742|7341
+O	notable	Illuminated Crown	explicit.stat_2954116742|1823
+O	notable	Imbibed Power	explicit.stat_2954116742|50912
+O	notable	Immaterial	explicit.stat_2954116742|19156
+O	notable	Immolation	explicit.stat_2954116742|53030
+O	notable	Immortal Infamy	explicit.stat_2954116742|24062
+O	notable	Immortal Thirst	explicit.stat_2954116742|51871
+O	notable	Impact Area	explicit.stat_2954116742|16626
+O	notable	Impact Force	explicit.stat_2954116742|64443
+O	notable	Impair	explicit.stat_2954116742|46696
+O	notable	Impending Doom	explicit.stat_2954116742|21748
+O	notable	Impenetrable Shell	explicit.stat_2954116742|65023
+O	notable	In Your Face	explicit.stat_2954116742|57379
+O	notable	In the Thick of It	explicit.stat_2954116742|35028
+O	notable	Incendiary	explicit.stat_2954116742|62310
+O	notable	Incision	explicit.stat_2954116742|36630
+O	notable	Inescapable Cold	explicit.stat_2954116742|47270
+O	notable	Inevitable Rupture	explicit.stat_2954116742|22817
+O	notable	Infernal Limit	explicit.stat_2954116742|61354
+O	notable	Infused Flesh	explicit.stat_2954116742|57110
+O	notable	Infused Limits	explicit.stat_2954116742|38965
+O	notable	Infusing Power	explicit.stat_2954116742|24764
+O	notable	Infusion of Power	explicit.stat_2954116742|59387
+O	notable	Ingenuity	explicit.stat_2954116742|39567
+O	notable	Inherited Strength	explicit.stat_2954116742|46683
+O	notable	Initiative	explicit.stat_2954116742|23227
+O	notable	Inner Faith	explicit.stat_2954116742|30562
+O	notable	Insightfulness	explicit.stat_2954116742|116
+O	notable	Inspiring Ally	explicit.stat_2954116742|16150
+O	notable	Inspiring Leader	explicit.stat_2954116742|4661
+O	notable	Instability	explicit.stat_2954116742|43944
+O	notable	Insulated Treads	explicit.stat_2954116742|9736
+O	notable	Insulating Hide	explicit.stat_2954116742|48649
+O	notable	Intense Dose	explicit.stat_2954116742|46182
+O	notable	Intense Flames	explicit.stat_2954116742|65016
+O	notable	Internal Bleeding	explicit.stat_2954116742|7668
+O	notable	Investing Energies	explicit.stat_2954116742|35369
+O	notable	Invigorating Archon	explicit.stat_2954116742|41394
+O	notable	Invigorating Grandeur	explicit.stat_2954116742|50023
+O	notable	Invigorating Hate	explicit.stat_2954116742|28408
+O	notable	Invocated Echoes	explicit.stat_2954116742|24491
+O	notable	Invocated Efficiency	explicit.stat_2954116742|51934
+O	notable	Invocated Limit	explicit.stat_2954116742|338
+O	notable	Iron Slippers	explicit.stat_2954116742|31724
+O	notable	Irreparable	explicit.stat_2954116742|22626
+O	notable	Jack of all Trades	explicit.stat_2954116742|16618
+O	notable	Javelin	explicit.stat_2954116742|10265
+O	notable	Kaom's Blessing	explicit.stat_2954116742|3663
+O	notable	Kept at Bay	explicit.stat_2954116742|37302
+O	notable	Killer Instinct	explicit.stat_2954116742|56453
+O	notable	Kite Runner	explicit.stat_2954116742|26107
+O	notable	Knight of Chitus	explicit.stat_2954116742|24736
+O	notable	Knight of Izaro	explicit.stat_2954116742|9863
+O	notable	Knight of Tarcus	explicit.stat_2954116742|1861
+O	notable	Last Stand	explicit.stat_2954116742|2397
+O	notable	Lasting Boons	explicit.stat_2954116742|64659
+O	notable	Lasting Incantations	explicit.stat_2954116742|58096
+O	notable	Lasting Toxins	explicit.stat_2954116742|61741
+O	notable	Lasting Trauma	explicit.stat_2954116742|18496
+O	notable	Lavianga's Brew	explicit.stat_2954116742|8607
+O	notable	Lay Siege	explicit.stat_2954116742|45599
+O	notable	Lead by Example	explicit.stat_2954116742|40687
+O	notable	Leaping Ambush	explicit.stat_2954116742|8531
+O	notable	Leather Bound Gauntlets	explicit.stat_2954116742|51446
+O	notable	Leeching Toxins	explicit.stat_2954116742|63431
+O	notable	Left Hand of Darkness	explicit.stat_2954116742|19644
+O	notable	Left Ventricle	explicit.stat_2954116742|4091
+O	notable	Licking Wounds	explicit.stat_2954116742|55375
+O	notable	Lifelong Friend	explicit.stat_2954116742|31129
+O	notable	Light on your Feet	explicit.stat_2954116742|55131
+O	notable	Lightning Quick	explicit.stat_2954116742|13738
+O	notable	Lightning Rod	explicit.stat_2954116742|44566
+O	notable	Lightning Storm	explicit.stat_2954116742|60878
+O	notable	Lingering Horror	explicit.stat_2954116742|56063
+O	notable	Lingering Whispers	explicit.stat_2954116742|16499
+O	notable	Living Death	explicit.stat_2954116742|62887
+O	notable	Lockdown	explicit.stat_2954116742|31745
+O	notable	Locked On	explicit.stat_2954116742|56999
+O	notable	Lone Warrior	explicit.stat_2954116742|12964
+O	notable	Long Distance Relationship	explicit.stat_2954116742|31826
+O	notable	Loose Flesh	explicit.stat_2954116742|13542
+O	notable	Lord of Horrors	explicit.stat_2954116742|33240
+O	notable	Lord of the Squall	explicit.stat_2954116742|27779
+O	notable	Low Tolerance	explicit.stat_2954116742|42959
+O	notable	Lucidity	explicit.stat_2954116742|51891
+O	notable	Lucky Rabbit Foot	explicit.stat_2954116742|59303
+O	notable	Lust for Power	explicit.stat_2954116742|1104
+O	notable	Lust for Sacrifice	explicit.stat_2954116742|27009
+O	notable	Made to Last	explicit.stat_2954116742|44952
+O	notable	Madness in the Bones	explicit.stat_2954116742|23738
+O	notable	Magnum Opus	explicit.stat_2954116742|39568
+O	notable	Maiming Strike	explicit.stat_2954116742|41580
+O	notable	Manifold Method	explicit.stat_2954116742|37742
+O	notable	Marathon Runner	explicit.stat_2954116742|64050
+O	notable	Marked Agility	explicit.stat_2954116742|44756
+O	notable	Marked for Death	explicit.stat_2954116742|36976
+O	notable	Marked for Sickness	explicit.stat_2954116742|63830
+O	notable	Martial Artistry	explicit.stat_2954116742|2113
+O	notable	Mass Hysteria	explicit.stat_2954116742|27108
+O	notable	Mass Rejuvenation	explicit.stat_2954116742|34340
+O	notable	Master Fletching	explicit.stat_2954116742|30341
+O	notable	Master of Hexes	explicit.stat_2954116742|40345
+O	notable	Material Solidification	explicit.stat_2954116742|27513
+O	notable	Mauling Stuns	explicit.stat_2954116742|11886
+O	notable	Meat Recycling	explicit.stat_2954116742|25620
+O	notable	Melding	explicit.stat_2954116742|3215
+O	notable	Melting Flames	explicit.stat_2954116742|43939
+O	notable	Mending Deflection	explicit.stat_2954116742|9652
+O	notable	Mental Alacrity	explicit.stat_2954116742|16466
+O	notable	Mental Perseverance	explicit.stat_2954116742|9226
+O	notable	Mental Toughness	explicit.stat_2954116742|24120
+O	notable	Mind Eraser	explicit.stat_2954116742|45632
+O	notable	Molten Being	explicit.stat_2954116742|11392
+O	notable	Molten Carapace	explicit.stat_2954116742|51868
+O	notable	Molten Claw	explicit.stat_2954116742|36100
+O	notable	Moment of Truth	explicit.stat_2954116742|17548
+O	notable	Momentum	explicit.stat_2954116742|63579
+O	notable	Morgana, the Storm Seer	explicit.stat_2954116742|64770
+O	notable	Multi Shot	explicit.stat_2954116742|47560
+O	notable	Multitasking	explicit.stat_2954116742|8810
+O	notable	Mutewind Agility	explicit.stat_2954116742|50239
+O	notable	Mystic Avalanche	explicit.stat_2954116742|35046
+O	notable	Mystical Rage	explicit.stat_2954116742|52764
+O	notable	Natural Immunity	explicit.stat_2954116742|934
+O	notable	Nature's Bite	explicit.stat_2954116742|53265
+O	notable	Near Sighted	explicit.stat_2954116742|4709
+O	notable	Near at Hand	explicit.stat_2954116742|35581
+O	notable	Necromantic Ward	explicit.stat_2954116742|10499
+O	notable	Necrotic Touch	explicit.stat_2954116742|11376
+O	notable	Necrotised Flesh	explicit.stat_2954116742|59541
+O	notable	Nimble Strength	explicit.stat_2954116742|40292
+O	notable	Nourishing Ally	explicit.stat_2954116742|37266
+O	notable	Nurturing Guardian	explicit.stat_2954116742|60992
+O	notable	Off-Balancing Retort	explicit.stat_2954116742|42036
+O	notable	One For All	explicit.stat_2954116742|35918
+O	notable	One With Flame	explicit.stat_2954116742|44753
+O	notable	One with the River	explicit.stat_2954116742|34316
+O	notable	One with the Storm	explicit.stat_2954116742|9444
+O	notable	Overexposure	explicit.stat_2954116742|52199
+O	notable	Overflowing Power	explicit.stat_2954116742|65204
+O	notable	Overheating Blow	explicit.stat_2954116742|42390
+O	notable	Overload	explicit.stat_2954116742|47635
+O	notable	Overwhelm	explicit.stat_2954116742|25513
+O	notable	Overwhelming Strike	explicit.stat_2954116742|57388
+O	notable	Overzealous	explicit.stat_2954116742|10295
+O	notable	Pack Encouragement	explicit.stat_2954116742|21784
+O	notable	Paragon	explicit.stat_2954116742|20686
+O	notable	Paranoia	explicit.stat_2954116742|24766
+O	notable	Passthrough Rounds	explicit.stat_2954116742|56016
+O	notable	Patient Barrier	explicit.stat_2954116742|62230
+O	notable	Perfect Opportunity	explicit.stat_2954116742|60404
+O	notable	Perfectly Placed Knife	explicit.stat_2954116742|49661
+O	notable	Perforation	explicit.stat_2954116742|17330
+O	notable	Perpetual Freeze	explicit.stat_2954116742|2863
+O	notable	Personal Touch	explicit.stat_2954116742|34308
+O	notable	Pierce the Heart	explicit.stat_2954116742|7651
+O	notable	Piercing Claw	explicit.stat_2954116742|17260
+O	notable	Piercing Shot	explicit.stat_2954116742|4534
+O	notable	Pile On	explicit.stat_2954116742|51129
+O	notable	Pin and Run	explicit.stat_2954116742|60083
+O	notable	Pin their Motivation	explicit.stat_2954116742|4447
+O	notable	Pinpoint Shot	explicit.stat_2954116742|16816
+O	notable	Pliable Flesh	explicit.stat_2954116742|38111
+O	notable	Pocket Sand	explicit.stat_2954116742|58426
+O	notable	Polished Iron	explicit.stat_2954116742|27950
+O	notable	Polymathy	explicit.stat_2954116742|57047
+O	notable	Potent Incantation	explicit.stat_2954116742|19125
+O	notable	Power Conduction	explicit.stat_2954116742|15083
+O	notable	Power Shots	explicit.stat_2954116742|6178
+O	notable	Precise Invocations	explicit.stat_2954116742|49150
+O	notable	Precise Point	explicit.stat_2954116742|13895
+O	notable	Precise Volatility	explicit.stat_2954116742|34425
+O	notable	Precision Salvo	explicit.stat_2954116742|19337
+O	notable	Preemptive Strike	explicit.stat_2954116742|21380
+O	notable	Presence Present	explicit.stat_2954116742|37872
+O	notable	Preservation	explicit.stat_2954116742|32951
+O	notable	Pressure Points	explicit.stat_2954116742|28329
+O	notable	Price of Freedom	explicit.stat_2954116742|9908
+O	notable	Primal Growth	explicit.stat_2954116742|32071
+O	notable	Primal Protection	explicit.stat_2954116742|31364
+O	notable	Primal Rage	explicit.stat_2954116742|28892
+O	notable	Primal Sundering	explicit.stat_2954116742|50884
+O	notable	Primed to Explode	explicit.stat_2954116742|26356
+O	notable	Prism Guard	explicit.stat_2954116742|62034
+O	notable	Profane Commander	explicit.stat_2954116742|54814
+O	notable	Proficiency	explicit.stat_2954116742|58397
+O	notable	Projectile Bulwark	explicit.stat_2954116742|19236
+O	notable	Proliferating Weeds	explicit.stat_2954116742|45874
+O	notable	Prolonged Assault	explicit.stat_2954116742|19442
+O	notable	Prolonged Fury	explicit.stat_2954116742|49550
+O	notable	Protraction	explicit.stat_2954116742|54998
+O	notable	Psychic Fragmentation	explicit.stat_2954116742|38614
+O	notable	Punctured Lung	explicit.stat_2954116742|13482
+O	notable	Puppet Master chance	explicit.stat_2954116742|62210
+O	notable	Pure Chaos	explicit.stat_2954116742|55149
+O	notable	Pure Power	explicit.stat_2954116742|28975
+O	notable	Push the Advantage	explicit.stat_2954116742|6229
+O	notable	Pyromancer	explicit.stat_2954116742|14265
+O	notable	Quick Fingers	explicit.stat_2954116742|33542
+O	notable	Quick Recovery	explicit.stat_2954116742|48240
+O	notable	Rallying Form	explicit.stat_2954116742|55450
+O	notable	Rallying Icon	explicit.stat_2954116742|43791
+O	notable	Rapid Reload	explicit.stat_2954116742|64119
+O	notable	Rapid Strike	explicit.stat_2954116742|7604
+O	notable	Rattled	explicit.stat_2954116742|62185
+O	notable	Raw Mana	explicit.stat_2954116742|3567
+O	notable	Reaching Strike	explicit.stat_2954116742|17372
+O	notable	Reaving	explicit.stat_2954116742|10602
+O	notable	Redblade Discipline	explicit.stat_2954116742|61309
+O	notable	Refills	explicit.stat_2954116742|45244
+O	notable	Refocus	explicit.stat_2954116742|26447
+O	notable	Regenerative Flesh	explicit.stat_2954116742|20388
+O	notable	Reinforced Rallying	explicit.stat_2954116742|56388
+O	notable	Reinvigoration	explicit.stat_2954116742|35809
+O	notable	Relentless Fallen	explicit.stat_2954116742|55180
+O	notable	Remnant Attraction	explicit.stat_2954116742|1506
+O	notable	Repeating Explosives	explicit.stat_2954116742|65468
+O	notable	Replenishing Horde	explicit.stat_2954116742|21251
+O	notable	Reprisal	explicit.stat_2954116742|20414
+O	notable	Repulsion	explicit.stat_2954116742|10029
+O	notable	Resolute Reach	explicit.stat_2954116742|25361
+O	notable	Resolute Reprisal	explicit.stat_2954116742|56860
+O	notable	Resolution	explicit.stat_2954116742|40325
+O	notable	Restless Dead	explicit.stat_2954116742|38972
+O	notable	Resurging Archon	explicit.stat_2954116742|31773
+O	notable	Retaliation	explicit.stat_2954116742|7395
+O	notable	Return to Nature	explicit.stat_2954116742|9009
+O	notable	Reusable Ammunition	explicit.stat_2954116742|7062
+O	notable	Revenge	explicit.stat_2954116742|3188
+O	notable	Reverberating Parry	explicit.stat_2954116742|33400
+O	notable	Reverberation	explicit.stat_2954116742|8660
+O	notable	Rhythm of Fire	explicit.stat_2954116742|37619
+O	notable	Rhythm of Ice	explicit.stat_2954116742|13693
+O	notable	Right Hand of Darkness	explicit.stat_2954116742|8957
+O	notable	Roaring Cries	explicit.stat_2954116742|28613
+O	notable	Roil	explicit.stat_2954116742|60269
+O	notable	Roll and Strike	explicit.stat_2954116742|61112
+O	notable	Ruin	explicit.stat_2954116742|8483
+O	notable	Ruinic Helm	explicit.stat_2954116742|18959
+O	notable	Run and Gun	explicit.stat_2954116742|53566
+O	notable	Rupturing Pins	explicit.stat_2954116742|7782
+O	notable	Rusted Pins	explicit.stat_2954116742|9290
+O	notable	Sacrificial Blood	explicit.stat_2954116742|14294
+O	notable	Sand in the Eyes	explicit.stat_2954116742|25619
+O	notable	Sanguimantic Rituals	explicit.stat_2954116742|58215
+O	notable	Sanguine Tolerance	explicit.stat_2954116742|4810
+O	notable	Saqawal's Guidance	explicit.stat_2954116742|42070
+O	notable	Saqawal's Hide	explicit.stat_2954116742|35743
+O	notable	Saqawal's Talon	explicit.stat_2954116742|62237
+O	notable	Savagery	explicit.stat_2954116742|63255
+O	notable	Savoured Blood	explicit.stat_2954116742|18397
+O	notable	Savouring	explicit.stat_2954116742|45713
+O	notable	Scales of the Wyvern	explicit.stat_2954116742|60619
+O	notable	Searing Heat	explicit.stat_2954116742|39884
+O	notable	Secrets of the Orb	explicit.stat_2954116742|52229
+O	notable	Seeing Stars	explicit.stat_2954116742|5009
+O	notable	Self Immolation	explicit.stat_2954116742|23630
+O	notable	Self Mortification	explicit.stat_2954116742|44917
+O	notable	Serrated Edges	explicit.stat_2954116742|36085
+O	notable	Shadow Dancing	explicit.stat_2954116742|13457
+O	notable	Sharp Sight	explicit.stat_2954116742|53150
+O	notable	Sharpened Claw	explicit.stat_2954116742|61703
+O	notable	Shatter Palm	explicit.stat_2954116742|41811
+O	notable	Shattered Crystal	explicit.stat_2954116742|49740
+O	notable	Shattering	explicit.stat_2954116742|48658
+O	notable	Shattering Blow	explicit.stat_2954116742|53527
+O	notable	Shattering Daze	explicit.stat_2954116742|64415
+O	notable	Shedding Skin	explicit.stat_2954116742|15644
+O	notable	Shield Expertise	explicit.stat_2954116742|37244
+O	notable	Shifted Strikes	explicit.stat_2954116742|57617
+O	notable	Shimmering	explicit.stat_2954116742|53941
+O	notable	Shimmering Mirage	explicit.stat_2954116742|5335
+O	notable	Shocking Limit	explicit.stat_2954116742|29800
+O	notable	Shockproof	explicit.stat_2954116742|32448
+O	notable	Shockwaves	explicit.stat_2954116742|1087
+O	notable	Short Shot	explicit.stat_2954116742|46296
+O	notable	Shrapnel	explicit.stat_2954116742|55060
+O	notable	Shredding Contraptions	explicit.stat_2954116742|14211
+O	notable	Shredding Force	explicit.stat_2954116742|5284
+O	notable	Sic 'Em	explicit.stat_2954116742|47088
+O	notable	Sigil of Fire	explicit.stat_2954116742|63037
+O	notable	Sigil of Ice	explicit.stat_2954116742|40803
+O	notable	Sigil of Lightning	explicit.stat_2954116742|46024
+O	notable	Silent Guardian	explicit.stat_2954116742|17229
+O	notable	Singular Purpose	explicit.stat_2954116742|52392
+O	notable	Siphon	explicit.stat_2954116742|15829
+O	notable	Sitting Duck	explicit.stat_2954116742|12906
+O	notable	Skullcrusher	explicit.stat_2954116742|2645
+O	notable	Sling Shots	explicit.stat_2954116742|55308
+O	notable	Slippery Ice	explicit.stat_2954116742|23362
+O	notable	Slow Burn	explicit.stat_2954116742|31326
+O	notable	Smoke Inhalation	explicit.stat_2954116742|54148
+O	notable	Sniper	explicit.stat_2954116742|11526
+O	notable	Snowpiercer	explicit.stat_2954116742|9421
+O	notable	Soul Bloom	explicit.stat_2954116742|51169
+O	notable	Spaghettification	explicit.stat_2954116742|34473
+O	notable	Specialised Shots	explicit.stat_2954116742|14602
+O	notable	Spectral Ward	explicit.stat_2954116742|34324
+O	notable	Spell Haste	explicit.stat_2954116742|17254
+O	notable	Spellblade	explicit.stat_2954116742|49984
+O	notable	Spike Pit	explicit.stat_2954116742|3698
+O	notable	Spiked Armour	explicit.stat_2954116742|40117
+O	notable	Spiked Shield	explicit.stat_2954116742|36808
+O	notable	Spiral into Depression	explicit.stat_2954116742|1546
+O	notable	Spiral into Insanity	explicit.stat_2954116742|2138
+O	notable	Spiral into Mania	explicit.stat_2954116742|14934
+O	notable	Spirit Bond	explicit.stat_2954116742|51105
+O	notable	Spirit of the Bear	explicit.stat_2954116742|9328
+O	notable	Spirit of the Wolf	explicit.stat_2954116742|3348
+O	notable	Spirit of the Wyvern	explicit.stat_2954116742|26104
+O	notable	Splintering Force	explicit.stat_2954116742|49088
+O	notable	Splinters	explicit.stat_2954116742|7449
+O	notable	Split Shot	explicit.stat_2954116742|42302
+O	notable	Split the Earth	explicit.stat_2954116742|13980
+O	notable	Splitting Ground	explicit.stat_2954116742|20251
+O	notable	Spray and Pray	explicit.stat_2954116742|23736
+O	notable	Spreading Shocks	explicit.stat_2954116742|11578
+O	notable	Stacking Toxins	explicit.stat_2954116742|63759
+O	notable	Staggering Palm	explicit.stat_2954116742|39881
+O	notable	Staggering Wounds	explicit.stat_2954116742|61104
+O	notable	Stand Ground	explicit.stat_2954116742|6304
+O	notable	Stand and Deliver	explicit.stat_2954116742|5802
+O	notable	Stars Aligned	explicit.stat_2954116742|2486
+O	notable	Staunch Deflection	explicit.stat_2954116742|34908
+O	notable	Staunching	explicit.stat_2954116742|37408
+O	notable	Steadfast Resolve	explicit.stat_2954116742|26479
+O	notable	Steady Footing	explicit.stat_2954116742|47782
+O	notable	Stigmata	explicit.stat_2954116742|47441
+O	notable	Stimulants	explicit.stat_2954116742|7163
+O	notable	Storm Driven	explicit.stat_2954116742|1603
+O	notable	Storm Surge	explicit.stat_2954116742|61921
+O	notable	Storm Swell	explicit.stat_2954116742|336
+O	notable	Storm's Rebuke	explicit.stat_2954116742|22726
+O	notable	Stormbreaker	explicit.stat_2954116742|43139
+O	notable	Stormcharged	explicit.stat_2954116742|38535
+O	notable	Stormkeeper	explicit.stat_2954116742|47387
+O	notable	Stormwalker	explicit.stat_2954116742|13515
+O	notable	Strike True	explicit.stat_2954116742|45177
+O	notable	Stripped Defences	explicit.stat_2954116742|33922
+O	notable	Strong Chin	explicit.stat_2954116742|10998
+O	notable	Struck Through	explicit.stat_2954116742|39369
+O	notable	Stupefy	explicit.stat_2954116742|38342
+O	notable	Sturdy Ally	explicit.stat_2954116742|8791
+O	notable	Stylebender	explicit.stat_2954116742|60138
+O	notable	Subterfuge Mask	explicit.stat_2954116742|55193
+O	notable	Succour	explicit.stat_2954116742|30392
+O	notable	Sudden Escalation	explicit.stat_2954116742|10398
+O	notable	Sudden Infuriation	explicit.stat_2954116742|29372
+O	notable	Suffusion	explicit.stat_2954116742|14383
+O	notable	Sundering	explicit.stat_2954116742|2511
+O	notable	Supportive Ancestors	explicit.stat_2954116742|19249
+O	notable	Surging Beast	explicit.stat_2954116742|29881
+O	notable	Surging Currents	explicit.stat_2954116742|42065
+O	notable	Swift Blocking	explicit.stat_2954116742|56806
+O	notable	Swift Claw	explicit.stat_2954116742|32353
+O	notable	Swift Flight	explicit.stat_2954116742|56714
+O	notable	Swift Interruption	explicit.stat_2954116742|65265
+O	notable	Symbol of Defiance	explicit.stat_2954116742|53367
+O	notable	Tactical Retreat	explicit.stat_2954116742|17825
+O	notable	Tainted Strike	explicit.stat_2954116742|22864
+O	notable	Taste for Blood	explicit.stat_2954116742|40213
+O	notable	Taut Flesh	explicit.stat_2954116742|48774
+O	notable	Tempered Defences	explicit.stat_2954116742|18157
+O	notable	Tempered Mind	explicit.stat_2954116742|8831
+O	notable	Temporal Mastery	explicit.stat_2954116742|12412
+O	notable	Tenfold Attacks	explicit.stat_2954116742|25971
+O	notable	Thaumaturgic Generator	explicit.stat_2954116742|56666
+O	notable	The Ancient Serpent	explicit.stat_2954116742|4544
+O	notable	The Fabled Stag	explicit.stat_2954116742|7847
+O	notable	The Frenzied Bear	explicit.stat_2954116742|34543
+O	notable	The Great Boar	explicit.stat_2954116742|54031
+O	notable	The Howling Primate	explicit.stat_2954116742|48734
+O	notable	The Molten One's Gift	explicit.stat_2954116742|28542
+O	notable	The Noble Wolf	explicit.stat_2954116742|2745
+O	notable	The Power Within	explicit.stat_2954116742|27176
+O	notable	The Quick Fox	explicit.stat_2954116742|21349
+O	notable	The Raging Ox	explicit.stat_2954116742|45370
+O	notable	The Soul Meridian	explicit.stat_2954116742|52971
+O	notable	The Spring Hare	explicit.stat_2954116742|11774
+O	notable	The Wild Cat	explicit.stat_2954116742|22811
+O	notable	The Winter Owl	explicit.stat_2954116742|53185
+O	notable	Thickened Arteries	explicit.stat_2954116742|35849
+O	notable	Thicket Warding	explicit.stat_2954116742|56893
+O	notable	Thin Ice	explicit.stat_2954116742|19722
+O	notable	Thirst for Endurance	explicit.stat_2954116742|59433
+O	notable	Thirst for Power	explicit.stat_2954116742|38532
+O	notable	Thirsting Ally	explicit.stat_2954116742|17600
+O	notable	Thornhide	explicit.stat_2954116742|43711
+O	notable	Thousand Cuts	explicit.stat_2954116742|42714
+O	notable	Thrill of Battle	explicit.stat_2954116742|25711
+O	notable	Thrill of the Fight	explicit.stat_2954116742|15606
+O	notable	Throatseeker	explicit.stat_2954116742|56265
+O	notable	Thunderstruck	explicit.stat_2954116742|63585
+O	notable	Tides of Change	explicit.stat_2954116742|42813
+O	notable	Time Manipulation	explicit.stat_2954116742|24240
+O	notable	Titanic	explicit.stat_2954116742|65160
+O	notable	Tolerant Equipment	explicit.stat_2954116742|2843
+O	notable	Total Incineration	explicit.stat_2954116742|28482
+O	notable	Touch the Arcane	explicit.stat_2954116742|27626
+O	notable	Towering Shield	explicit.stat_2954116742|53823
+O	notable	Toxic Sludge	explicit.stat_2954116742|261
+O	notable	Toxic Tolerance	explicit.stat_2954116742|2134
+O	notable	Trained Deflection	explicit.stat_2954116742|52180
+O	notable	Trained Turrets	explicit.stat_2954116742|57785
+O	notable	Tribal Fury	explicit.stat_2954116742|750
+O	notable	Trick Shot	explicit.stat_2954116742|23221
+O	notable	True Strike	explicit.stat_2954116742|61601
+O	notable	Tukohama's Brew	explicit.stat_2954116742|53131
+O	notable	Turn the Clock Back	explicit.stat_2954116742|35564
+O	notable	Turn the Clock Forward	explicit.stat_2954116742|2335
+O	notable	Unbending	explicit.stat_2954116742|1352
+O	notable	Unbothering Cold	explicit.stat_2954116742|4579
+O	notable	Unbound Forces	explicit.stat_2954116742|64543
+O	notable	Unbreakable	explicit.stat_2954116742|13489
+O	notable	Unbreaking	explicit.stat_2954116742|53921
+O	notable	Unerring Impact	explicit.stat_2954116742|38888
+O	notable	Unexpected Finesse	explicit.stat_2954116742|31189
+O	notable	Unfettered	explicit.stat_2954116742|10169
+O	notable	Unforgiving	explicit.stat_2954116742|8881
+O	notable	Unhindered	explicit.stat_2954116742|32543
+O	notable	Unimpeded	explicit.stat_2954116742|51394
+O	notable	Unleash Fire	explicit.stat_2954116742|20008
+O	notable	Unnatural Resilience	explicit.stat_2954116742|4547
+O	notable	Unsight	explicit.stat_2954116742|51602
+O	notable	Unspoken Bond	explicit.stat_2954116742|33585
+O	notable	Unstable Bond	explicit.stat_2954116742|18485
+O	notable	Unstoppable Barrier	explicit.stat_2954116742|33978
+O	notable	Unyielding	explicit.stat_2954116742|10774
+O	notable	Urgent Call	explicit.stat_2954116742|1169
+O	notable	Utility Ordnance	explicit.stat_2954116742|17303
+O	notable	Utmost Offering	explicit.stat_2954116742|41033
+O	notable	Vale Shelter	explicit.stat_2954116742|12750
+O	notable	Vengeance	explicit.stat_2954116742|17762
+O	notable	Vengeful Fury	explicit.stat_2954116742|54937
+O	notable	Versatile Arms	explicit.stat_2954116742|4238
+O	notable	Viciousness	explicit.stat_2954116742|65193
+O	notable	Vigilance	explicit.stat_2954116742|22967
+O	notable	Vigorous Remnants	explicit.stat_2954116742|63739
+O	notable	Vile Mending	explicit.stat_2954116742|36507
+O	notable	Vocal Empowerment	explicit.stat_2954116742|31373
+O	notable	Void	explicit.stat_2954116742|3492
+O	notable	Volatile Grenades	explicit.stat_2954116742|17882
+O	notable	Volcanic Skin	explicit.stat_2954116742|11366
+O	notable	Voll's Protection	explicit.stat_2954116742|31955
+O	notable	Voracious	explicit.stat_2954116742|46060
+O	notable	Vulgar Methods	explicit.stat_2954116742|27303
+O	notable	Waning Hindrances	explicit.stat_2954116742|25211
+O	notable	Warding Fetish	explicit.stat_2954116742|31925
+O	notable	Warding Potions	explicit.stat_2954116742|47418
+O	notable	Warlord Berserker	explicit.stat_2954116742|53187
+O	notable	Warlord Leader	explicit.stat_2954116742|14761
+O	notable	Warm the Heart	explicit.stat_2954116742|12998
+O	notable	Wary Dodging	explicit.stat_2954116742|64650
+O	notable	Wasting	explicit.stat_2954116742|51213
+O	notable	Wasting Casts	explicit.stat_2954116742|61444
+O	notable	Watchtowers	explicit.stat_2954116742|5580
+O	notable	Waters of Life	explicit.stat_2954116742|51509
+O	notable	Well of Power	explicit.stat_2954116742|58198
+O	notable	Wellspring	explicit.stat_2954116742|2021
+O	notable	Whirling Assault	explicit.stat_2954116742|37514
+O	notable	Wide Barrier	explicit.stat_2954116742|46384
+O	notable	Widespread Coverage	explicit.stat_2954116742|65256
+O	notable	Wild Storm	explicit.stat_2954116742|7809
+O	notable	Wither Away	explicit.stat_2954116742|44373
+O	notable	Wolf's Howl	explicit.stat_2954116742|57921
+O	notable	Woodland Aspect	explicit.stat_2954116742|62803
+O	notable	Wrapped Quiver	explicit.stat_2954116742|30132
+O	notable	Wyvern's Breath	explicit.stat_2954116742|35417
+O	notable	Zarokh's Gift	explicit.stat_2954116742|11184
+O	notable	Zone of Control	explicit.stat_2954116742|50485
+O	skill	Alchemist's Boon	explicit.stat_448592698|8
+O	skill	Ancestral Cry	explicit.stat_448592698|208
+O	skill	Ancestral Warrior Totem	explicit.stat_448592698|21
+O	skill	Arc	explicit.stat_448592698|98
+O	skill	Archmage	explicit.stat_448592698|11
+O	skill	Arctic Armour	explicit.stat_448592698|119
+O	skill	Arctic Howl	explicit.stat_448592698|237
+O	skill	Armour Breaker	explicit.stat_448592698|135
+O	skill	Armour Piercing Rounds	explicit.stat_448592698|174
+O	skill	Artillery Ballista	explicit.stat_448592698|86
+O	skill	Attrition	explicit.stat_448592698|5
+O	skill	Ball Lightning	explicit.stat_448592698|30
+O	skill	Barkskin	explicit.stat_448592698|242
+O	skill	Barrage	explicit.stat_448592698|100
+O	skill	Barrier Invocation	explicit.stat_448592698|67
+O	skill	Berserk	explicit.stat_448592698|12
+O	skill	Blasphemy	explicit.stat_448592698|63
+O	skill	Blink	explicit.stat_448592698|3
+O	skill	Blood Hunt	explicit.stat_448592698|178
+O	skill	Bloodhound's Mark	explicit.stat_448592698|192
+O	skill	Bone Cage	explicit.stat_448592698|145
+O	skill	Bone Offering	explicit.stat_448592698|31
+O	skill	Boneshatter	explicit.stat_448592698|163
+O	skill	Bonestorm	explicit.stat_448592698|107
+O	skill	Briarpatch	explicit.stat_448592698|238
+O	skill	Cast on Critical	explicit.stat_448592698|1
+O	skill	Cast on Dodge	explicit.stat_448592698|2
+O	skill	Cast on Elemental Ailment	explicit.stat_448592698|215
+O	skill	Cast on Freeze	explicit.stat_448592698|65
+O	skill	Cast on Ignite	explicit.stat_448592698|66
+O	skill	Cast on Minion Death	explicit.stat_448592698|69
+O	skill	Cast on Shock	explicit.stat_448592698|64
+O	skill	Charge Regulation	explicit.stat_448592698|7
+O	skill	Charged Staff	explicit.stat_448592698|55
+O	skill	Cluster Grenade	explicit.stat_448592698|26
+O	skill	Combat Frenzy	explicit.stat_448592698|76
+O	skill	Comet	explicit.stat_448592698|37
+O	skill	Conductivity	explicit.stat_448592698|82
+O	skill	Contagion	explicit.stat_448592698|159
+O	skill	Convalescence	explicit.stat_448592698|202
+O	skill	Cross Slash	explicit.stat_448592698|232
+O	skill	Cull The Weak	explicit.stat_448592698|203
+O	skill	Dark Effigy	explicit.stat_448592698|58
+O	skill	Defiance Banner	explicit.stat_448592698|70
+O	skill	Despair	explicit.stat_448592698|46
+O	skill	Detonate Dead	explicit.stat_448592698|78
+O	skill	Detonating Arrow	explicit.stat_448592698|56
+O	skill	Devour	explicit.stat_448592698|234
+O	skill	Disengage	explicit.stat_448592698|177
+O	skill	Dread Banner	explicit.stat_448592698|4
+O	skill	Earthquake	explicit.stat_448592698|158
+O	skill	Earthshatter	explicit.stat_448592698|84
+O	skill	Electrocuting Arrow	explicit.stat_448592698|110
+O	skill	Elemental Conflux	explicit.stat_448592698|6
+O	skill	Elemental Invocation	explicit.stat_448592698|72
+O	skill	Elemental Sundering	explicit.stat_448592698|196
+O	skill	Elemental Weakness	explicit.stat_448592698|216
+O	skill	Ember Fusillade	explicit.stat_448592698|149
+O	skill	Emergency Reload	explicit.stat_448592698|43
+O	skill	Enfeeble	explicit.stat_448592698|134
+O	skill	Entangle	explicit.stat_448592698|230
+O	skill	Escape Shot	explicit.stat_448592698|165
+O	skill	Essence Drain	explicit.stat_448592698|139
+O	skill	Eternal Rage	explicit.stat_448592698|239
+O	skill	Explosive Grenade	explicit.stat_448592698|168
+O	skill	Explosive Shot	explicit.stat_448592698|92
+O	skill	Explosive Spear	explicit.stat_448592698|184
+O	skill	Eye of Winter	explicit.stat_448592698|18
+O	skill	Falling Thunder	explicit.stat_448592698|155
+O	skill	Fangs of Frost	explicit.stat_448592698|189
+O	skill	Feral Invocation	explicit.stat_448592698|243
+O	skill	Ferocious Roar	explicit.stat_448592698|225
+O	skill	Fireball	explicit.stat_448592698|57
+O	skill	Firestorm	explicit.stat_448592698|29
+O	skill	Flame Breath	explicit.stat_448592698|229
+O	skill	Flame Wall	explicit.stat_448592698|162
+O	skill	Flameblast	explicit.stat_448592698|15
+O	skill	Flammability	explicit.stat_448592698|80
+O	skill	Flash Grenade	explicit.stat_448592698|142
+O	skill	Flicker Strike	explicit.stat_448592698|13
+O	skill	Forge Hammer	explicit.stat_448592698|207
+O	skill	Fortifying Cry	explicit.stat_448592698|206
+O	skill	Fragmentation Rounds	explicit.stat_448592698|173
+O	skill	Freezing Mark	explicit.stat_448592698|95
+O	skill	Freezing Salvo	explicit.stat_448592698|118
+O	skill	Frost Bomb	explicit.stat_448592698|157
+O	skill	Frost Darts	explicit.stat_448592698|211
+O	skill	Frost Wall	explicit.stat_448592698|45
+O	skill	Frostbolt	explicit.stat_448592698|140
+O	skill	Frozen Locus	explicit.stat_448592698|169
+O	skill	Furious Slam	explicit.stat_448592698|224
+O	skill	Fury of the Mountain	explicit.stat_448592698|231
+O	skill	Galvanic Shards	explicit.stat_448592698|117
+O	skill	Gas Arrow	explicit.stat_448592698|89
+O	skill	Gas Grenade	explicit.stat_448592698|104
+O	skill	Gathering Storm	explicit.stat_448592698|28
+O	skill	Ghost Dance	explicit.stat_448592698|124
+O	skill	Glacial Bolt	explicit.stat_448592698|93
+O	skill	Glacial Cascade	explicit.stat_448592698|166
+O	skill	Glacial Lance	explicit.stat_448592698|182
+O	skill	Grim Feast	explicit.stat_448592698|129
+O	skill	Hailstorm Rounds	explicit.stat_448592698|40
+O	skill	Hammer of the Gods	explicit.stat_448592698|23
+O	skill	Hand of Chayula	explicit.stat_448592698|62
+O	skill	Herald of Ash	explicit.stat_448592698|120
+O	skill	Herald of Blood	explicit.stat_448592698|186
+O	skill	Herald of Ice	explicit.stat_448592698|121
+O	skill	Herald of Plague	explicit.stat_448592698|75
+O	skill	Herald of Thunder	explicit.stat_448592698|122
+O	skill	Hexblast	explicit.stat_448592698|34
+O	skill	High Velocity Rounds	explicit.stat_448592698|150
+O	skill	Hypothermia	explicit.stat_448592698|81
+O	skill	Ice Nova	explicit.stat_448592698|153
+O	skill	Ice Shards	explicit.stat_448592698|116
+O	skill	Ice Shot	explicit.stat_448592698|61
+O	skill	Ice Strike	explicit.stat_448592698|103
+O	skill	Ice-Tipped Arrows	explicit.stat_448592698|210
+O	skill	Incendiary Shot	explicit.stat_448592698|151
+O	skill	Incinerate	explicit.stat_448592698|99
+O	skill	Infernal Cry	explicit.stat_448592698|137
+O	skill	Iron Ward	explicit.stat_448592698|205
+O	skill	Killing Palm	explicit.stat_448592698|167
+O	skill	Leap Slam	explicit.stat_448592698|77
+O	skill	Lightning Arrow	explicit.stat_448592698|156
+O	skill	Lightning Conduit	explicit.stat_448592698|19
+O	skill	Lightning Rod	explicit.stat_448592698|172
+O	skill	Lightning Spear	explicit.stat_448592698|181
+O	skill	Lightning Warp	explicit.stat_448592698|47
+O	skill	Lingering Illusion	explicit.stat_448592698|68
+O	skill	Living Bomb	explicit.stat_448592698|244
+O	skill	Lunar Assault	explicit.stat_448592698|233
+O	skill	Lunar Blessing	explicit.stat_448592698|236
+O	skill	Magma Barrier	explicit.stat_448592698|126
+O	skill	Magnetic Salvo	explicit.stat_448592698|27
+O	skill	Mana Remnants	explicit.stat_448592698|125
+O	skill	Mana Tempest	explicit.stat_448592698|53
+O	skill	Mantra of Destruction	explicit.stat_448592698|60
+O	skill	Mirage Archer	explicit.stat_448592698|213
+O	skill	Molten Blast	explicit.stat_448592698|114
+O	skill	Mortar Cannon	explicit.stat_448592698|212
+O	skill	Oil Barrage	explicit.stat_448592698|228
+O	skill	Oil Grenade	explicit.stat_448592698|54
+O	skill	Orb of Storms	explicit.stat_448592698|138
+O	skill	Overwhelming Presence	explicit.stat_448592698|74
+O	skill	Pain Offering	explicit.stat_448592698|105
+O	skill	Perfect Strike	explicit.stat_448592698|112
+O	skill	Permafrost Bolts	explicit.stat_448592698|175
+O	skill	Plague Bearer	explicit.stat_448592698|123
+O	skill	Plasma Blast	explicit.stat_448592698|25
+O	skill	Poisonburst Arrow	explicit.stat_448592698|171
+O	skill	Pounce	explicit.stat_448592698|221
+O	skill	Primal Strikes	explicit.stat_448592698|188
+O	skill	Profane Ritual	explicit.stat_448592698|90
+O	skill	Raging Spirits	explicit.stat_448592698|127
+O	skill	Rain of Arrows	explicit.stat_448592698|48
+O	skill	Raise Zombie	explicit.stat_448592698|97
+O	skill	Rake	explicit.stat_448592698|191
+O	skill	Rampage	explicit.stat_448592698|222
+O	skill	Rapid Assault	explicit.stat_448592698|176
+O	skill	Rapid Shot	explicit.stat_448592698|115
+O	skill	Ravenous Swarm	explicit.stat_448592698|204
+O	skill	Reaper's Invocation	explicit.stat_448592698|9
+O	skill	Resonating Shield	explicit.stat_448592698|113
+O	skill	Rolling Magma	explicit.stat_448592698|217
+O	skill	Rolling Slam	explicit.stat_448592698|164
+O	skill	Sacrifice	explicit.stat_448592698|10
+O	skill	Savage Fury	explicit.stat_448592698|240
+O	skill	Scavenged Plating	explicit.stat_448592698|130
+O	skill	Seismic Cry	explicit.stat_448592698|33
+O	skill	Shard Scavenger	explicit.stat_448592698|73
+O	skill	Shattering Palm	explicit.stat_448592698|38
+O	skill	Shield Charge	explicit.stat_448592698|133
+O	skill	Shield Wall	explicit.stat_448592698|91
+O	skill	Shockburst Rounds	explicit.stat_448592698|41
+O	skill	Shockchain Arrow	explicit.stat_448592698|42
+O	skill	Shockwave Totem	explicit.stat_448592698|136
+O	skill	Siege Ballista	explicit.stat_448592698|51
+O	skill	Siege Cascade	explicit.stat_448592698|24
+O	skill	Siphon Elements	explicit.stat_448592698|214
+O	skill	Siphoning Strike	explicit.stat_448592698|88
+O	skill	Skeletal Arsonist	explicit.stat_448592698|141
+O	skill	Skeletal Brute	explicit.stat_448592698|16
+O	skill	Skeletal Cleric	explicit.stat_448592698|17
+O	skill	Skeletal Frost Mage	explicit.stat_448592698|101
+O	skill	Skeletal Reaver	explicit.stat_448592698|50
+O	skill	Skeletal Sniper	explicit.stat_448592698|160
+O	skill	Skeletal Storm Mage	explicit.stat_448592698|32
+O	skill	Snap	explicit.stat_448592698|111
+O	skill	Snipe	explicit.stat_448592698|147
+O	skill	Sniper's Mark	explicit.stat_448592698|79
+O	skill	Solar Orb	explicit.stat_448592698|109
+O	skill	Soul Offering	explicit.stat_448592698|22
+O	skill	Spark	explicit.stat_448592698|154
+O	skill	Spear of Solaris	explicit.stat_448592698|194
+O	skill	Spearfield	explicit.stat_448592698|180
+O	skill	Spell Totem	explicit.stat_448592698|226
+O	skill	Spiral Volley	explicit.stat_448592698|20
+O	skill	Staggering Palm	explicit.stat_448592698|143
+O	skill	Stampede	explicit.stat_448592698|39
+O	skill	Storm Lance	explicit.stat_448592698|195
+O	skill	Storm Wave	explicit.stat_448592698|94
+O	skill	Stormblast Bolts	explicit.stat_448592698|59
+O	skill	Stormcaller Arrow	explicit.stat_448592698|146
+O	skill	Summon Spectre	explicit.stat_448592698|200
+O	skill	Sunder	explicit.stat_448592698|49
+O	skill	Supercharged Slam	explicit.stat_448592698|36
+O	skill	Tamed Companion	explicit.stat_448592698|193
+O	skill	Tempest Bell	explicit.stat_448592698|144
+O	skill	Tempest Flurry	explicit.stat_448592698|106
+O	skill	Temporal Chains	explicit.stat_448592698|14
+O	skill	Thrashing Vines	explicit.stat_448592698|235
+O	skill	Thunderous Leap	explicit.stat_448592698|185
+O	skill	Thunderstorm	explicit.stat_448592698|223
+O	skill	Time of Need	explicit.stat_448592698|71
+O	skill	Tornado	explicit.stat_448592698|218
+O	skill	Tornado Shot	explicit.stat_448592698|44
+O	skill	Toxic Domain	explicit.stat_448592698|209
+O	skill	Toxic Growth	explicit.stat_448592698|108
+O	skill	Trail of Caltrops	explicit.stat_448592698|198
+O	skill	Trinity	explicit.stat_448592698|197
+O	skill	Twister	explicit.stat_448592698|183
+O	skill	Unearth	explicit.stat_448592698|170
+O	skill	Vaulting Impact	explicit.stat_448592698|152
+O	skill	Vine Arrow	explicit.stat_448592698|148
+O	skill	Volcanic Fissure	explicit.stat_448592698|52
+O	skill	Volcano	explicit.stat_448592698|219
+O	skill	Voltaic Grenade	explicit.stat_448592698|87
+O	skill	Voltaic Mark	explicit.stat_448592698|96
+O	skill	Vulnerability	explicit.stat_448592698|83
+O	skill	Walking Calamity	explicit.stat_448592698|241
+O	skill	War Banner	explicit.stat_448592698|131
+O	skill	Wave of Frost	explicit.stat_448592698|85
+O	skill	Whirling Assault	explicit.stat_448592698|35
+O	skill	Whirling Slash	explicit.stat_448592698|179
+O	skill	Whirlwind Lance	explicit.stat_448592698|187
+O	skill	Wind Blast	explicit.stat_448592698|102
+O	skill	Wind Dancer	explicit.stat_448592698|128
+O	skill	Wind Serpent's Fury	explicit.stat_448592698|190
+O	skill	Wing Blast	explicit.stat_448592698|227
+O	skill	Withering Presence	explicit.stat_448592698|132
+O	skill	Wolf Pack	explicit.stat_448592698|220
