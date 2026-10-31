@@ -121,9 +121,9 @@ VARIANTS = {                     # Unique -> Pools (Spawn-Tags der Spieldaten) o
 ex_by_skel = {}
 for e in explicit:
     ex_by_skel.setdefault(skel(e['text']), e)
-for e in explicit:                # Protokoll: Trade-Einträge mit Auswahl-Optionen (zum Abgleich der Auswahl-Zeilen)
-    if (e.get('option') or {}).get('options') and re.search(r'Allocates|Level of all|Radius of|Keystone', e['text']):
-        print('trade option stat:', e['id'], repr(e['text']), len(e['option']['options']))
+opt_log = [f"{e['id']}\t{e['text']}\t{len(e['option']['options'])}" for e in explicit if (e.get('option') or {}).get('options')]
+if opt_log:                       # Übersicht der Trade-Einträge mit Auswahl-Optionen (zum Abgleich der Auswahl-Zeilen)
+    (OUT / 'trade-option-stats.tsv').write_text('# Trade-Einträge mit Auswahl (ID, Text, Anzahl Optionen)\n' + '\n'.join(opt_log) + '\n', encoding='utf-8')
 
 
 def trade_pick(template, setname):
