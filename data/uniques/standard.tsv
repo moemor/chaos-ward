@@ -1,5 +1,5 @@
 # Chaos Ward Uniques: Preise von poe.ninja (Economy-API), Enchants aus den Spieldaten
-H	Standard	2026-11-02	divine	932.9
+H	Standard	2026-11-03	divine	932.9
 E	1	(20-10)% reduced Attribute Requirements	
 E	2	(15-25)% increased Physical Damage	enchant.stat_1509134228
 E	3	Adds (9-14) to (15-22) Fire Damage	enchant.stat_709508406
@@ -21,31 +21,31 @@ E	18	+1% to all Maximum Elemental Resistances	enchant.stat_1978899297
 E	19	+(30-40) to maximum Life	enchant.stat_3299347043
 E	20	(40-50)% increased Thorns damage	enchant.stat_1315743832
 E	21	+(13-19)% to Chaos Resistance	enchant.stat_2923486259
-E	22	+1 to Level of all Fire Spell Skills	enchant.stat_591105508
-E	23	+1 to Level of all Cold Spell Skills	enchant.stat_2254480358
-E	24	+1 to Level of all Lightning Spell Skills	enchant.stat_1545858329
-E	25	+1 to Level of all Chaos Spell Skills	enchant.stat_4226189338
-E	26	+1 to Level of all Physical Spell Skills	enchant.stat_1600707273
-E	27	(20-30)% increased Spell Damage	enchant.stat_2974417149
-E	28	(20-30)% increased Flammability Magnitude	enchant.stat_2968503605
-E	29	(20-30)% increased Freeze Buildup	enchant.stat_473429811
-E	30	(20-30)% increased chance to Shock	enchant.stat_293638271
-E	31	(20-30)% increased Critical Hit Chance for Spells	enchant.stat_737908626
-E	32	Gain (20-25) Life per enemy killed	enchant.stat_3695891184
-E	33	Gain (10-15) Mana per enemy killed	enchant.stat_1368271171
-E	34	(10-15)% increased Cast Speed	enchant.stat_2891184298
-E	35	(15-25)% increased Armour	enchant.stat_2866361420
-E	36	(15-25)% increased Evasion Rating	enchant.stat_2106365538
-E	37	(15-25)% increased maximum Energy Shield	enchant.stat_2482852589
-E	38	+(20-25)% to Fire Resistance	enchant.stat_3372524247
-E	39	+(20-25)% to Cold Resistance	enchant.stat_4220027924
-E	40	+(20-25)% to Lightning Resistance	enchant.stat_1671376347
-E	41	+(1-3)% to Maximum Fire Resistance	enchant.stat_4095671657
-E	42	+1 to Maximum Endurance Charges	enchant.stat_1515657623
-E	43	+(10-15) to Strength	enchant.stat_4080418644
-E	44	+(10-15) to Dexterity	enchant.stat_3261801346
-E	45	+(10-15) to Intelligence	enchant.stat_328541901
-E	46	(10-15)% chance to cause Bleeding on Hit	enchant.stat_1519615863
+E	22	(15-25)% increased Armour	enchant.stat_2866361420
+E	23	(15-25)% increased Evasion Rating	enchant.stat_2106365538
+E	24	(15-25)% increased maximum Energy Shield	enchant.stat_2482852589
+E	25	+(20-25)% to Fire Resistance	enchant.stat_3372524247
+E	26	+(20-25)% to Cold Resistance	enchant.stat_4220027924
+E	27	+(20-25)% to Lightning Resistance	enchant.stat_1671376347
+E	28	+(1-3)% to Maximum Fire Resistance	enchant.stat_4095671657
+E	29	+1 to Maximum Endurance Charges	enchant.stat_1515657623
+E	30	+(10-15) to Strength	enchant.stat_4080418644
+E	31	+(10-15) to Dexterity	enchant.stat_3261801346
+E	32	+(10-15) to Intelligence	enchant.stat_328541901
+E	33	(10-15)% chance to cause Bleeding on Hit	enchant.stat_1519615863
+E	34	+1 to Level of all Fire Spell Skills	enchant.stat_591105508
+E	35	+1 to Level of all Cold Spell Skills	enchant.stat_2254480358
+E	36	+1 to Level of all Lightning Spell Skills	enchant.stat_1545858329
+E	37	+1 to Level of all Chaos Spell Skills	enchant.stat_4226189338
+E	38	+1 to Level of all Physical Spell Skills	enchant.stat_1600707273
+E	39	(20-30)% increased Spell Damage	enchant.stat_2974417149
+E	40	(20-30)% increased Flammability Magnitude	enchant.stat_2968503605
+E	41	(20-30)% increased Freeze Buildup	enchant.stat_473429811
+E	42	(20-30)% increased chance to Shock	enchant.stat_293638271
+E	43	(20-30)% increased Critical Hit Chance for Spells	enchant.stat_737908626
+E	44	Gain (20-25) Life per enemy killed	enchant.stat_3695891184
+E	45	Gain (10-15) Mana per enemy killed	enchant.stat_1368271171
+E	46	(10-15)% increased Cast Speed	enchant.stat_2891184298
 E	47	+(20-25) to maximum Mana	enchant.stat_1050105434
 E	48	(15-25)% increased Life Regeneration rate	enchant.stat_44972811
 E	49	(20-30)% increased Mana Regeneration Rate	enchant.stat_789117908
@@ -83,15 +83,15 @@ E	80	+3% to maximum Block chance	enchant.stat_480796730
 E	81	(20-25) Life gained when you Block	enchant.stat_762600725
 E	82	(10-15) Mana gained when you Block	enchant.stat_2122183138
 E	83	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
-E	84	(15-25)% increased Spirit	enchant.stat_3984865854
-E	85	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
-E	86	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
-E	87	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
-E	88	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
-E	89	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
-E	90	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
-E	91	Loads an additional bolt	enchant.stat_1967051901
-E	92	(40-60)% increased Spell Damage	enchant.stat_2974417149
+E	84	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
+E	85	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
+E	86	Loads an additional bolt	enchant.stat_1967051901
+E	87	(40-60)% increased Spell Damage	enchant.stat_2974417149
+E	88	(15-25)% increased Spirit	enchant.stat_3984865854
+E	89	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
+E	90	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
+E	91	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
+E	92	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
 E	93	Leech 3% of Physical Attack Damage as Life	enchant.stat_2557965901
 E	94	Leech 2% of Physical Attack Damage as Mana	enchant.stat_707457662
 E	95	+1 to Level of all Skills	enchant.stat_4283407333
