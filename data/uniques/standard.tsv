@@ -97,7 +97,7 @@ E	94	+1 to Level of all Skills	enchant.stat_4283407333
 E	95	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
 E	96	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
 E	97	Charms gain (0.08-0.17) charges per Second	
-E	98	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
-E	99	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
-E	100	Bow Attacks fire an additional Arrow	
+E	98	Bow Attacks fire an additional Arrow	
+E	99	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
+E	100	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
 E	101	(40-60)% increased Spell Damage	enchant.stat_2974417149
