@@ -82,22 +82,22 @@ E	79	(10-15)% increased Block chance	enchant.stat_2481353198
 E	80	+3% to maximum Block chance	enchant.stat_480796730
 E	81	(20-25) Life gained when you Block	enchant.stat_762600725
 E	82	(10-15) Mana gained when you Block	enchant.stat_2122183138
-E	83	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
-E	84	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
-E	85	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
-E	86	Loads an additional bolt	enchant.stat_1967051901
-E	87	(40-60)% increased Spell Damage	enchant.stat_2974417149
-E	88	(15-25)% increased Spirit	enchant.stat_3984865854
-E	89	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
-E	90	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
-E	91	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
-E	92	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
-E	93	Leech 3% of Physical Attack Damage as Life	enchant.stat_2557965901
-E	94	Leech 2% of Physical Attack Damage as Mana	enchant.stat_707457662
-E	95	+1 to Level of all Skills	enchant.stat_4283407333
-E	96	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
-E	97	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
-E	98	Charms gain (0.08-0.17) charges per Second	
-E	99	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
-E	100	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
-E	101	Bow Attacks fire an additional Arrow	
+E	83	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
+E	84	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
+E	85	Loads an additional bolt	enchant.stat_1967051901
+E	86	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
+E	87	(15-25)% increased Spirit	enchant.stat_3984865854
+E	88	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
+E	89	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
+E	90	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
+E	91	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
+E	92	Leech 3% of Physical Attack Damage as Life	enchant.stat_2557965901
+E	93	Leech 2% of Physical Attack Damage as Mana	enchant.stat_707457662
+E	94	+1 to Level of all Skills	enchant.stat_4283407333
+E	95	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
+E	96	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
+E	97	Charms gain (0.08-0.17) charges per Second	
+E	98	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
+E	99	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
+E	100	Bow Attacks fire an additional Arrow	
+E	101	(40-60)% increased Spell Damage	enchant.stat_2974417149
