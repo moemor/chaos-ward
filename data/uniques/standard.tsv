@@ -1,5 +1,5 @@
 # Chaos Ward Uniques: Preise von poe.ninja (Economy-API), Enchants aus den Spieldaten
-H	Standard	2026-11-06	divine	932.9
+H	Standard	2026-11-07	divine	932.9
 E	1	(20-10)% reduced Attribute Requirements	
 E	2	(15-25)% increased Physical Damage	enchant.stat_1509134228
 E	3	Adds (9-14) to (15-22) Fire Damage	enchant.stat_709508406
@@ -54,19 +54,19 @@ E	51	(10-15)% increased Rarity of Items found	enchant.stat_3917489142
 E	52	(20-30)% increased Damage	enchant.stat_2154246560
 E	53	(4-6)% increased Skill Speed	enchant.stat_970213192
 E	54	(15-20)% increased Critical Damage Bonus	enchant.stat_3556824919
-E	55	+(1-3)% to Maximum Cold Resistance	enchant.stat_3676141501
-E	56	+(20-30) to Spirit	enchant.stat_3981240776
-E	57	+1 to Maximum Power Charges	enchant.stat_227523295
-E	58	+(50-100) to Accuracy Rating	enchant.stat_803737631
-E	59	+1 to Level of all Minion Skills	enchant.stat_2162097452
-E	60	(15-25)% increased Armour and Evasion	enchant.stat_2451402625
-E	61	Damage Penetrates (10-15)% Fire Resistance	enchant.stat_2653955271
-E	62	Damage Penetrates (10-15)% Cold Resistance	enchant.stat_3417711605
-E	63	Damage Penetrates (10-15)% Lightning Resistance	enchant.stat_818778753
-E	64	Break (10-15)% increased Armour	enchant.stat_1776411443
-E	65	(5-10)% increased Quantity of Gold Dropped by Slain Enemies	enchant.stat_3175163625
-E	66	+1 to Maximum Frenzy Charges	enchant.stat_4078695
-E	67	+1 to Level of all Melee Skills	enchant.stat_9187492
+E	55	(15-25)% increased Armour and Evasion	enchant.stat_2451402625
+E	56	Damage Penetrates (10-15)% Fire Resistance	enchant.stat_2653955271
+E	57	Damage Penetrates (10-15)% Cold Resistance	enchant.stat_3417711605
+E	58	Damage Penetrates (10-15)% Lightning Resistance	enchant.stat_818778753
+E	59	Break (10-15)% increased Armour	enchant.stat_1776411443
+E	60	(5-10)% increased Quantity of Gold Dropped by Slain Enemies	enchant.stat_3175163625
+E	61	+1 to Maximum Frenzy Charges	enchant.stat_4078695
+E	62	+1 to Level of all Melee Skills	enchant.stat_9187492
+E	63	+(1-3)% to Maximum Cold Resistance	enchant.stat_3676141501
+E	64	+(20-30) to Spirit	enchant.stat_3981240776
+E	65	+1 to Maximum Power Charges	enchant.stat_227523295
+E	66	+(50-100) to Accuracy Rating	enchant.stat_803737631
+E	67	+1 to Level of all Minion Skills	enchant.stat_2162097452
 E	68	Adds (13-20) to (21-31) Fire Damage	enchant.stat_709508406
 E	69	Adds (11-17) to (18-26) Cold Damage	enchant.stat_1037193709
 E	70	Adds (1-3) to (41-61) Lightning Damage	enchant.stat_3336890334
@@ -86,18 +86,18 @@ E	83	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
 E	84	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
 E	85	Loads an additional bolt	enchant.stat_1967051901
 E	86	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
-E	87	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
-E	88	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
-E	89	(15-25)% increased Spirit	enchant.stat_3984865854
-E	90	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
-E	91	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
-E	92	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
-E	93	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
-E	94	(40-60)% increased Spell Damage	enchant.stat_2974417149
-E	95	Bow Attacks fire an additional Arrow	
-E	96	Leech 3% of Physical Attack Damage as Life	enchant.stat_2557965901
-E	97	Leech 2% of Physical Attack Damage as Mana	enchant.stat_707457662
-E	98	+1 to Level of all Skills	enchant.stat_4283407333
-E	99	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
-E	100	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
-E	101	Charms gain (0.08-0.17) charges per Second	
+E	87	Leech 3% of Physical Attack Damage as Life	enchant.stat_2557965901
+E	88	Leech 2% of Physical Attack Damage as Mana	enchant.stat_707457662
+E	89	+1 to Level of all Skills	enchant.stat_4283407333
+E	90	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
+E	91	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
+E	92	Charms gain (0.08-0.17) charges per Second	
+E	93	(15-25)% increased Spirit	enchant.stat_3984865854
+E	94	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
+E	95	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
+E	96	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
+E	97	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
+E	98	(40-60)% increased Spell Damage	enchant.stat_2974417149
+E	99	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
+E	100	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
+E	101	Bow Attacks fire an additional Arrow	
