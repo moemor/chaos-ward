@@ -1,5 +1,5 @@
 # Chaos Ward Uniques: Preise von poe.ninja (Economy-API), Enchants aus den Spieldaten
-H	Standard	2026-11-11	divine	932.9
+H	Standard	2026-11-12	divine	932.9
 E	1	(20-10)% reduced Attribute Requirements	
 E	2	(15-25)% increased Physical Damage	enchant.stat_1509134228
 E	3	Adds (9-14) to (15-22) Fire Damage	enchant.stat_709508406
@@ -92,12 +92,12 @@ E	89	+1 to Level of all Skills	enchant.stat_4283407333
 E	90	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
 E	91	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
 E	92	Charms gain (0.08-0.17) charges per Second	
-E	93	(15-25)% increased Spirit	enchant.stat_3984865854
-E	94	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
-E	95	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
-E	96	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
-E	97	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
-E	98	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
-E	99	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
-E	100	(40-60)% increased Spell Damage	enchant.stat_2974417149
+E	93	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
+E	94	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
+E	95	(40-60)% increased Spell Damage	enchant.stat_2974417149
+E	96	(15-25)% increased Spirit	enchant.stat_3984865854
+E	97	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
+E	98	Allies in your Presence have (5-10)% increased Attack Speed	enchant.stat_1998951374
+E	99	Allies in your Presence have (5-10)% increased Cast Speed	enchant.stat_289128254
+E	100	Allies in your Presence have (10-15)% increased Critical Damage Bonus	enchant.stat_3057012405
 E	101	Bow Attacks fire an additional Arrow	
