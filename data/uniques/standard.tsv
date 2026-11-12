@@ -72,28 +72,28 @@ E	69	+(20-30) to Spirit	enchant.stat_3981240776
 E	70	+1 to Maximum Power Charges	enchant.stat_227523295
 E	71	+(50-100) to Accuracy Rating	enchant.stat_803737631
 E	72	+1 to Level of all Minion Skills	enchant.stat_2162097452
-E	73	+(1-3)% to Maximum Lightning Resistance	enchant.stat_1011760251
-E	74	(3-5)% increased Movement Speed	enchant.stat_2250533757
-E	75	(20-30)% increased Stun Threshold	enchant.stat_680068163
-E	76	(20-30)% increased Freeze Threshold	enchant.stat_3780644166
-E	77	(30-20)% reduced Slowing Potency of Debuffs on You	
-E	78	(15-25)% increased Evasion and Energy Shield	enchant.stat_1999113824
-E	79	(10-15)% increased Block chance	enchant.stat_2481353198
-E	80	+3% to maximum Block chance	enchant.stat_480796730
-E	81	(20-25) Life gained when you Block	enchant.stat_762600725
-E	82	(10-15) Mana gained when you Block	enchant.stat_2122183138
-E	83	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
-E	84	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
-E	85	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
-E	86	Loads an additional bolt	enchant.stat_1967051901
-E	87	Leech 3% of Physical Attack Damage as Life	enchant.stat_2557965901
-E	88	Leech 2% of Physical Attack Damage as Mana	enchant.stat_707457662
-E	89	+1 to Level of all Skills	enchant.stat_4283407333
-E	90	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
-E	91	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
-E	92	Charms gain (0.08-0.17) charges per Second	
-E	93	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
-E	94	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
+E	73	(15-25)% increased Evasion and Energy Shield	enchant.stat_1999113824
+E	74	(10-15)% increased Block chance	enchant.stat_2481353198
+E	75	+3% to maximum Block chance	enchant.stat_480796730
+E	76	(20-25) Life gained when you Block	enchant.stat_762600725
+E	77	(10-15) Mana gained when you Block	enchant.stat_2122183138
+E	78	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
+E	79	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
+E	80	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
+E	81	Loads an additional bolt	enchant.stat_1967051901
+E	82	+(1-3)% to Maximum Lightning Resistance	enchant.stat_1011760251
+E	83	(3-5)% increased Movement Speed	enchant.stat_2250533757
+E	84	(20-30)% increased Stun Threshold	enchant.stat_680068163
+E	85	(20-30)% increased Freeze Threshold	enchant.stat_3780644166
+E	86	(30-20)% reduced Slowing Potency of Debuffs on You	
+E	87	(20-30)% chance to Pierce an Enemy	enchant.stat_2321178454
+E	88	Projectiles have (10-20)% chance to Chain an additional time from terrain	enchant.stat_4081947835
+E	89	Leech 3% of Physical Attack Damage as Life	enchant.stat_2557965901
+E	90	Leech 2% of Physical Attack Damage as Mana	enchant.stat_707457662
+E	91	+1 to Level of all Skills	enchant.stat_4283407333
+E	92	Life Flasks gain (0.08-0.17) charges per Second	enchant.stat_1102738251
+E	93	Mana Flasks gain (0.08-0.17) charges per Second	enchant.stat_2200293569
+E	94	Charms gain (0.08-0.17) charges per Second	
 E	95	(40-60)% increased Spell Damage	enchant.stat_2974417149
 E	96	(15-25)% increased Spirit	enchant.stat_3984865854
 E	97	Allies in your Presence deal (20-30)% increased Damage	enchant.stat_1798257884
