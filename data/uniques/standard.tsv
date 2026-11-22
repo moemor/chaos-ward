@@ -67,17 +67,17 @@ E	64	Adds (11-17) to (18-26) Cold Damage	enchant.stat_1037193709
 E	65	Adds (1-3) to (41-61) Lightning Damage	enchant.stat_3336890334
 E	66	Adds (10-16) to (17-25) Chaos damage	enchant.stat_2223678961
 E	67	(40-50)% increased Elemental Damage with Attacks	enchant.stat_387439868
-E	68	(10-15)% increased Block chance	enchant.stat_2481353198
-E	69	+3% to maximum Block chance	enchant.stat_480796730
-E	70	(20-25) Life gained when you Block	enchant.stat_762600725
-E	71	(10-15) Mana gained when you Block	enchant.stat_2122183138
-E	72	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
-E	73	+(1-3)% to Maximum Cold Resistance	enchant.stat_3676141501
-E	74	+(20-30) to Spirit	enchant.stat_3981240776
-E	75	+1 to Maximum Power Charges	enchant.stat_227523295
-E	76	+(50-100) to Accuracy Rating	enchant.stat_803737631
-E	77	+1 to Level of all Minion Skills	enchant.stat_2162097452
-E	78	(15-25)% increased Evasion and Energy Shield	enchant.stat_1999113824
+E	68	+(1-3)% to Maximum Cold Resistance	enchant.stat_3676141501
+E	69	+(20-30) to Spirit	enchant.stat_3981240776
+E	70	+1 to Maximum Power Charges	enchant.stat_227523295
+E	71	+(50-100) to Accuracy Rating	enchant.stat_803737631
+E	72	+1 to Level of all Minion Skills	enchant.stat_2162097452
+E	73	(15-25)% increased Evasion and Energy Shield	enchant.stat_1999113824
+E	74	(10-15)% increased Block chance	enchant.stat_2481353198
+E	75	+3% to maximum Block chance	enchant.stat_480796730
+E	76	(20-25) Life gained when you Block	enchant.stat_762600725
+E	77	(10-15) Mana gained when you Block	enchant.stat_2122183138
+E	78	(15-25)% increased Armour and Energy Shield	enchant.stat_3321629045
 E	79	(10-15)% chance to Maim on Hit	enchant.stat_2763429652
 E	80	(5-10)% chance to Blind Enemies on hit	enchant.stat_2301191210
 E	81	Loads an additional bolt	enchant.stat_1967051901
